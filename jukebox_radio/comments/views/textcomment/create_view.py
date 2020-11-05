@@ -6,16 +6,7 @@ from jukebox_radio.core.base_view import BaseView
 User = get_user_model()
 
 
-class TrackSearchView(BaseView, LoginRequiredMixin):
-
-    def get(self, request, **kwargs):
-        """
-        TODO
-        """
-        return self.http_response_200({})
-
-
-class CollectionSearchView(BaseView, LoginRequiredMixin):
+class TextCommentCreateView(BaseView, LoginRequiredMixin):
 
     def get(self, request, **kwargs):
         """
