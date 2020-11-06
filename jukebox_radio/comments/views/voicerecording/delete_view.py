@@ -8,7 +8,7 @@ User = get_user_model()
 
 class VoiceRecordingDeleteView(BaseView, LoginRequiredMixin):
 
-    def get(self, request, **kwargs):
+    def delete(self, request, **kwargs):
         """
         TODO
         """

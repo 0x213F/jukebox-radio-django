@@ -8,7 +8,7 @@ User = get_user_model()
 
 class TextCommentModificationListDeleteView(BaseView, LoginRequiredMixin):
 
-    def get(self, request, **kwargs):
+    def delete(self, request, **kwargs):
         """
         TODO
         """
