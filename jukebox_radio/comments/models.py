@@ -1,4 +1,5 @@
 import pgtrigger
+import uuid
 
 from django.db import models
 
@@ -23,6 +24,8 @@ def upload_to_comments_voice_recordings(*args, **kwargs):
 @pghistory.track(pghistory.Snapshot('text_comment.snapshot'))
 class TextComment(models.Model):
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
 
     text = models.TextField()
@@ -43,6 +46,8 @@ class TextComment(models.Model):
     )
 )
 class VoiceRecording(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
 
@@ -74,6 +79,8 @@ class TextCommentModification(models.Model):
         (STYLE_STRIKETHROUGH, 'Strikethrough'),
         (STYLE_UNDERLINE, 'Underline'),
     )
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     text_comment = models.ForeignKey(
