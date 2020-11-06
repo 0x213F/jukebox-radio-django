@@ -6,7 +6,7 @@ from jukebox_radio.core.base_view import BaseView
 User = get_user_model()
 
 
-class VoiceRecordingUpdateView(BaseView, LoginRequiredMixin):
+class VoiceRecordingListView(BaseView, LoginRequiredMixin):
 
     def get(self, request, **kwargs):
         """

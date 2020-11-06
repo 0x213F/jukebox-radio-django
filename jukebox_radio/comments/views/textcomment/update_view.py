@@ -8,7 +8,7 @@ User = get_user_model()
 
 class TextCommentUpdateView(BaseView, LoginRequiredMixin):
 
-    def get(self, request, **kwargs):
+    def post(self, request, **kwargs):
         """
         TODO
         """

@@ -1,3 +1,3 @@
 from .create_view import VoiceRecordingCreateView
 from .delete_view import VoiceRecordingDeleteView
-from .update_view import VoiceRecordingUpdateView
+from .list_view import VoiceRecordingListView
