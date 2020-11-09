@@ -10,6 +10,15 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
 
     def delete(self, request, **kwargs):
         """
-        TODO
+        Delete a Queue.
         """
-        return self.http_response_200({})
+        Queue = apps.get_model('streams', 'Queue')
+
+        queue_uuid = request.DELETE.get('queueUuid')
+
+        queue = Queue.objects.get(uuid=queue_uuid, user=request.user)
+        queue.delete()
+
+        return self.http_response_200({
+            'uuid': queue_uuid,
+        })

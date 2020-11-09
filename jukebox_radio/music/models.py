@@ -1,4 +1,5 @@
 import pgtrigger
+import uuid
 
 from django.db import models
 
@@ -35,6 +36,8 @@ def upload_to_collections_jr_imgs(*args, **kwargs):
     )
 )
 class Track(models.Model):
+
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Jukebox Radio
     jr_audio = models.FileField(
@@ -103,6 +106,8 @@ class CollectionListing(models.Model):
             "number",
         ]
 
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     child_track = models.ForeignKey(
         'music.Track',
         on_delete=models.CASCADE,
@@ -139,6 +144,8 @@ class Collection(models.Model):
         (FORMAT_PLAYLIST, 'Playlist'),
         (FORMAT_MIX, 'Mix'),
     )
+
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     format = models.CharField(max_length=32, choices=FORMAT_CHOICES)
 

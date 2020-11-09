@@ -18,11 +18,11 @@ class TextCommentUpdateView(BaseView, LoginRequiredMixin):
         TextComment = apps.get_model('comments', 'TextComment')
         TextCommentModification = apps.get_model('comments', 'TextCommentModification')
 
-        text_comment_id = request.DELETE.get('text_comment_id')
+        text_comment_uuid = request.DELETE.get('textCommentUuid')
         text_comment = (
             TextComment
             .objects
-            .get(id=text_comment_id, user=request.user)
+            .get(uuid=text_comment_uuid, user=request.user)
         )
         text_comment.text = request.PUT.get('text')
         text_comment.save()
@@ -35,6 +35,6 @@ class TextCommentUpdateView(BaseView, LoginRequiredMixin):
         text_comment_modification_qs.delete()
 
         return self.http_response_200({
-            'id': text_comment.id,
+            'uuid': text_comment.uuid,
             'text': text_comment.text,
         })

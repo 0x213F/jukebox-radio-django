@@ -33,9 +33,9 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
         )
 
         return self.http_response_200({
-            'id': text_comment.id,
-            'user__username': text_comment.user.username,
+            'uuid': text_comment.uuid,
+            'userUsername': text_comment.user.username,
             'text': text_comment.text,
-            'track_id': text_comment.track_id,
-            'timestamp_ms': text_comment.timestamp_ms,
+            'trackId': text_comment.track_id,
+            'timestampMilliseconds': text_comment.timestamp_ms,
         })

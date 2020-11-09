@@ -16,15 +16,15 @@ class TextCommentDeleteView(BaseView, LoginRequiredMixin):
         """
         TextComment = apps.get_model('comments', 'TextComment')
 
-        text_comment_id = request.DELETE.get('text_comment_id')
+        text_comment_uuid = request.DELETE.get('textCommentUuid')
 
         text_comment = (
             TextComment
             .objects
-            .get(id=text_comment_id, user=request.user)
+            .get(uuid=text_comment_uuid, user=request.user)
         )
         text_comment.delete()
 
         return self.http_response_200({
-            'id': text_comment.id,
+            'uuid': text_comment_uuid,
         })
