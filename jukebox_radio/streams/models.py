@@ -1,4 +1,5 @@
 import pgtrigger
+import uuid
 
 from django.db import models
 
@@ -16,11 +17,16 @@ from unique_upload import unique_upload
 @pghistory.track(pghistory.Snapshot('stream.snapshot'))
 class Stream(models.Model):
 
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
 
     now_playing = models.ForeignKey('music.Track', on_delete=models.CASCADE)
     played_at = models.DateTimeField()
     is_playing = models.BooleanField()
+
+    recording_started_at = models.DateTimeField()
+    recording_ended_at = models.DateTimeField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -33,6 +39,8 @@ class Stream(models.Model):
     )
 )
 class Queue(models.Model):
+
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     track = models.ForeignKey(
         'music.Track',
@@ -67,6 +75,8 @@ class Queue(models.Model):
         related_name='+',
         on_delete=models.CASCADE,
     )
+
+    played_at = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

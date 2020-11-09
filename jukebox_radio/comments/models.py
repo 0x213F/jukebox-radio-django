@@ -24,7 +24,7 @@ def upload_to_comments_voice_recordings(*args, **kwargs):
 @pghistory.track(pghistory.Snapshot('text_comment.snapshot'))
 class TextComment(models.Model):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
 
@@ -47,12 +47,13 @@ class TextComment(models.Model):
 )
 class VoiceRecording(models.Model):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
 
     audio = models.FileField(upload_to=upload_to_comments_voice_recordings)
-    transcript = models.JSONField()
+    transcript_data = models.JSONField()
+    transcript_final = models.TextField()
     duration_ms = models.IntegerField()
     track = models.ForeignKey('music.Track', on_delete=models.CASCADE)
     timestamp_ms = models.IntegerField()
@@ -80,7 +81,7 @@ class TextCommentModification(models.Model):
         (STYLE_UNDERLINE, 'Underline'),
     )
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     text_comment = models.ForeignKey(

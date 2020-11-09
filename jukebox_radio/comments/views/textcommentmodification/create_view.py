@@ -16,15 +16,18 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
             - Strikethrough
             - Underline
         """
-        text_comment_id = request.PUT.get('text_comment_id')
+        TextComment = apps.get_model('comments', 'TextComment')
+        TextCommentModification = apps.get_model('comments', 'TextCommentModification')
+
+        text_comment_uuid = request.PUT.get('textCommentUuid')
         text_comment = (
             TextComment
             .objects
-            .get(id=text_comment_id, user=request.user)
+            .get(uuid=text_comment_uuid, user=request.user)
         )
 
-        start_ptr = request.PUT.get('start_ptr')
-        end_ptr = request.PUT.get('end_ptr')
+        start_ptr = request.PUT.get('startPtr')
+        end_ptr = request.PUT.get('endPtr')
         style = request.PUT.get('style')
 
         text_comment_modification = TextCommentModification.objects.create(
@@ -36,10 +39,10 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
         )
 
         return self.http_response_200({
-            'id': text_comment_modification.id,
-            'user__username': text_comment_modification.user.username,
-            'text_comment_id': text_comment_modification.text_comment_id,
-            'start_ptr': start_ptr,
-            'end_ptr': end_ptr,
+            'uuid': text_comment_modification.uuid,
+            'userUsername': text_comment_modification.user.username,
+            'textCommentId': text_comment_modification.text_comment_id,
+            'startPtr': start_ptr,
+            'endPtr': end_ptr,
             'style': style,
         })
