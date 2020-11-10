@@ -103,7 +103,7 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "users:redirect"
+LOGIN_REDIRECT_URL = "home"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 
@@ -321,3 +321,6 @@ CORS_URLS_REGEX = r"^/api/.*$"
 # Spotify
 SPOTIFY_CLIENT_ID = env("SPOTIFY_CLIENT_ID")
 SPOITFY_CLIENT_SECRET = env("SPOITFY_CLIENT_SECRET")
+SPOTIFY_USER_DATA_SCOPES = 'streaming app-remote-control user-modify-playback-state user-read-currently-playing user-read-playback-state'
+
+FERNET_KEY = env("FERNET_KEY")

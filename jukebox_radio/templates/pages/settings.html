@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <p>
+    <input type="checkbox" disabled {% if spotify_is_already_authorized %}checked{% endif %}>
+    Spotify Connected
+  </p>
+
+  <p>
+    <a href="{{ spotify_authorization_url }}">Authorize Spotify</a>
+  </p>
+
+{% endblock content %}
