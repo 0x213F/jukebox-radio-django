@@ -314,5 +314,10 @@ REST_FRAMEWORK = {
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
+
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+# Spotify
+SPOTIFY_CLIENT_ID = env("SPOTIFY_CLIENT_ID")
+SPOITFY_CLIENT_SECRET = env("SPOITFY_CLIENT_SECRET")

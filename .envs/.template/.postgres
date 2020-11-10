@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=jukebox_radio
+POSTGRES_USER=NSfIQiJuNflkxVHRdvRYbUXwhRYmXiAj
+POSTGRES_PASSWORD=vr6KQTUUIgIWTrPnVsAyHTXmduh1Yub1yBt1EERF5UqeD7GsU7yiDaAi5dGLsgZG

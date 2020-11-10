@@ -14,7 +14,9 @@ def test_text_comment_modification_list_delete_view_assert_request_type(client):
 
 
 @pytest.mark.django_db
-def test_text_comment_modification_list_delete_view_request_authentication_required(client):
+def test_text_comment_modification_list_delete_view_request_authentication_required(
+    client,
+):
     """
     If any of the following attempts to access this endpoint, then they should
     be denied access:

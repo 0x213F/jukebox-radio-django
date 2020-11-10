@@ -7,7 +7,6 @@ User = get_user_model()
 
 
 class StreamSkipTrackView(BaseView, LoginRequiredMixin):
-
     def post(self, request, **kwargs):
         """
         TODO

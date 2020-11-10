@@ -9,22 +9,16 @@ User = get_user_model()
 
 
 class TextCommentCreateView(BaseView, LoginRequiredMixin):
-
     def put(self, request, **kwargs):
         """
         Create a TextComment.
         """
-        TextComment = apps.get_model('comments', 'TextComment')
-        Stream = apps.get_model('streams', 'Stream')
+        TextComment = apps.get_model("comments", "TextComment")
+        Stream = apps.get_model("streams", "Stream")
 
         now = time_util.nowutc()
-        stream = (
-            Stream
-            .objects
-            .select_related('now_playing')
-            .get(user=request.user)
-        )
-        text = request.PUT.get('text')
+        stream = Stream.objects.select_related("now_playing").get(user=request.user)
+        text = request.PUT.get("text")
         text_comment = TextComment.objects.create(
             user=request.user,
             text=text,
@@ -32,10 +26,12 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
             timestamp_ms=time_util.ms(now - stream.played_at),
         )
 
-        return self.http_response_200({
-            'uuid': text_comment.uuid,
-            'userUsername': text_comment.user.username,
-            'text': text_comment.text,
-            'trackId': text_comment.track_id,
-            'timestampMilliseconds': text_comment.timestamp_ms,
-        })
+        return self.http_response_200(
+            {
+                "uuid": text_comment.uuid,
+                "userUsername": text_comment.user.username,
+                "text": text_comment.text,
+                "trackId": text_comment.track_id,
+                "timestampMilliseconds": text_comment.timestamp_ms,
+            }
+        )

@@ -10,13 +10,12 @@ User = get_user_model()
 
 
 class TrackSearchView(BaseView, LoginRequiredMixin):
-
     def get(self, request, **kwargs):
         """
         Given a query, get relevant tracks.
         """
-        spotify_results = get_spotify_results(query, 'tracks', request.user)
-        youtube_results = get_youtube_results(query, 'tracks')
+        spotify_results = get_spotify_results(query, "tracks", request.user)
+        youtube_results = get_youtube_results(query, "tracks")
         jr_results = get_jr_results()
 
         results = spotify_results + youtube_results + jr_results
@@ -24,14 +23,13 @@ class TrackSearchView(BaseView, LoginRequiredMixin):
 
 
 class CollectionSearchView(BaseView, LoginRequiredMixin):
-
     def get(self, request, **kwargs):
         """
         Given a query, get relevant collections.
         """
 
-        spotify_results = get_spotify_results(query, 'collections', request.user)
-        youtube_results = get_youtube_results(query, 'collections')
+        spotify_results = get_spotify_results(query, "collections", request.user)
+        youtube_results = get_youtube_results(query, "collections")
         jr_results = get_jr_results()
 
         results = spotify_results + youtube_results + jr_results

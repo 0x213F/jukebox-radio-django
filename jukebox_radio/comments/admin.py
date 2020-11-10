@@ -5,38 +5,33 @@ from django.contrib.auth import get_user_model
 
 import pghistory
 
-from jukebox_radio.users.forms import UserChangeForm, UserCreationForm
-
 User = get_user_model()
 
 
-@admin.register(apps.get_model('comments.TextComment'))
+@admin.register(apps.get_model("comments.TextComment"))
 class TextCommentAdmin(admin.ModelAdmin):
 
     # NOTE: https://github.com/jyveapp/django-pghistory
-    object_history_template = 'admin/pghistory_template.html'
+    object_history_template = "admin/pghistory_template.html"
 
     def history_view(self, request, object_id, extra_context=None):
-        '''
+        """
         Adds additional context for the custom history template.
-        '''
+        """
         extra_context = extra_context or {}
-        extra_context['object_history'] = (
-            pghistory.models.AggregateEvent.objects
-            .target(self.model(pk=object_id))
-            .order_by('pgh_created_at')
-            .select_related('pgh_context')
+        extra_context["object_history"] = (
+            pghistory.models.AggregateEvent.objects.target(self.model(pk=object_id))
+            .order_by("pgh_created_at")
+            .select_related("pgh_context")
         )
-        return super().history_view(
-            request, object_id, extra_context=extra_context
-        )
+        return super().history_view(request, object_id, extra_context=extra_context)
 
 
-@admin.register(apps.get_model('comments.VoiceRecording'))
+@admin.register(apps.get_model("comments.VoiceRecording"))
 class VoiceRecordingAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(apps.get_model('comments.TextCommentModification'))
+@admin.register(apps.get_model("comments.TextCommentModification"))
 class TextCommentModificationAdmin(admin.ModelAdmin):
     pass

@@ -275,4 +275,4 @@ jukebox_radio/media/
 .ipython/
 .env
 .envs/*
-!.envs/.local/
+!.envs/.template/

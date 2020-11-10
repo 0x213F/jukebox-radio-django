@@ -7,22 +7,21 @@ User = get_user_model()
 
 
 class VoiceRecordingDeleteView(BaseView, LoginRequiredMixin):
-
     def delete(self, request, **kwargs):
         """
         Delete a VoiceRecording.
         """
-        VoiceRecording = apps.get_model('comments', 'VoiceRecording')
+        VoiceRecording = apps.get_model("comments", "VoiceRecording")
 
-        voice_recording_uuid = request.DELETE.get('VoiceRecordingUuid')
+        voice_recording_uuid = request.DELETE.get("VoiceRecordingUuid")
 
-        voice_recording = (
-            VoiceRecording
-            .objects
-            .get(uuid=voice_recording_uuid, user=request.user)
+        voice_recording = VoiceRecording.objects.get(
+            uuid=voice_recording_uuid, user=request.user
         )
         voice_recording.delete()
 
-        return self.http_response_200({
-            'uuid': voice_recording_uuid,
-        })
+        return self.http_response_200(
+            {
+                "uuid": voice_recording_uuid,
+            }
+        )

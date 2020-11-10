@@ -7,7 +7,6 @@ User = get_user_model()
 
 
 class StreamScanForwardView(BaseView, LoginRequiredMixin):
-
     def post(self, request, **kwargs):
         """
         TODO
