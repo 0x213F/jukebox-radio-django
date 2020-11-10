@@ -6,19 +6,19 @@ Part jukebox. Part radio.
 Docker Setup
 ------------
 
-* This can take a while, especially the first time you run this particular command on your development system:
+This can take a while, especially the first time you run this particular command on your development system:
 
     $ docker-compose -f local.yml build
 
-* Before running everything, run migrations:
+Before running everything, run migrations:
 
     $ docker-compose -f local.yml run --rm django python manage.py migrate
 
-* Open a terminal at the project root and run the following for local development:
+Open a terminal at the project root and run the following for local development:
 
     $ docker-compose -f local.yml up
 
-* To run in a detached (background) mode, just:
+To run in a detached (background) mode, just:
 
     $ docker-compose -f local.yml up -d
 
