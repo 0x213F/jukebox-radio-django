@@ -3,13 +3,24 @@ Jukebox Radio
 
 Part jukebox. Part radio.
 
-.. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
-     :target: https://github.com/pydanny/cookiecutter-django/
-     :alt: Built with Cookiecutter Django
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-     :target: https://github.com/ambv/black
-     :alt: Black code style
+Docker Setup
+------------
 
+* This can take a while, especially the first time you run this particular command on your development system:
+
+    $ docker-compose -f local.yml build
+
+* Before running everything, run migrations:
+
+    $ docker-compose -f local.yml run --rm django python manage.py migrate
+
+* Open a terminal at the project root and run the following for local development:
+
+    $ docker-compose -f local.yml up
+
+* To run in a detached (background) mode, just:
+
+    $ docker-compose -f local.yml up -d
 
 Settings
 --------
@@ -46,8 +57,8 @@ Test coverage
 
 To run the tests, check your test coverage, and generate an HTML coverage report::
 
-    $ coverage run -m pytest
-    $ coverage html
+    $ docker-compose -f local.yml run --rm django coverage run -m pytest
+    $ docker-compose -f local.yml run --rm django html
     $ open htmlcov/index.html
 
 Running tests with py.test
@@ -55,7 +66,7 @@ Running tests with py.test
 
 ::
 
-  $ pytest
+  $ docker-compose -f local.yml run --rm django pytest
 
 Live reloading and Sass CSS compilation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -63,25 +74,6 @@ Live reloading and Sass CSS compilation
 Moved to `Live reloading and SASS compilation`_.
 
 .. _`Live reloading and SASS compilation`: http://cookiecutter-django.readthedocs.io/en/latest/live-reloading-and-sass-compilation.html
-
-
-
-Celery
-^^^^^^
-
-This app comes with Celery.
-
-To run a celery worker:
-
-.. code-block:: bash
-
-    cd jukebox_radio
-    celery -A config.celery_app worker -l info
-
-Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
-
-
-
 
 
 Sentry
@@ -131,5 +123,3 @@ Bootstrap's javascript as well as its dependencies is concatenated into a single
 
 .. _in the bootstrap source: https://github.com/twbs/bootstrap/blob/v4-dev/scss/_variables.scss
 .. _Bootstrap docs: https://getbootstrap.com/docs/4.1/getting-started/theming/
-
-
