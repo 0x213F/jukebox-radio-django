@@ -9,22 +9,21 @@ User = get_user_model()
 
 
 class TextCommentDeleteView(BaseView, LoginRequiredMixin):
-
     def delete(self, request, **kwargs):
         """
         Delete a TextComment.
         """
-        TextComment = apps.get_model('comments', 'TextComment')
+        TextComment = apps.get_model("comments", "TextComment")
 
-        text_comment_uuid = request.DELETE.get('textCommentUuid')
+        text_comment_uuid = request.DELETE.get("textCommentUuid")
 
-        text_comment = (
-            TextComment
-            .objects
-            .get(uuid=text_comment_uuid, user=request.user)
+        text_comment = TextComment.objects.get(
+            uuid=text_comment_uuid, user=request.user
         )
         text_comment.delete()
 
-        return self.http_response_200({
-            'uuid': text_comment_uuid,
-        })
+        return self.http_response_200(
+            {
+                "uuid": text_comment_uuid,
+            }
+        )

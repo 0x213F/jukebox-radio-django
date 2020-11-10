@@ -7,7 +7,6 @@ User = get_user_model()
 
 
 class StreamPlayTrackView(BaseView, LoginRequiredMixin):
-
     def post(self, request, **kwargs):
         """
         TODO

@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class StreamsConfig(AppConfig):
-    name = 'jukebox_radio.streams'
+    name = "jukebox_radio.streams"

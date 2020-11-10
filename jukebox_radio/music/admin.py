@@ -9,57 +9,64 @@ User = get_user_model()
 
 
 class CollectionListingAdminInline(admin.TabularInline):
-    model = apps.get_model('music.CollectionListing')
-    fk_name = 'parent_collection'
+    model = apps.get_model("music.CollectionListing")
+    fk_name = "collection"
     extra = 0
 
-    readonly_fields = (
-        'number',
-    )
+    readonly_fields = ("number",)
 
     def has_add_permission(self, request, obj=None):
         return False
 
 
-@admin.register(apps.get_model('music.Track'))
+@admin.register(apps.get_model("music.Track"))
 class TrackAdmin(admin.ModelAdmin):
 
     fieldsets = (
-        ('JUKEBOX RADIO', {
-            'fields': (
-                'jr_img',
-                'jr_audio',
-                'jr_name',
-                'jr_duration_ms',
-            ),
-        }),
-        ('SPOTIFY', {
-            'fields': (
-                'spotify_img',
-                'spotify_uri',
-                'spotify_name',
-                'spotify_duration_ms',
-            ),
-        }),
-        ('YOUTUBE', {
-            'fields': (
-                'youtube_img',
-                'youtube_id',
-                'youtube_name',
-                'youtube_duration_ms',
-            ),
-        }),
+        (
+            "JUKEBOX RADIO",
+            {
+                "fields": (
+                    "jr_img",
+                    "jr_audio",
+                    "jr_name",
+                    "jr_duration_ms",
+                ),
+            },
+        ),
+        (
+            "SPOTIFY",
+            {
+                "fields": (
+                    "spotify_img",
+                    "spotify_uri",
+                    "spotify_name",
+                    "spotify_duration_ms",
+                ),
+            },
+        ),
+        (
+            "YOUTUBE",
+            {
+                "fields": (
+                    "youtube_img",
+                    "youtube_id",
+                    "youtube_name",
+                    "youtube_duration_ms",
+                ),
+            },
+        ),
     )
 
     search_fields = (
-        'jr_name',
-        'jr_duration_ms',
-        'spotify_uri',
-        'spotify_name',
-        'spotify_duration_ms',
-        'youtube_id',
-        'youtube_name',
-        'youtube_duration_ms',
+        "jr_name",
+        "jr_duration_ms",
+        "spotify_uri",
+        "spotify_name",
+        "spotify_duration_ms",
+        "youtube_id",
+        "youtube_name",
+        "youtube_duration_ms",
     )
 
     def has_add_permission(self, request, obj=None):
@@ -69,47 +76,56 @@ class TrackAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(apps.get_model('music.Album'))
+@admin.register(apps.get_model("music.Album"))
 class AlbumAdmin(admin.ModelAdmin):
 
-    inlines = (CollectionListingAdminInline, )
+    inlines = (CollectionListingAdminInline,)
 
     fieldsets = (
-        ('JUKEBOX RADIO', {
-            'fields': (
-                'jr_img',
-                'jr_name',
-            ),
-        }),
-        ('SPOTIFY', {
-            'fields': (
-                'spotify_img',
-                'spotify_uri',
-                'spotify_name',
-            ),
-        }),
-        ('YOUTUBE', {
-            'fields': (
-                'youtube_img',
-                'youtube_id',
-                'youtube_name',
-            ),
-        }),
+        (
+            "JUKEBOX RADIO",
+            {
+                "fields": (
+                    "jr_img",
+                    "jr_name",
+                ),
+            },
+        ),
+        (
+            "SPOTIFY",
+            {
+                "fields": (
+                    "spotify_img",
+                    "spotify_uri",
+                    "spotify_name",
+                ),
+            },
+        ),
+        (
+            "YOUTUBE",
+            {
+                "fields": (
+                    "youtube_img",
+                    "youtube_id",
+                    "youtube_name",
+                ),
+            },
+        ),
     )
 
     search_fields = (
-        'jr_name',
-        'jr_duration_ms',
-        'spotify_uri',
-        'spotify_name',
-        'spotify_duration_ms',
-        'youtube_id',
-        'youtube_name',
-        'youtube_duration_ms',
+        "jr_name",
+        "jr_duration_ms",
+        "spotify_uri",
+        "spotify_name",
+        "spotify_duration_ms",
+        "youtube_id",
+        "youtube_name",
+        "youtube_duration_ms",
     )
 
     def get_queryset(self, request):
-        Collection = apps.get_model('music.Collection')
+        Collection = apps.get_model("music.Collection")
 
         qs = Collection.objects.all()
         qs = qs.filter(format=Collection.FORMAT_ALBUM)
@@ -122,44 +138,53 @@ class AlbumAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(apps.get_model('music.Playlist'))
+@admin.register(apps.get_model("music.Playlist"))
 class PlaylistAdmin(admin.ModelAdmin):
 
-    inlines = (CollectionListingAdminInline, )
+    inlines = (CollectionListingAdminInline,)
 
     fieldsets = (
-        ('JUKEBOX RADIO', {
-            'fields': (
-                'jr_img',
-                'jr_name',
-            ),
-        }),
-        ('SPOTIFY', {
-            'fields': (
-                'spotify_img',
-                'spotify_uri',
-                'spotify_name',
-            ),
-        }),
-        ('YOUTUBE', {
-            'fields': (
-                'youtube_img',
-                'youtube_id',
-                'youtube_name',
-            ),
-        }),
+        (
+            "JUKEBOX RADIO",
+            {
+                "fields": (
+                    "jr_img",
+                    "jr_name",
+                ),
+            },
+        ),
+        (
+            "SPOTIFY",
+            {
+                "fields": (
+                    "spotify_img",
+                    "spotify_uri",
+                    "spotify_name",
+                ),
+            },
+        ),
+        (
+            "YOUTUBE",
+            {
+                "fields": (
+                    "youtube_img",
+                    "youtube_id",
+                    "youtube_name",
+                ),
+            },
+        ),
     )
 
     search_fields = (
-        'jr_name',
-        'spotify_uri',
-        'spotify_name',
-        'youtube_id',
-        'youtube_name',
+        "jr_name",
+        "spotify_uri",
+        "spotify_name",
+        "youtube_id",
+        "youtube_name",
     )
 
     def get_queryset(self, request):
-        Collection = apps.get_model('music.Collection')
+        Collection = apps.get_model("music.Collection")
 
         qs = Collection.objects.all()
         qs = qs.filter(format=Collection.FORMAT_PLAYLIST)
@@ -172,54 +197,63 @@ class PlaylistAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(apps.get_model('music.Mix'))
-class MixAdmin(admin.ModelAdmin):
-
-    inlines = (CollectionListingAdminInline, )
-
-    fieldsets = (
-        ('JUKEBOX RADIO', {
-            'fields': (
-                'jr_img',
-                'jr_name',
-            ),
-        }),
-        ('SPOTIFY', {
-            'fields': (
-                'spotify_img',
-                'spotify_uri',
-                'spotify_name',
-            ),
-        }),
-        ('YOUTUBE', {
-            'fields': (
-                'youtube_img',
-                'youtube_id',
-                'youtube_name',
-            ),
-        }),
-    )
-
-    search_fields = (
-        'jr_name',
-        'jr_duration_ms',
-        'spotify_uri',
-        'spotify_name',
-        'spotify_duration_ms',
-        'youtube_id',
-        'youtube_name',
-        'youtube_duration_ms',
-    )
-
-    def get_queryset(self, request):
-        Collection = apps.get_model('music.Collection')
-
-        qs = Collection.objects.all()
-        qs = qs.filter(format=Collection.FORMAT_MIX)
-        return qs
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
+# @admin.register(apps.get_model("music.Mix"))
+# class MixAdmin(admin.ModelAdmin):
+#
+#     inlines = (CollectionListingAdminInline,)
+#
+#     fieldsets = (
+#         (
+#             "JUKEBOX RADIO",
+#             {
+#                 "fields": (
+#                     "jr_img",
+#                     "jr_name",
+#                 ),
+#             },
+#         ),
+#         (
+#             "SPOTIFY",
+#             {
+#                 "fields": (
+#                     "spotify_img",
+#                     "spotify_uri",
+#                     "spotify_name",
+#                 ),
+#             },
+#         ),
+#         (
+#             "YOUTUBE",
+#             {
+#                 "fields": (
+#                     "youtube_img",
+#                     "youtube_id",
+#                     "youtube_name",
+#                 ),
+#             },
+#         ),
+#     )
+#
+#     search_fields = (
+#         "jr_name",
+#         "jr_duration_ms",
+#         "spotify_uri",
+#         "spotify_name",
+#         "spotify_duration_ms",
+#         "youtube_id",
+#         "youtube_name",
+#         "youtube_duration_ms",
+#     )
+#
+#     def get_queryset(self, request):
+#         Collection = apps.get_model("music.Collection")
+#
+#         qs = Collection.objects.all()
+#         qs = qs.filter(format=Collection.FORMAT_MIX)
+#         return qs
+#
+#     def has_add_permission(self, request, obj=None):
+#         return False
+#
+#     def has_change_permission(self, request, obj=None):
+#         return False

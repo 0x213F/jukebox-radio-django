@@ -7,27 +7,21 @@ User = get_user_model()
 
 
 class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
-
     def put(self, request, **kwargs):
         """
         Create a VoiceRecording.
         """
-        VoiceRecording = apps.get_model('comments', 'VoiceRecording')
+        VoiceRecording = apps.get_model("comments", "VoiceRecording")
 
-        audio = request.FILES['audio']
-        duration_ms = request.PUT['duration_ms']
-        transcript_data = request.PUT['transcriptData']
-        transcript_final = request.PUT['transcriptFinal']
+        audio = request.FILES["audio"]
+        duration_ms = request.PUT["duration_ms"]
+        transcript_data = request.PUT["transcriptData"]
+        transcript_final = request.PUT["transcriptFinal"]
 
         now = time_util.nowutc()
-        stream = (
-            Stream
-            .objects
-            .select_related('now_playing')
-            .get(user=request.user)
-        )
+        stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
-        timestamp_ms = (time_util.ms(now - stream.played_at) - duration_ms)
+        timestamp_ms = time_util.ms(now - stream.played_at) - duration_ms
 
         voice_recording = VoiceRecording.objects.create(
             user=request.user,
@@ -39,12 +33,14 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
             timestamp_ms=timestamp_ms,
         )
 
-        return self.http_response_200({
-            'uuid': voice_recording.uuid,
-            'user': voice_recording.user.username,
-            'transcriptData': voice_recording.transcript_data,
-            'transcriptFinal': voice_recording.transcript_final,
-            'durationMilliseconds': voice_recording.duration_ms,
-            'trackId': voice_recording.track_id,
-            'timestampMilliseconds': voice_recording.timestamp_ms,
-        })
+        return self.http_response_200(
+            {
+                "uuid": voice_recording.uuid,
+                "user": voice_recording.user.username,
+                "transcriptData": voice_recording.transcript_data,
+                "transcriptFinal": voice_recording.transcript_final,
+                "durationMilliseconds": voice_recording.duration_ms,
+                "trackId": voice_recording.track_id,
+                "timestampMilliseconds": voice_recording.timestamp_ms,
+            }
+        )

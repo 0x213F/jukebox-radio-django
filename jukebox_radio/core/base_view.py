@@ -1,7 +1,11 @@
 from django.core.serializers import serialize
-from django.http import (HttpResponse, HttpResponseBadRequest,
-                         HttpResponseForbidden, HttpResponseRedirect,
-                         JsonResponse)
+from django.http import (
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.template.response import TemplateResponse
 from django.views import View
 
