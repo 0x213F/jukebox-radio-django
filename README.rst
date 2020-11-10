@@ -6,6 +6,8 @@ Part jukebox. Part radio.
 Docker Setup
 ------------
 
+* Rename `.envs/.template` to `.envs/local`. Fill in missing values.
+
 This can take a while, especially the first time you run this particular command on your development system:
 
     $ docker-compose -f local.yml build
