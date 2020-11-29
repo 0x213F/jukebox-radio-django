@@ -46,11 +46,11 @@ class Track(models.Model):
     name = models.CharField(max_length=200)
     duration_ms = models.PositiveIntegerField()
 
-    external_id = models.CharField(null=True, max_length=200)
-    audio = models.FileField(null=True, upload_to=upload_to_tracks_jr_audios)
+    external_id = models.CharField(null=True, blank=True, max_length=200)
+    audio = models.FileField(null=True, blank=True, upload_to=upload_to_tracks_jr_audios)
 
-    img = models.ImageField(null=True, upload_to=upload_to_tracks_jr_imgs)
-    img_url = models.CharField(null=True, max_length=200)
+    img = models.ImageField(null=True, blank=True, upload_to=upload_to_tracks_jr_imgs)
+    img_url = models.CharField(null=True, blank=True, max_length=200)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

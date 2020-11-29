@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% load static compress%}
+
+{% block title %}Player{% endblock title %}
+
+{% block content %}
+  <!-- <div>
+
+    <input id="text"></input>
+
+    <button>Create Text Comment</button>
+
+  </div> -->
+
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+
+      <h1>Comments</h1>
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-outline-secondary" type="button" id="record">Record</button>
+        </div>
+        <div class="custom-file">
+          <input type="text" class="form-control" id="text" style="border-radius: 0px;">
+        </div>
+
+        <div class="input-group-append">
+          <button class="btn btn-outline-primary" type="button" id="new-text-comment">Submit</button>
+        </div>
+      </div>
+
+      <h1>Playback</h1>
+
+      <div class="form-group">
+        <button class="btn btn-primary" type="submit">Play</button>
+        <button class="btn btn-primary disabled" type="submit" disabled>Pause</button>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-outline-primary" type="submit">Rewind Track</button>
+        <button class="btn btn-outline-primary" type="submit">Skip Track</button>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-outline-secondary" type="submit">Scan Backward</button>
+        <button class="btn btn-outline-secondary" type="submit">Scan Forward</button>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block addedjavascript %}
+
+  {% compress js %}
+  <script src="{% static 'js/player.js' %}"></script>
+  {% endcompress %}
+
+{% endblock addedjavascript %}
