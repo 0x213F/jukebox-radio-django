@@ -21,59 +21,13 @@ class CollectionListingAdminInline(admin.TabularInline):
 
 @admin.register(apps.get_model("music.Track"))
 class TrackAdmin(admin.ModelAdmin):
+    pass
 
-    fieldsets = (
-        (
-            "JUKEBOX RADIO",
-            {
-                "fields": (
-                    "jr_img",
-                    "jr_audio",
-                    "jr_name",
-                    "jr_duration_ms",
-                ),
-            },
-        ),
-        (
-            "SPOTIFY",
-            {
-                "fields": (
-                    "spotify_img",
-                    "spotify_uri",
-                    "spotify_name",
-                    "spotify_duration_ms",
-                ),
-            },
-        ),
-        (
-            "YOUTUBE",
-            {
-                "fields": (
-                    "youtube_img",
-                    "youtube_id",
-                    "youtube_name",
-                    "youtube_duration_ms",
-                ),
-            },
-        ),
-    )
-
-    search_fields = (
-        "jr_name",
-        "jr_duration_ms",
-        "spotify_uri",
-        "spotify_name",
-        "spotify_duration_ms",
-        "youtube_id",
-        "youtube_name",
-        "youtube_duration_ms",
-    )
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
+    # def has_add_permission(self, request, obj=None):
+    #     return False
+    #
+    # def has_change_permission(self, request, obj=None):
+    #     return False
 
 
 @admin.register(apps.get_model("music.Album"))

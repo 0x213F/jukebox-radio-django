@@ -8,12 +8,16 @@ from django.views.generic import TemplateView
 from rest_framework.authtoken.views import obtain_auth_token
 
 from config.views import SettingsView
+from config.views import PlayerView
 
 urlpatterns = [
     # Templates
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
         "settings/", SettingsView.as_view(), name="settings"
+    ),
+    path(
+        "player/", PlayerView.as_view(), name="player"
     ),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),

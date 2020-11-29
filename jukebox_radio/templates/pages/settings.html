@@ -1,13 +1,49 @@
 {% extends "base.html" %}
 
-{% block content %}
-  <p>
-    <input type="checkbox" disabled {% if spotify_is_already_authorized %}checked{% endif %}>
-    Spotify Connected
-  </p>
+{% block title %}Settings{% endblock title %}
 
-  <p>
-    <a href="{{ spotify_authorization_url }}">Authorize Spotify</a>
-  </p>
+{% block content %}
+
+
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>Jukebox Radio</h1>
+
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          <input type="checkbox">
+        </div>
+      </div>
+      <div type="text" class="form-control">Autoplay historical voice recordings</div>
+    </div>
+
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          <input type="checkbox" checked>
+        </div>
+      </div>
+      <div type="text" class="form-control">Autoplay live voice recordings</div>
+    </div>
+
+    <div class="form-group">
+      <button class="btn btn-primary">Save</button>
+    </div>
+
+    <h1>Spotify</h1>
+
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          <input type="checkbox" disabled {% if spotify_is_already_authorized %}checked{% endif %}>
+        </div>
+      </div>
+      <div type="text" class="form-control"><a href="{{ spotify_authorization_url }}">Authorize Spotify</a></div>
+    </div>
+
+  </div>
+</div>
 
 {% endblock content %}

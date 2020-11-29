@@ -18,7 +18,7 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
         transcript_data = request.PUT["transcriptData"]
         transcript_final = request.PUT["transcriptFinal"]
 
-        now = time_util.nowutc()
+        now = time_util.now()
         stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
         timestamp_ms = time_util.ms(now - stream.played_at) - duration_ms
