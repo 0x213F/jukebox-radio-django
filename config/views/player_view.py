@@ -20,7 +20,10 @@ class PlayerView(BaseView, LoginRequiredMixin):
 
         queue_qs = Queue.objects.in_stream(stream)
 
-        format_choices = [('track', 'Track')] + list(Collection.FORMAT_CHOICES)
+        format_choices = (
+            [('track', 'Track'), ('video', 'Video')] +
+            list(Collection.FORMAT_CHOICES)
+        )
 
         return self.template_response(request, 'pages/player.html', {
             'queues': queue_qs,

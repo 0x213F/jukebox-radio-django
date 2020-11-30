@@ -40,6 +40,13 @@ def upload_to_collections_jr_imgs(*args, **kwargs):
 )
 class Track(models.Model):
 
+    FORMAT_SONG = "song"
+    FORMAT_VIDEO = "video"
+    FORMAT_CHOICES = (
+        (FORMAT_SONG, "Song"),
+        (FORMAT_VIDEO, "Video"),
+    )
+
     PROVIDER_SPOTIFY = GLOBAL_PROVIDER_SPOTIFY
     PROVIDER_YOUTUBE = GLOBAL_PROVIDER_YOUTUBE
     PROVIDER_JUKEBOX_RADIO = GLOBAL_PROVIDER_JUKEBOX_RADIO
@@ -47,10 +54,13 @@ class Track(models.Model):
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    format = models.CharField(max_length=32, choices=FORMAT_CHOICES)
+
     provider = models.CharField(max_length=32, choices=PROVIDER_CHOICES)
 
     name = models.CharField(max_length=200)
-    duration_ms = models.PositiveIntegerField()
+    artist_name = models.CharField(max_length=200)
+    duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
     external_id = models.CharField(null=True, blank=True, max_length=200)
     audio = models.FileField(null=True, blank=True, upload_to=upload_to_tracks_jr_audios)
