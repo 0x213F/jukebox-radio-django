@@ -15,10 +15,18 @@ class BaseView(View):
     Inherits from Django View.
     """
 
-    def http_response_200(self, response):
+    def http_response_200(self, data=None):
         """
         SUCCESS
         """
+        response = {
+            "system": {
+                "status": 200,
+                "message": "Ok",
+            },
+        }
+        if data:
+            response["data"] = data
         if type(response) == dict:
             return JsonResponse(response)
         if type(response) == list:

@@ -16,7 +16,7 @@
   <div class="row">
     <div class="col-md-6 offset-md-3">
 
-      <h1>Comments</h1>
+      <h3>Comments</h3>
 
       <div class="input-group mb-3">
         <div class="input-group-prepend">
@@ -27,11 +27,11 @@
         </div>
 
         <div class="input-group-append">
-          <button class="btn btn-outline-primary" type="button" id="new-text-comment">Submit</button>
+          <button class="btn btn-outline-primary" type="button" id="text-comment-create-button">Submit</button>
         </div>
       </div>
 
-      <h1>Playback</h1>
+      <h3>Playback</h3>
 
       <div class="form-group">
         <button class="btn btn-primary" type="submit">Play</button>
@@ -45,6 +45,51 @@
         <button class="btn btn-outline-secondary" type="submit">Scan Backward</button>
         <button class="btn btn-outline-secondary" type="submit">Scan Forward</button>
       </div>
+
+      <h3>Queue</h3>
+      {% for queue in queues %}
+      <div class="form-group">
+        {% if queue.track %}
+          {{ queue.track.name }}
+        {% elif queue.collection %}
+          {{ queue.collection.name }}
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div class="form-group">
+        TEST
+      </div>
+
+      <h3>Search</h3>
+      <div class="form-group">
+        {% for provider_slug, provider_name in PROVIDER_CHOICES %}
+        <div class="form-check form-check-inline">
+          <input id="{{ provider_slug }}-id" class="form-check-input" type="checkbox" name="{{ provider_slug }}">
+          <label class="form-check-label" for="{{ provider_slug }}-id">{{ provider_name }}</label>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {% for format_slug, format_name in FORMAT_CHOICES %}
+        <div class="form-check form-check-inline">
+          <input id="{{ format_slug }}-id" class="form-check-input" type="checkbox" name="{{ format_slug }}">
+          <label class="form-check-label" for="{{ format_slug }}-id">{{ format_name }}</label>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 col-form-label">Query</label>
+        <div class="input-group col-sm-10" style="float: right;">
+          <div class="custom-file">
+            <input type="text" class="form-control" id="search-query" style="border-radius-top-right: 0px; border-radius-bottom-right: 0px;">
+          </div>
+
+          <div class="input-group-append">
+            <button class="btn btn-outline-primary" type="button" id="music-search-button">Search</button>
+          </div>
+        </div>
+      </div>
+
 
     </div>
   </div>

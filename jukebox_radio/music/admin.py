@@ -151,63 +151,63 @@ class PlaylistAdmin(admin.ModelAdmin):
         return False
 
 
-# @admin.register(apps.get_model("music.Mix"))
-# class MixAdmin(admin.ModelAdmin):
-#
-#     inlines = (CollectionListingAdminInline,)
-#
-#     fieldsets = (
-#         (
-#             "JUKEBOX RADIO",
-#             {
-#                 "fields": (
-#                     "jr_img",
-#                     "jr_name",
-#                 ),
-#             },
-#         ),
-#         (
-#             "SPOTIFY",
-#             {
-#                 "fields": (
-#                     "spotify_img",
-#                     "spotify_uri",
-#                     "spotify_name",
-#                 ),
-#             },
-#         ),
-#         (
-#             "YOUTUBE",
-#             {
-#                 "fields": (
-#                     "youtube_img",
-#                     "youtube_id",
-#                     "youtube_name",
-#                 ),
-#             },
-#         ),
-#     )
-#
-#     search_fields = (
-#         "jr_name",
-#         "jr_duration_ms",
-#         "spotify_uri",
-#         "spotify_name",
-#         "spotify_duration_ms",
-#         "youtube_id",
-#         "youtube_name",
-#         "youtube_duration_ms",
-#     )
-#
-#     def get_queryset(self, request):
-#         Collection = apps.get_model("music.Collection")
-#
-#         qs = Collection.objects.all()
-#         qs = qs.filter(format=Collection.FORMAT_MIX)
-#         return qs
-#
-#     def has_add_permission(self, request, obj=None):
-#         return False
-#
-#     def has_change_permission(self, request, obj=None):
-#         return False
+@admin.register(apps.get_model("music.Session"))
+class MixAdmin(admin.ModelAdmin):
+
+    inlines = (CollectionListingAdminInline,)
+
+    fieldsets = (
+        (
+            "JUKEBOX RADIO",
+            {
+                "fields": (
+                    "jr_img",
+                    "jr_name",
+                ),
+            },
+        ),
+        (
+            "SPOTIFY",
+            {
+                "fields": (
+                    "spotify_img",
+                    "spotify_uri",
+                    "spotify_name",
+                ),
+            },
+        ),
+        (
+            "YOUTUBE",
+            {
+                "fields": (
+                    "youtube_img",
+                    "youtube_id",
+                    "youtube_name",
+                ),
+            },
+        ),
+    )
+
+    search_fields = (
+        "jr_name",
+        "jr_duration_ms",
+        "spotify_uri",
+        "spotify_name",
+        "spotify_duration_ms",
+        "youtube_id",
+        "youtube_name",
+        "youtube_duration_ms",
+    )
+
+    def get_queryset(self, request):
+        Collection = apps.get_model("music", "Collection")
+
+        qs = Collection.objects.all()
+        qs = qs.filter(format=Collection.FORMAT_SESSION)
+        return qs
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

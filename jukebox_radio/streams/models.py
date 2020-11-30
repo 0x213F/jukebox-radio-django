@@ -29,10 +29,22 @@ class Stream(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
+class QueueQuerySet(models.QuerySet):
+
+    def in_stream(self, stream):
+        return self.filter(
+            stream=stream,
+            played_at__isnull=True,
+            deleted_at__isnull=True,
+        )
+
+
 @pgtrigger.register(
     pgtrigger.Protect(name="protect_deletes", operation=pgtrigger.Delete)
 )
 class Queue(models.Model):
+
+    objects = QueueQuerySet.as_manager()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
