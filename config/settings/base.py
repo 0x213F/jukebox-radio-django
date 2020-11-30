@@ -324,3 +324,5 @@ SPOITFY_CLIENT_SECRET = env("SPOITFY_CLIENT_SECRET")
 SPOTIFY_USER_DATA_SCOPES = 'streaming app-remote-control user-modify-playback-state user-read-currently-playing user-read-playback-state'
 
 FERNET_KEY = env("FERNET_KEY")
+
+GOOGLE_API_KEY = env("GOOGLE_API_KEY")

@@ -8,6 +8,16 @@ import pgtrigger
 from unique_upload import unique_upload
 
 
+GLOBAL_PROVIDER_SPOTIFY = "spotify"
+GLOBAL_PROVIDER_YOUTUBE = "youtube"
+GLOBAL_PROVIDER_JUKEBOX_RADIO = "jukebox_radio"
+GLOBAL_PROVIDER_CHOICES = (
+    (GLOBAL_PROVIDER_SPOTIFY, "Spotify"),
+    (GLOBAL_PROVIDER_YOUTUBE, "YouTube"),
+    (GLOBAL_PROVIDER_JUKEBOX_RADIO, "Jukebox Radio"),
+)
+
+
 def upload_to_tracks_jr_audios(*args, **kwargs):
     return f"django-storage/music/tracks/jr-audios/" f"{unique_upload(*args, **kwargs)}"
 
@@ -30,14 +40,10 @@ def upload_to_collections_jr_imgs(*args, **kwargs):
 )
 class Track(models.Model):
 
-    PROVIDER_SPOTIFY = "spotify"
-    PROVIDER_YOUTUBE = "youtube"
-    PROVIDER_JUKEBOX_RADIO = "jukebox_radio"
-    PROVIDER_CHOICES = (
-        (PROVIDER_SPOTIFY, "Spotify"),
-        (PROVIDER_YOUTUBE, "YouTube"),
-        (PROVIDER_JUKEBOX_RADIO, "Jukebox Radio"),
-    )
+    PROVIDER_SPOTIFY = GLOBAL_PROVIDER_SPOTIFY
+    PROVIDER_YOUTUBE = GLOBAL_PROVIDER_YOUTUBE
+    PROVIDER_JUKEBOX_RADIO = GLOBAL_PROVIDER_JUKEBOX_RADIO
+    PROVIDER_CHOICES = GLOBAL_PROVIDER_CHOICES
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -98,21 +104,17 @@ class Collection(models.Model):
 
     FORMAT_ALBUM = "album"
     FORMAT_PLAYLIST = "playlist"
-    FORMAT_MIX = "mix"
+    FORMAT_SESSION = "session"
     FORMAT_CHOICES = (
         (FORMAT_ALBUM, "Album"),
         (FORMAT_PLAYLIST, "Playlist"),
-        (FORMAT_MIX, "Mix"),
+        (FORMAT_SESSION, "Session"),
     )
 
-    PROVIDER_SPOTIFY = "spotify"
-    PROVIDER_YOUTUBE = "youtube"
-    PROVIDER_JUKEBOX_RADIO = "jukebox_radio"
-    PROVIDER_CHOICES = (
-        (PROVIDER_SPOTIFY, "Spotify"),
-        (PROVIDER_YOUTUBE, "YouTube"),
-        (PROVIDER_JUKEBOX_RADIO, "Jukebox Radio"),
-    )
+    PROVIDER_SPOTIFY = GLOBAL_PROVIDER_SPOTIFY
+    PROVIDER_YOUTUBE = GLOBAL_PROVIDER_YOUTUBE
+    PROVIDER_JUKEBOX_RADIO = GLOBAL_PROVIDER_JUKEBOX_RADIO
+    PROVIDER_CHOICES = GLOBAL_PROVIDER_CHOICES
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -147,8 +149,8 @@ class Playlist(Collection):
         verbose_name_plural = "Playlists"
 
 
-# class Mix(Collection):
-#     class Meta:
-#         proxy = True
-#         verbose_name = "Mix"
-#         verbose_name_plural = "Mixes"
+class Session(Collection):
+    class Meta:
+        proxy = True
+        verbose_name = "Session"
+        verbose_name_plural = "Sessions"

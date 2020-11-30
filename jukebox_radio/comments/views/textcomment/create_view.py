@@ -12,7 +12,7 @@ User = get_user_model()
 
 
 class TextCommentCreateView(BaseView, LoginRequiredMixin):
-    def put(self, request, **kwargs):
+    def post(self, request, **kwargs):
         """
         Create a TextComment.
         """
@@ -30,7 +30,7 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
         if not stream.now_playing or track_is_over:
             return self.http_response_400("No track is currently playing in the stream")
 
-        text = request.PUT.get("text")
+        text = request.POST.get("text")
         text_comment = TextComment.objects.create(
             user=request.user,
             text=text,

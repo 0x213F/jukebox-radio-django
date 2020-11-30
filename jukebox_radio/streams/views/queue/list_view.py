@@ -16,7 +16,7 @@ class QueueListView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=user)
 
-        queue_qs = Queue.objects.filter(stream=stream, played_at__isnull=True)
+        queue_qs = Queue.objects.in_stream(stream)
 
         queues = []
         for queue in queue_qs:

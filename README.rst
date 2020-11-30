@@ -12,13 +12,16 @@ This can take a while, especially the first time you run this particular command
 
     $ docker-compose -f local.yml build
 
-Before running everything, run migrations:
+Before running everything, create an admin user:
 
     $ docker-compose -f local.yml run --rm django python manage.py migrate
+    $ docker-compose -f local.yml run --rm django python manage.py createsuperuser
 
-Open a terminal at the project root and run the following for local development:
+Run the following for local development:
 
     $ docker-compose -f local.yml up
+
+IMPORTANT: make sure to go to the admin page, go to "sites," and change "jukebox.radio" to "localhost:3000"
 
 To run in a detached (background) mode, just:
 
