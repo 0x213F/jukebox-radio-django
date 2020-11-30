@@ -1,9 +1,11 @@
 import requests
+from cryptography.fernet import Fernet
 
 from django.apps import apps
 from django.conf import settings
 
 from jukebox_radio.music.models import GLOBAL_PROVIDER_JUKEBOX_RADIO, GLOBAL_PROVIDER_SPOTIFY, GLOBAL_PROVIDER_YOUTUBE
+
 
 def get_search_results(user, provider_slug, query, formats):
     Track = apps.get_model("music", "Track")
@@ -18,7 +20,7 @@ def get_search_results(user, provider_slug, query, formats):
     else:
         raise ValueError(f'Unrecognized provider slug: {provider_slug}')
 
-    # # # # # # # # # # # # # # #
+    # - - - - - - - - - - - - - -
     # Save search results in DB
     tracks = []
     track_eids = []
@@ -57,12 +59,13 @@ def get_search_results(user, provider_slug, query, formats):
     Track.objects.bulk_create(tracks, ignore_conflicts=True)
     Collection.objects.bulk_create(collections, ignore_conflicts=True)
 
-    # # # # # # # # # # # # # # #
+    # - - - - - - - - - - - - - -
     # Return relevant DB objects
     track_qs = Track.objects.filter(external_id__in=track_eids)
     collection_qs = Collection.objects.filter(external_id__in=collection_eids)
 
     return search_results
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Jukebox Radio
@@ -70,11 +73,81 @@ def get_search_results(user, provider_slug, query, formats):
 def _get_jukebox_radio_search_results(query, formats):
     pass
 
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Spotify
 
 def _get_spotify_search_results(query, formats, user):
-    pass
+        data = {
+            "q": query,
+            "type": ','.join(formats),
+        }
+
+        cipher_suite = Fernet(settings.FERNET_KEY)
+        spotify_access_token = cipher_suite.decrypt(
+            user.encrypted_spotify_access_token.encode("utf-8")
+        ).decode("utf-8")
+
+        response = requests.get(
+            f"https://api.spotify.com/v1/search",
+            params=data,
+            headers={
+                "Authorization": f"Bearer {spotify_access_token}",
+                "Content-Type": "application/json",
+            },
+        )
+        response_json = response.json()
+
+        data = []
+
+        # - - - - - - - - - - - - -
+        # Glue everything together
+        if "albums" in response_json:
+            items = response_json["albums"]["items"]
+            for item in items:
+                data.append(
+                    {
+                        "format": "album",
+                        "provider": "spotify",
+                        "external_id": item["uri"],
+                        "name": item["name"],
+                        "artist_name": ", ".join(
+                            [a["name"] for a in item["artists"]]
+                        ),
+                        "img_url": item["images"][0]["url"],
+                    }
+                )
+        if "playlists" in response_json:
+            items = response_json["playlists"]["items"]
+            for item in items:
+                data.append(
+                    {
+                        "format": "playlist",
+                        "provider": "spotify",
+                        "external_id": item["uri"],
+                        "name": item["name"],
+                        "artist_name": item["owner"]["display_name"],
+                        "img_url": item["images"][0]["url"],
+                    }
+                )
+        if "tracks" in response_json:
+            items = response_json["tracks"]["items"]
+            for item in items:
+                data.append(
+                    {
+                        "format": "track",
+                        "provider": "spotify",
+                        "external_id": item["uri"],
+                        "name": item["name"],
+                        "artist_name": ", ".join(
+                            [a["name"] for a in item["artists"]]
+                        ),
+                        "img_url": item["album"]["images"][0]["url"],
+                    }
+                )
+
+        return data
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # YouTube
@@ -94,12 +167,12 @@ def _get_youtube_search_results(query, formats):
         raise ValueError(f'Invalid formats: {formats}')
 
     params = {
-        "part": "contentDetails",
+        "part": "snippet",
         "q": query,
         "key": settings.GOOGLE_API_KEY,
         "type": 'video',
         "videoEmbeddable": True,
-        "maxResults": 16,
+        "maxResults": 25,
     }
 
     response = requests.get(
@@ -110,7 +183,6 @@ def _get_youtube_search_results(query, formats):
         },
     )
     response_json = response.json()
-    print(response_json)
 
     cleaned_data = []
     if 'items' not in response_json:
