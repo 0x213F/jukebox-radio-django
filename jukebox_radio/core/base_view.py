@@ -25,7 +25,7 @@ class BaseView(View):
                 "message": "Ok",
             },
         }
-        if data:
+        if data is not None:
             response["data"] = data
         if type(response) == dict:
             return JsonResponse(response)

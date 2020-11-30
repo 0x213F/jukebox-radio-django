@@ -13,6 +13,8 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
         """
         Given a query, get relevant collections.
         """
+        Track = apps.get_model("music", "Track")
+        Collection = apps.get_model("music", "Collection")
 
         providers = request.GET.get("providers").split(',')
         formats = request.GET.get("formats").split(',')
@@ -22,8 +24,8 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
         for (provider_slug, _) in GLOBAL_PROVIDER_CHOICES:
             if provider_slug not in providers:
                 continue
-            search_results.append(
+            search_results.extend(
                 get_search_results(request.user, provider_slug, query, formats)
             )
 
-        return self.http_response_200([{}])
+        return self.http_response_200(search_results)

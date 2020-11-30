@@ -50,6 +50,7 @@ document.getElementById('music-search-button').onclick = function() {
   let formats = [];
   let formatNames = [
       "track",
+      "video",
       "album",
       "playlist",
       "session",
