@@ -48,6 +48,8 @@ class Queue(models.Model):
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
     track = models.ForeignKey(
         "music.Track",
         related_name="+",
