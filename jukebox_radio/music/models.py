@@ -40,10 +40,10 @@ def upload_to_collections_jr_imgs(*args, **kwargs):
 )
 class Track(models.Model):
 
-    FORMAT_SONG = "song"
+    FORMAT_TRACK = "track"
     FORMAT_VIDEO = "video"
     FORMAT_CHOICES = (
-        (FORMAT_SONG, "Song"),
+        (FORMAT_TRACK, "Track"),
         (FORMAT_VIDEO, "Video"),
     )
 
