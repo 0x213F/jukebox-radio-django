@@ -1,3 +1,6 @@
+import json
+
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -6,56 +9,33 @@ from jukebox_radio.core.base_view import BaseView
 User = get_user_model()
 
 
-def validate_music_content(track_id, collection_id):
-    """
-    XOR
-    """
-    if not bool(track_id) ^ bool(collection_id):
-        raise Exception('Must provide "trackId" XOR "collectionId"')
-
-
-def validate_queue_ptrs(user, prev_queue_ptr_id, next_queue_ptr_id):
-    """
-    TODO
-    """
-    Queue = apps.get_model("streams", "Queue")
-
-    stream = Stream.objects.select_related("now_playing").get(user=user)
-
-    if not prev_queue_ptr_id and not next_queue_ptr_id:
-        if Queue.objects.filter(stream).exists():
-            raise Exception("TODO")
-
-
 class QueueCreateView(BaseView, LoginRequiredMixin):
-    def put(self, request, **kwargs):
+    def post(self, request, **kwargs):
         """
         TODO
         """
+        Track = apps.get_model("music", "Track")
+        Collection = apps.get_model("music", "Collection")
         Queue = apps.get_model("streams", "Queue")
         Stream = apps.get_model("streams", "Stream")
 
         stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
-        track_id = request.PUT.get("trackId", None)
-        collection_id = request.PUT.get("collectionId", None)
-        prev_queue_ptr_id = request.PUT.get("prevQueuePtrId", None)
-        next_queue_ptr_id = request.PUT.get("nextQueuePtrId", None)
+        post_data = json.loads(request.body.decode("utf-8"))
+        generic_uuid = post_data.get("uuid")
+        class_name = post_data.get("class")
 
-        try:
-            validate_music_content(track_id, collection_id)
-        except Exception as msg:
-            return http_response_400(msg)
+        track = Track.objects.get(uuid=generic_uuid) if class_name == 'Track' else None
+        collection = Collection.objects.get(uuid=generic_uuid) if class_name == 'Collection' else None
 
-        try:
-            validate_queue_ptrs(request.user, prev_queue_ptr_id, next_queue_ptr_id)
-        except Exception as msg:
-            return http_response_400(msg)
+        # TODO ... pointers
+        prev_queue_ptr_id = None
+        next_queue_ptr_id = None
 
-        is_abstract = bool(collection_id)
+        is_abstract = bool(collection)
         queue = Queue.objects.create(
-            track_id=track_id,
-            collection_id=collection_id,
+            track=track,
+            collection=collection,
             stream=stream,
             prev_queue_ptr_id=prev_queue_ptr_id,
             next_queue_ptr_id=next_queue_ptr_id,
@@ -65,8 +45,8 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
 
         return self.http_response_200(
             {
-                "trackId": queue.track_id,
-                "collectionId": queue.collection_id,
+                "trackUuid": track.uuid if track else None,
+                "collectionUuid": collection.uuid if collection else None,
                 "streamId": queue.stream_id,
                 "prevQueuePtr": queue.prev_queue_ptr_id,
                 "nextQueuePtr": queue.next_queue_ptr_id,

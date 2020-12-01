@@ -63,8 +63,21 @@ def get_search_results(user, provider_slug, query, formats):
     # Return relevant DB objects
     track_qs = Track.objects.filter(external_id__in=track_eids)
     collection_qs = Collection.objects.filter(external_id__in=collection_eids)
+    db_objs = []
+    for obj_qs in [track_qs, collection_qs]:
+        for obj in obj_qs:
+            db_objs.append({
+                'class': obj.__class__.__name__,
+                'uuid': getattr(obj, "uuid"),
+                'format': getattr(obj, "format"),
+                'provider': getattr(obj, "provider"),
+                'external_id': getattr(obj, "external_id"),
+                'name': getattr(obj, "name"),
+                'artist_name': getattr(obj, "artist_name"),
+                'img_url': getattr(obj, "img_url"),
+            })
 
-    return search_results
+    return db_objs
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -78,75 +91,80 @@ def _get_jukebox_radio_search_results(query, formats):
 # Spotify
 
 def _get_spotify_search_results(query, formats, user):
-        data = {
-            "q": query,
-            "type": ','.join(formats),
-        }
+    Collection = apps.get_model('music', 'Collection')
+    Track = apps.get_model('music', 'Track')
 
-        cipher_suite = Fernet(settings.FERNET_KEY)
-        spotify_access_token = cipher_suite.decrypt(
-            user.encrypted_spotify_access_token.encode("utf-8")
-        ).decode("utf-8")
+    formats = set(formats).intersection(set([Track.FORMAT_TRACK, Collection.FORMAT_ALBUM, Collection.FORMAT_PLAYLIST]))
 
-        response = requests.get(
-            f"https://api.spotify.com/v1/search",
-            params=data,
-            headers={
-                "Authorization": f"Bearer {spotify_access_token}",
-                "Content-Type": "application/json",
-            },
-        )
-        response_json = response.json()
+    data = {
+        "q": query,
+        "type": ','.join(formats),
+    }
 
-        data = []
+    cipher_suite = Fernet(settings.FERNET_KEY)
+    spotify_access_token = cipher_suite.decrypt(
+        user.encrypted_spotify_access_token.encode("utf-8")
+    ).decode("utf-8")
 
-        # - - - - - - - - - - - - -
-        # Glue everything together
-        if "albums" in response_json:
-            items = response_json["albums"]["items"]
-            for item in items:
-                data.append(
-                    {
-                        "format": "album",
-                        "provider": "spotify",
-                        "external_id": item["uri"],
-                        "name": item["name"],
-                        "artist_name": ", ".join(
-                            [a["name"] for a in item["artists"]]
-                        ),
-                        "img_url": item["images"][0]["url"],
-                    }
-                )
-        if "playlists" in response_json:
-            items = response_json["playlists"]["items"]
-            for item in items:
-                data.append(
-                    {
-                        "format": "playlist",
-                        "provider": "spotify",
-                        "external_id": item["uri"],
-                        "name": item["name"],
-                        "artist_name": item["owner"]["display_name"],
-                        "img_url": item["images"][0]["url"],
-                    }
-                )
-        if "tracks" in response_json:
-            items = response_json["tracks"]["items"]
-            for item in items:
-                data.append(
-                    {
-                        "format": "track",
-                        "provider": "spotify",
-                        "external_id": item["uri"],
-                        "name": item["name"],
-                        "artist_name": ", ".join(
-                            [a["name"] for a in item["artists"]]
-                        ),
-                        "img_url": item["album"]["images"][0]["url"],
-                    }
-                )
+    response = requests.get(
+        f"https://api.spotify.com/v1/search",
+        params=data,
+        headers={
+            "Authorization": f"Bearer {spotify_access_token}",
+            "Content-Type": "application/json",
+        },
+    )
+    response_json = response.json()
 
-        return data
+    data = []
+
+    # - - - - - - - - - - - - -
+    # Glue everything together
+    if "albums" in response_json:
+        items = response_json["albums"]["items"]
+        for item in items:
+            data.append(
+                {
+                    "format": "album",
+                    "provider": "spotify",
+                    "external_id": item["uri"],
+                    "name": item["name"],
+                    "artist_name": ", ".join(
+                        [a["name"] for a in item["artists"]]
+                    ),
+                    "img_url": item["images"][0]["url"],
+                }
+            )
+    if "playlists" in response_json:
+        items = response_json["playlists"]["items"]
+        for item in items:
+            data.append(
+                {
+                    "format": "playlist",
+                    "provider": "spotify",
+                    "external_id": item["uri"],
+                    "name": item["name"],
+                    "artist_name": item["owner"]["display_name"],
+                    "img_url": item["images"][0]["url"],
+                }
+            )
+    if "tracks" in response_json:
+        items = response_json["tracks"]["items"]
+        for item in items:
+            data.append(
+                {
+                    "format": "track",
+                    "provider": "spotify",
+                    "external_id": item["uri"],
+                    "name": item["name"],
+                    "artist_name": ", ".join(
+                        [a["name"] for a in item["artists"]]
+                    ),
+                    "img_url": item["album"]["images"][0]["url"],
+                }
+            )
+
+    return data
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -161,16 +179,16 @@ def _get_youtube_search_results(query, formats):
     '''
     Track = apps.get_model('music', 'Track')
 
-    try:
-        assert set(formats) == set([Track.FORMAT_VIDEO])
-    except AssertionError:
-        raise ValueError(f'Invalid formats: {formats}')
+    formats = set(formats).intersection(set([Track.FORMAT_VIDEO]))
+
+    if not formats:
+        return []
 
     params = {
         "part": "snippet",
         "q": query,
         "key": settings.GOOGLE_API_KEY,
-        "type": 'video',
+        "type": ','.join(formats),
         "videoEmbeddable": True,
         "maxResults": 25,
     }

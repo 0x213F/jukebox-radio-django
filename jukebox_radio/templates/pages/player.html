@@ -5,17 +5,15 @@
 {% block title %}Player{% endblock title %}
 
 {% block content %}
-  <!-- <div>
-
-    <input id="text"></input>
-
-    <button>Create Text Comment</button>
-
-  </div> -->
 
   <div class="row">
     <div class="col-md-6 offset-md-3">
 
+      <br>
+      <h1>Player</h1>
+      <br>
+
+      <!-- COMMENTS ----------------------------------------------------------->
       <h3>Comments</h3>
 
       <div class="input-group mb-3">
@@ -31,6 +29,7 @@
         </div>
       </div>
 
+      <!-- PLAYBACK ----------------------------------------------------------->
       <h3>Playback</h3>
 
       <div class="form-group">
@@ -46,42 +45,30 @@
         <button class="btn btn-outline-secondary" type="submit">Scan Forward</button>
       </div>
 
+      <!-- QUEUE -------------------------------------------------------------->
       <h3>Queue</h3>
-      {% for queue in queues %}
       <div class="form-group">
-        {% if queue.track %}
-          {{ queue.track.name }}
-        {% elif queue.collection %}
-          {{ queue.collection.name }}
-        {% endif %}
-      </div>
-      {% endfor %}
-      <div class="form-group">
-        TEST
+        <ol>
+          {% for queue in queues %}
+            <li>
+            {% if queue.track %}
+              {{ queue.track.name }}
+            {% elif queue.collection %}
+              {{ queue.collection.name }}
+            {% endif %}
+            </li>
+          {% endfor %}
+        </ol>
       </div>
 
+      <!-- SEARCH ------------------------------------------------------------->
       <h3>Search</h3>
-      <div class="form-group">
-        {% for provider_slug, provider_name in PROVIDER_CHOICES %}
-        <div class="form-check form-check-inline">
-          <input id="{{ provider_slug }}-id" class="form-check-input" type="checkbox" name="{{ provider_slug }}">
-          <label class="form-check-label" for="{{ provider_slug }}-id">{{ provider_name }}</label>
-        </div>
-        {% endfor %}
-      </div>
-      <div class="form-group">
-        {% for format_slug, format_name in FORMAT_CHOICES %}
-        <div class="form-check form-check-inline">
-          <input id="{{ format_slug }}-id" class="form-check-input" type="checkbox" name="{{ format_slug }}">
-          <label class="form-check-label" for="{{ format_slug }}-id">{{ format_name }}</label>
-        </div>
-        {% endfor %}
-      </div>
+
       <div class="form-group">
         <label class="col-sm-2 col-form-label">Query</label>
         <div class="input-group col-sm-10" style="float: right;">
           <div class="custom-file">
-            <input type="text" class="form-control" id="search-query">
+            <input type="text" class="form-control fix-corners" id="search-query">
           </div>
 
           <div class="input-group-append">
@@ -90,6 +77,28 @@
         </div>
       </div>
 
+      <div class="form-group">
+        {% for provider_slug, provider_name in PROVIDER_CHOICES %}
+        <div class="form-check form-check-inline">
+          <input id="{{ provider_slug }}-id" class="form-check-input" type="checkbox" name="{{ provider_slug }}">
+          <label class="form-check-label" for="{{ provider_slug }}-id">{{ provider_name }}</label>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        {% for format_slug, format_name in FORMAT_CHOICES %}
+        <div class="form-check form-check-inline">
+          <input id="{{ format_slug }}-id" class="form-check-input" type="checkbox" name="{{ format_slug }}">
+          <label class="form-check-label" for="{{ format_slug }}-id">{{ format_name }}</label>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <table id="search-results" class="table">
+        </table>
+      </div>
 
     </div>
   </div>
