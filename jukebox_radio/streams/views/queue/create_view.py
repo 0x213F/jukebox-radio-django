@@ -28,20 +28,27 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
         track = Track.objects.get(uuid=generic_uuid) if class_name == 'Track' else None
         collection = Collection.objects.get(uuid=generic_uuid) if class_name == 'Collection' else None
 
-        # TODO ... pointers
-        prev_queue_ptr_id = None
-        next_queue_ptr_id = None
+        try:
+            prev_queue_ptr = Queue.objects.get(stream=stream, next_queue_ptr=None, played_at__isnull=True, deleted_at__isnull=True)
+        except Queue.DoesNotExist:
+            prev_queue_ptr = None
+        next_queue_ptr = None
 
         is_abstract = bool(collection)
         queue = Queue.objects.create(
+            user=request.user,
             track=track,
             collection=collection,
             stream=stream,
-            prev_queue_ptr_id=prev_queue_ptr_id,
-            next_queue_ptr_id=next_queue_ptr_id,
+            prev_queue_ptr=prev_queue_ptr,
+            next_queue_ptr=next_queue_ptr,
             is_abstract=is_abstract,
             parent_queue_ptr=None,
         )
+
+        if prev_queue_ptr:
+            prev_queue_ptr.next_queue_ptr = queue
+            prev_queue_ptr.save()
 
         return self.http_response_200(
             {
