@@ -21,17 +21,20 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
-        post_data = json.loads(request.body.decode("utf-8"))
-        generic_uuid = post_data.get("uuid")
-        class_name = post_data.get("class")
+        generic_uuid = request.POST.get("uuid")
+        class_name = request.POST.get("class")
 
         track = Track.objects.get(uuid=generic_uuid) if class_name == 'Track' else None
         collection = Collection.objects.get(uuid=generic_uuid) if class_name == 'Collection' else None
 
+        # TODO need to finish up track and collection objects if they are not fully complete
+
         try:
             prev_queue_ptr = Queue.objects.get(stream=stream, next_queue_ptr=None, played_at__isnull=True, deleted_at__isnull=True)
+            is_head = False
         except Queue.DoesNotExist:
             prev_queue_ptr = None
+            is_head = True
         next_queue_ptr = None
 
         is_abstract = bool(collection)
@@ -44,6 +47,8 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
             next_queue_ptr=next_queue_ptr,
             is_abstract=is_abstract,
             parent_queue_ptr=None,
+            is_head=is_head,
+            is_tail=True,
         )
 
         if prev_queue_ptr:
