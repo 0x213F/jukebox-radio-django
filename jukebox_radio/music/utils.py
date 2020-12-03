@@ -3,6 +3,7 @@ from cryptography.fernet import Fernet
 
 from django.apps import apps
 from django.conf import settings
+from django.db.models import Q
 
 from jukebox_radio.music.models import GLOBAL_PROVIDER_JUKEBOX_RADIO, GLOBAL_PROVIDER_SPOTIFY, GLOBAL_PROVIDER_YOUTUBE
 
@@ -12,7 +13,7 @@ def get_search_results(user, provider_slug, query, formats):
     Collection = apps.get_model("music", "Collection")
 
     if provider_slug == GLOBAL_PROVIDER_JUKEBOX_RADIO:
-        search_results = _get_jukebox_radio_search_results(query, formats)
+        search_results = _get_jukebox_radio_search_results(query, user)
     elif provider_slug == GLOBAL_PROVIDER_SPOTIFY:
         search_results = _get_spotify_search_results(query, formats, user)
     elif provider_slug == GLOBAL_PROVIDER_YOUTUBE:
@@ -27,6 +28,10 @@ def get_search_results(user, provider_slug, query, formats):
     collections = []
     collection_eids = []
     for search_result in search_results:
+
+        # SKIP JUKEBOX RADIO
+        if search_result['provider'] == GLOBAL_PROVIDER_JUKEBOX_RADIO:
+            continue
 
         # TRACK
         if search_result['format'] in ['track', 'video']:
@@ -83,8 +88,29 @@ def get_search_results(user, provider_slug, query, formats):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Jukebox Radio
 
-def _get_jukebox_radio_search_results(query, formats):
-    pass
+def _get_jukebox_radio_search_results(query, user):
+    Track = apps.get_model('music', 'Track')
+
+    track_qs = Track.objects.filter(
+        Q(user=user, provider=Track.PROVIDER_JUKEBOX_RADIO, artist_name__icontains=query) |
+        Q(user=user, provider=Track.PROVIDER_JUKEBOX_RADIO, album_name__icontains=query) |
+        Q(user=user, provider=Track.PROVIDER_JUKEBOX_RADIO, name__icontains=query)
+    )
+
+    tracks = []
+    for track in track_qs:
+        tracks.append(
+            {
+                "format": Track.FORMAT_TRACK,
+                "provider": Track.PROVIDER_JUKEBOX_RADIO,
+                "external_id": track.audio.url,
+                "name": track.name,
+                "artist_name": track.artist_name,
+                "img_url": track.img.url,
+            }
+        )
+
+    return tracks
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

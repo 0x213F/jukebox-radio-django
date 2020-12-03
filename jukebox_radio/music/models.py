@@ -54,16 +54,19 @@ class Track(models.Model):
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=True, blank=True)
+
     format = models.CharField(max_length=32, choices=FORMAT_CHOICES)
 
     provider = models.CharField(max_length=32, choices=PROVIDER_CHOICES)
 
     name = models.CharField(max_length=200)
     artist_name = models.CharField(max_length=200)
+    album_name = models.CharField(max_length=200)
     duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
-    external_id = models.CharField(null=True, blank=True, max_length=200)
     audio = models.FileField(null=True, blank=True, upload_to=upload_to_tracks_jr_audios)
+    external_id = models.CharField(null=True, blank=True, max_length=200)
 
     img = models.ImageField(null=True, blank=True, upload_to=upload_to_tracks_jr_imgs)
     img_url = models.CharField(null=True, blank=True, max_length=200)

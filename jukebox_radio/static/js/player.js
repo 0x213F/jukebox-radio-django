@@ -2,7 +2,7 @@ const CSRF_TOKEN = document.getElementById("csrf-token").childNodes[0].value;
 
 const failureCallback = data => { console.error(data); }
 
-async function fetchFromServer(method = '', url = '', data = {}, successCallback = null) {
+async function fetchFromServer(method = '', url = '', data = {}, successCallback = null, files = {}) {
   let response;
 
   if(!successCallback) {
@@ -10,11 +10,18 @@ async function fetchFromServer(method = '', url = '', data = {}, successCallback
   }
 
   if(method !== 'GET') {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(data)) {
+      formData.append(key, value);
+    }
+    for (const [key, value] of Object.entries(files)) {
+      formData.append(key, value);
+    }
     const request = new Request(url, {headers: {"X-CSRFToken": CSRF_TOKEN}});
     response = await fetch(request, {
       method: method,
       mode: 'same-origin',
-      body: JSON.stringify(data),
+      body: formData,
     })
       .then(response => response.json())
       .then(successCallback)
@@ -37,14 +44,16 @@ async function fetchFromServer(method = '', url = '', data = {}, successCallback
   }
 }
 
+// TEXT COMMENT CREATE
 ////////////////////////////////////////////////////////////////////////////////
 document.getElementById('text-comment-create-button').onclick = function() {
   const text = document.getElementById('text').textContent;
 
-  // TEXT COMMENT CREATE
   Api.text_comment_create(text);
 };
 
+
+// ADD TO QUEUE
 ////////////////////////////////////////////////////////////////////////////////
 const addToQueueSubmit = function() {
 
@@ -60,10 +69,11 @@ const addToQueueSubmit = function() {
           window.location.reload();
         };
 
-  // MUSIC SEARCH
   Api.stream_create_queue(dataClass, dataUuid, callback);
 }
 
+// MUSIC SEARCH
+////////////////////////////////////////////////////////////////////////////////
 const musicSearchSubmit = function() {
 
   // providers
@@ -119,20 +129,33 @@ const musicSearchSubmit = function() {
     }
   }
 
-  // MUSIC SEARCH
   Api.music_search(providers, formats, query, callback);
 };
 
 document.getElementById("music-search-button").onclick = musicSearchSubmit;
 document.getElementById("search-query").addEventListener("keyup", function(event) {
-  // Number 13 is the "Enter" key on the keyboard
   if (event.keyCode === 13) {
-    // Cancel the default action, if needed
     event.preventDefault();
-    // Trigger the button element with a click
     document.getElementById('music-search-button').click();
   }
 });
+
+// UPLOAD TRACK
+////////////////////////////////////////////////////////////////////////////////
+document.getElementById('track-create-button').onclick = function() {
+  const text = document.getElementById('text').textContent;
+
+  Api.music_create_track(
+    document.getElementById('audio-file').files[0],
+    document.getElementById('img-file').files[0],
+    document.getElementById('track-name').value,
+    document.getElementById('artist-name').value,
+    document.getElementById('album-name').value,
+    function() { window.location.reload(); }
+  );
+};
+
+// API
 ////////////////////////////////////////////////////////////////////////////////
 
 let Api = function() {};
@@ -160,4 +183,20 @@ Api.stream_create_queue = function(dataClass, uuid, callback) {
   };
 
   fetchFromServer('POST', '/streams/queue/create/', data, callback);
+}
+
+Api.music_create_track = function(audio_file, img_file, track_name, artist_name, album_name, callback) {
+
+  const data = {
+    track_name: track_name,
+    artist_name: artist_name,
+    album_name: album_name,
+  };
+
+  const files = {
+    audio_file: audio_file,
+    img_file: img_file,
+  }
+
+  fetchFromServer('POST', '/music/track/create/', data, callback, files);
 }
