@@ -1,7 +1,10 @@
+import os
 import tempfile
+from pydub import AudioSegment
 
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files import File
 
 from jukebox_radio.core.base_view import BaseView
 
@@ -18,15 +21,20 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
         artist_name = request.POST.get("artist_name")
         album_name = request.POST.get("album_name")
 
-        print(request.POST)
-        print(track_name)
-
         audio_file = request.FILES.get("audio_file")
         img_file = request.FILES.get("img_file")
 
-        # with tempfile.TemporaryFile() as f:
-        #     data = audio_file.read()
-        #     f.write(data)
+        # Morph audio into OGG
+        f = tempfile.NamedTemporaryFile(delete=False)
+        f.write(audio_file.read())
+
+        ext = 'ogg'
+        filename = f'garbage/{audio_file.name}.{ext}'
+        audio_segment = AudioSegment.from_mp3(f.name)
+        audio_file = File(audio_segment.export(filename, format=ext))
+
+        f.close()
+        os.remove(filename)
 
         track = Track.objects.create(
             user=request.user,
