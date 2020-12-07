@@ -48,17 +48,22 @@
       <!-- QUEUE -------------------------------------------------------------->
       <h3>Queue</h3>
       <div class="form-group">
-        <ol>
+        <table class="table">
           {% for queue in queues %}
-            <li>
+
+          <tr>
+            <td>
             {% if queue.track %}
               {{ queue.track.name }}
             {% elif queue.collection %}
               {{ queue.collection.name }}
             {% endif %}
-            </li>
+            </td>
+            <td><button class="btn btn-primary delete-queue" data-uuid="{{ queue.uuid }}">-</button>
+          </tr>
+
           {% endfor %}
-        </ol>
+        </table>
       </div>
 
       <!-- SEARCH ------------------------------------------------------------->
@@ -129,7 +134,7 @@
       </div>
 
       <div class="form-group">
-        <button class="btn btn-primary" type="submit" id="track-create-button">Play</button>
+        <button class="btn btn-primary" type="submit" id="track-create-button">Upload</button>
       </div>
 
     </div>

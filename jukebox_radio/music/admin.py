@@ -21,7 +21,12 @@ class CollectionListingAdminInline(admin.TabularInline):
 
 @admin.register(apps.get_model("music.Track"))
 class TrackAdmin(admin.ModelAdmin):
-    pass
+
+    search_fields = (
+        'name',
+        'artist_name',
+        'album_name',
+    )
 
     # def has_add_permission(self, request, obj=None):
     #     return False
