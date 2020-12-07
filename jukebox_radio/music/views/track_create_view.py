@@ -1,10 +1,11 @@
 import os
 import tempfile
-from pydub import AudioSegment
 
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
+
+from pydub import AudioSegment
 
 from jukebox_radio.core.base_view import BaseView
 
@@ -45,6 +46,7 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
             album_name=album_name,
             audio=audio_file,
             img=img_file,
+            duration_ms=audio_segment.duration_seconds * 1000,
         )
 
         return self.http_response_200({})

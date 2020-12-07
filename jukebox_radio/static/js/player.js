@@ -52,6 +52,25 @@ document.getElementById('text-comment-create-button').onclick = function() {
   Api.text_comment_create(text);
 };
 
+// REMOVE FROM QUEUE
+////////////////////////////////////////////////////////////////////////////////
+const removeFromQueueSubmit = function() {
+  const dataUuid = this.getAttribute('data-uuid'),
+        callback = function() {
+          window.location.reload();
+        };
+
+  Api.stream_delete_queue(dataUuid, callback);
+
+  this.disabled = true;
+}
+
+var anchors = document.getElementsByClassName('delete-queue');
+for(var i = 0; i < anchors.length; i++) {
+    var anchor = anchors[i];
+    anchor.onclick = removeFromQueueSubmit;
+}
+
 
 // ADD TO QUEUE
 ////////////////////////////////////////////////////////////////////////////////
@@ -179,10 +198,19 @@ Api.stream_create_queue = function(dataClass, uuid, callback) {
 
   const data = {
     'class': dataClass,
-    uuid: uuid,
+    musicUuid: uuid,
   };
 
   fetchFromServer('POST', '/streams/queue/create/', data, callback);
+}
+
+Api.stream_delete_queue = function(uuid, callback) {
+
+  const data = {
+    queueUuid: uuid,
+  };
+
+  fetchFromServer('POST', '/streams/queue/delete/', data, callback);
 }
 
 Api.music_create_track = function(audio_file, img_file, track_name, artist_name, album_name, callback) {

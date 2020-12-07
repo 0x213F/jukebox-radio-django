@@ -24,6 +24,7 @@ def get_search_results(user, provider_slug, query, formats):
     # - - - - - - - - - - - - - -
     # Save search results in DB
     tracks = []
+    track_uuids = []
     track_eids = []
     collections = []
     collection_eids = []
@@ -31,6 +32,7 @@ def get_search_results(user, provider_slug, query, formats):
 
         # SKIP JUKEBOX RADIO
         if search_result['provider'] == GLOBAL_PROVIDER_JUKEBOX_RADIO:
+            track_uuids.append(str(search_result["external_id"]))
             continue
 
         # TRACK
@@ -42,6 +44,7 @@ def get_search_results(user, provider_slug, query, formats):
                     external_id=search_result["external_id"],
                     name=search_result["name"],
                     artist_name=search_result["artist_name"],
+                    album_name=search_result["album_name"],
                     img_url=search_result["img_url"],
                 )
             )
@@ -64,9 +67,15 @@ def get_search_results(user, provider_slug, query, formats):
     Track.objects.bulk_create(tracks, ignore_conflicts=True)
     Collection.objects.bulk_create(collections, ignore_conflicts=True)
 
+    print(track_uuids)
+
     # - - - - - - - - - - - - - -
     # Return relevant DB objects
-    track_qs = Track.objects.filter(external_id__in=track_eids)
+    track_qs = Track.objects.filter(
+        Q(uuid__in=track_uuids) |
+        Q(external_id__in=track_eids)
+    )
+    print(track_qs)
     collection_qs = Collection.objects.filter(external_id__in=collection_eids)
     db_objs = []
     for obj_qs in [track_qs, collection_qs]:
@@ -103,9 +112,10 @@ def _get_jukebox_radio_search_results(query, user):
             {
                 "format": Track.FORMAT_TRACK,
                 "provider": Track.PROVIDER_JUKEBOX_RADIO,
-                "external_id": track.audio.url,
+                "external_id": track.uuid,
                 "name": track.name,
                 "artist_name": track.artist_name,
+                "album_name": track.album_name,
                 "img_url": track.img.url,
             }
         )
@@ -127,10 +137,7 @@ def _get_spotify_search_results(query, formats, user):
         "type": ','.join(formats),
     }
 
-    cipher_suite = Fernet(settings.FERNET_KEY)
-    spotify_access_token = cipher_suite.decrypt(
-        user.encrypted_spotify_access_token.encode("utf-8")
-    ).decode("utf-8")
+    spotify_access_token = user.spotify_access_token
 
     response = requests.get(
         f"https://api.spotify.com/v1/search",
@@ -186,6 +193,7 @@ def _get_spotify_search_results(query, formats, user):
                     "artist_name": ", ".join(
                         [a["name"] for a in item["artists"]]
                     ),
+                    "album_name": item["album"]["name"],
                     "img_url": item["album"]["images"][0]["url"],
                 }
             )

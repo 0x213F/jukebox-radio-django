@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.music.models import GLOBAL_PROVIDER_CHOICES
-from jukebox_radio.music.utils import get_search_results
+from jukebox_radio.music.search import get_search_results
 
 
 class MusicSearchView(BaseView, LoginRequiredMixin):

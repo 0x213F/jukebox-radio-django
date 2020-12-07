@@ -34,11 +34,17 @@ def upload_to_collections_jr_imgs(*args, **kwargs):
 
 @pgtrigger.register(
     pgtrigger.Protect(
-        name="append_only",
-        operation=(pgtrigger.Update | pgtrigger.Delete),
+        name="protect_delete",
+        operation=pgtrigger.Delete,
     )
 )
 class Track(models.Model):
+
+    class Meta:
+        unique_together = [
+            "provider",
+            "external_id",
+        ]
 
     FORMAT_TRACK = "track"
     FORMAT_VIDEO = "video"
@@ -75,6 +81,18 @@ class Track(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def spotify_id(self):
+        if not self.provider == self.PROVIDER_SPOTIFY:
+            raise ValueError(f'Cannot read `spotify_id` of track {self.uuid}')
+        return self.external_id[14:]
+
+    @property
+    def youtube_id(self):
+        if not self.provider == self.PROVIDER_YOUTUBE:
+            raise ValueError(f'Cannot read `youtube_id` of track {self.uuid}')
+        return self.external_id
 
 
 @pgtrigger.register(
@@ -147,6 +165,18 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def spotify_id(self):
+        if not self.provider == self.PROVIDER_SPOTIFY:
+            raise ValueError(f'Cannot read `spotify_id` of collection {self.uuid}')
+
+        if self.format == self.FORMAT_ALBUM:
+            return self.external_id[14:]
+        elif self.format == self.FORMAT_PLAYLIST:
+            return self.external_id[17:]
+        else:
+            raise ValueError(f'Unknown format of collection {self.uuid}')
 
 
 class Album(Collection):

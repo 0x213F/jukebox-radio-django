@@ -43,4 +43,3 @@ black==20.8b1
 
 ffmpeg==1.4
 pydub==0.24.1
-spleeter==2.0.1

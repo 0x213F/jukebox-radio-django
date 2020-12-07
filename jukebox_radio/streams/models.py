@@ -38,6 +38,10 @@ class QueueQuerySet(models.QuerySet):
             deleted_at__isnull=True,
         )
 
+        # TODO: Fun stuff here. We need to iron out our queryset into a sorted
+        #       list. Since this is a doubly-linked-list, I don't think it is
+        #       possible to do this inside the Django ORM.
+
 
 @pgtrigger.register(
     pgtrigger.Protect(name="protect_deletes", operation=pgtrigger.Delete)
