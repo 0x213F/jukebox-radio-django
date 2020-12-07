@@ -74,9 +74,9 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    'pgconnection',
-    'pgtrigger',
-    'pghistory',
+    "pgconnection",
+    "pgtrigger",
+    "pghistory",
 ]
 
 LOCAL_APPS = [
@@ -321,7 +321,7 @@ CORS_URLS_REGEX = r"^/api/.*$"
 # Spotify
 SPOTIFY_CLIENT_ID = env("SPOTIFY_CLIENT_ID")
 SPOITFY_CLIENT_SECRET = env("SPOITFY_CLIENT_SECRET")
-SPOTIFY_USER_DATA_SCOPES = 'streaming app-remote-control user-modify-playback-state user-read-currently-playing user-read-playback-state'
+SPOTIFY_USER_DATA_SCOPES = "streaming app-remote-control user-modify-playback-state user-read-currently-playing user-read-playback-state"
 
 FERNET_KEY = env("FERNET_KEY")
 

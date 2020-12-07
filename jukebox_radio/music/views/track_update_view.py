@@ -25,17 +25,16 @@ class TrackUpdateView(BaseView, LoginRequiredMixin):
         refresh_data = request.POST.get("refreshData")
 
         if not refresh_data:
-            raise ValueError('The external track data must always be refreshed')
+            raise ValueError("The external track data must always be refreshed")
 
-        if class_name == 'Track':
+        if class_name == "Track":
             obj = Track.objects.get(uuid=generic_uuid)
             refresh_track_external_data(obj, request.user)
-        elif class_name == 'Collection':
+        elif class_name == "Collection":
             obj = Collection.objects.get(uuid=generic_uuid)
             refresh_collection_external_data(obj, request.user)
         else:
-            raise ValueError(f'Invalid class {class_name}')
-
+            raise ValueError(f"Invalid class {class_name}")
 
             # TODO refresh data inside track or collection. meaning, do a hard
             # refresh on all the data for the track given the external_id. if

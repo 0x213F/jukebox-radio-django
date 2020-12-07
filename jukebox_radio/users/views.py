@@ -19,11 +19,13 @@ class UserConnectSpotifyView(BaseView, LoginRequiredMixin):
         Spotify redirects a user to this URL after the Spotify authorization
         process.
         """
-        settings_url = reverse('settings')
+        settings_url = reverse("settings")
 
         error = request.GET.get("error", None)
         if error:
-            messages.add_message(request, messages.ERROR, 'Spotify authentication failed')
+            messages.add_message(
+                request, messages.ERROR, "Spotify authentication failed"
+            )
             return self.redirect_response(settings_url)
 
         code = request.GET.get("code", None)
@@ -60,5 +62,7 @@ class UserConnectSpotifyView(BaseView, LoginRequiredMixin):
         user.spotify_scope = settings.SPOTIFY_USER_DATA_SCOPES
         user.save()
 
-        messages.add_message(request, messages.SUCCESS, 'Spotify authentication succeeded')
+        messages.add_message(
+            request, messages.SUCCESS, "Spotify authentication succeeded"
+        )
         return self.redirect_response(settings_url)

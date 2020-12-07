@@ -16,8 +16,8 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
 
-        providers = request.GET.get("providers").split(',')
-        formats = request.GET.get("formats").split(',')
+        providers = request.GET.get("providers").split(",")
+        formats = request.GET.get("formats").split(",")
         query = request.GET.get("query")
 
         search_results = []

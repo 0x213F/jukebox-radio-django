@@ -18,7 +18,9 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
 
         queue_uuid = request.POST.get("queueUuid")
 
-        queue = Queue.objects.select_related('prev_queue_ptr', 'next_queue_ptr').get(uuid=queue_uuid, user=request.user)
+        queue = Queue.objects.select_related("prev_queue_ptr", "next_queue_ptr").get(
+            uuid=queue_uuid, user=request.user
+        )
 
         with transaction.atomic():
 
@@ -29,7 +31,7 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
             # fix prev pointer
             queue.prev_queue_ptr.next_queue_ptr = queue.next_queue_ptr
             queue.prev_queue_ptr.save()
-            
+
             # fix next pointer
             queue.next_queue_ptr.prev_queue_ptr = queue.prev_queue_ptr
             queue.next_queue_ptr.save()
