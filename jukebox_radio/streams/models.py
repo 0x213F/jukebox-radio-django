@@ -33,16 +33,37 @@ class Stream(models.Model):
 
 class QueueQuerySet(models.QuerySet):
     def in_stream(self, stream):
-        return self.filter(
+        queue_qs = self.filter(
             stream=stream,
             played_at__isnull=True,
             deleted_at__isnull=True,
         )
 
-        # TODO: Fun stuff here. We need to iron out our queryset into a sorted
-        #       list. Since this is a doubly-linked-list, I don't think it is
-        #       possible to do this inside the Django ORM.
+        queue_list = list(queue_qs)
+        if not queue_list:
+            return []
 
+        # Fun stuff here. We need to iron out our queryset into a sorted list.
+        # Since this is a doubly-linked-list, I don't think it is possible to
+        # do this inside the Django ORM. This sorts in O(N^2)
+        sorted_queue_list = [queue_list[0]]
+        del queue_list[0]
+
+        while queue_list:
+            for idx in range(len(queue_list)):
+                queue = queue_list[idx]
+
+                if queue == sorted_queue_list[-1].next_queue_ptr:
+                    sorted_queue_list.append(queue)
+                    del queue_list[idx]
+                    break
+
+                if queue == sorted_queue_list[0].prev_queue_ptr:
+                    sorted_queue_list.insert(0, queue)
+                    del queue_list[idx]
+                    break
+
+        return sorted_queue_list
 
 @pgtrigger.register(
     pgtrigger.Protect(name="protect_deletes", operation=pgtrigger.Delete)
