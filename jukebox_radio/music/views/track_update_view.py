@@ -36,12 +36,12 @@ class TrackUpdateView(BaseView, LoginRequiredMixin):
         else:
             raise ValueError(f"Invalid class {class_name}")
 
-            # TODO refresh data inside track or collection. meaning, do a hard
-            # refresh on all the data for the track given the external_id. if
-            # collection, check/ update/ create the tracks too!
-            # TODO Call this before the "add to queue" endpoint on the fe
-            # TODO (impliment/ use) doubly linked list sort
-            # TODO remove rewind
+            # TODO refresh spotify album and playlist
             # TODO impliment (play/ pause) - play just plays the next queued item
+            #      note this doesn't actually play the item on the front-end,
+            #      just does it on the back-end.
+            # TODO impliment (seek forward/ seek backward)
+            # TODO impliment (next/ previous/ rewind)
+            # TODO use this endpoint before creating a queue with a partial track
 
         return self.http_response_200({})
