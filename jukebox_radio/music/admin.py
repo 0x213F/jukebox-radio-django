@@ -23,9 +23,9 @@ class CollectionListingAdminInline(admin.TabularInline):
 class TrackAdmin(admin.ModelAdmin):
 
     search_fields = (
-        'name',
-        'artist_name',
-        'album_name',
+        "name",
+        "artist_name",
+        "album_name",
     )
 
     # def has_add_permission(self, request, obj=None):

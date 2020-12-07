@@ -5,7 +5,11 @@ from django.apps import apps
 from django.conf import settings
 from django.db.models import Q
 
-from jukebox_radio.music.models import GLOBAL_PROVIDER_JUKEBOX_RADIO, GLOBAL_PROVIDER_SPOTIFY, GLOBAL_PROVIDER_YOUTUBE
+from jukebox_radio.music.models import (
+    GLOBAL_PROVIDER_JUKEBOX_RADIO,
+    GLOBAL_PROVIDER_SPOTIFY,
+    GLOBAL_PROVIDER_YOUTUBE,
+)
 
 
 def get_search_results(user, provider_slug, query, formats):
@@ -19,7 +23,7 @@ def get_search_results(user, provider_slug, query, formats):
     elif provider_slug == GLOBAL_PROVIDER_YOUTUBE:
         search_results = _get_youtube_search_results(query, formats)
     else:
-        raise ValueError(f'Unrecognized provider slug: {provider_slug}')
+        raise ValueError(f"Unrecognized provider slug: {provider_slug}")
 
     # - - - - - - - - - - - - - -
     # Save search results in DB
@@ -31,12 +35,12 @@ def get_search_results(user, provider_slug, query, formats):
     for search_result in search_results:
 
         # SKIP JUKEBOX RADIO
-        if search_result['provider'] == GLOBAL_PROVIDER_JUKEBOX_RADIO:
+        if search_result["provider"] == GLOBAL_PROVIDER_JUKEBOX_RADIO:
             track_uuids.append(str(search_result["external_id"]))
             continue
 
         # TRACK
-        if search_result['format'] in ['track', 'video']:
+        if search_result["format"] in ["track", "video"]:
             tracks.append(
                 Track(
                     format=search_result["format"],
@@ -72,24 +76,25 @@ def get_search_results(user, provider_slug, query, formats):
     # - - - - - - - - - - - - - -
     # Return relevant DB objects
     track_qs = Track.objects.filter(
-        Q(uuid__in=track_uuids) |
-        Q(external_id__in=track_eids)
+        Q(uuid__in=track_uuids) | Q(external_id__in=track_eids)
     )
     print(track_qs)
     collection_qs = Collection.objects.filter(external_id__in=collection_eids)
     db_objs = []
     for obj_qs in [track_qs, collection_qs]:
         for obj in obj_qs:
-            db_objs.append({
-                'class': obj.__class__.__name__,
-                'uuid': getattr(obj, "uuid"),
-                'format': getattr(obj, "format"),
-                'provider': getattr(obj, "provider"),
-                'external_id': getattr(obj, "external_id"),
-                'name': getattr(obj, "name"),
-                'artist_name': getattr(obj, "artist_name"),
-                'img_url': getattr(obj, "img_url"),
-            })
+            db_objs.append(
+                {
+                    "class": obj.__class__.__name__,
+                    "uuid": getattr(obj, "uuid"),
+                    "format": getattr(obj, "format"),
+                    "provider": getattr(obj, "provider"),
+                    "external_id": getattr(obj, "external_id"),
+                    "name": getattr(obj, "name"),
+                    "artist_name": getattr(obj, "artist_name"),
+                    "img_url": getattr(obj, "img_url"),
+                }
+            )
 
     return db_objs
 
@@ -97,13 +102,22 @@ def get_search_results(user, provider_slug, query, formats):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Jukebox Radio
 
+
 def _get_jukebox_radio_search_results(query, user):
-    Track = apps.get_model('music', 'Track')
+    Track = apps.get_model("music", "Track")
 
     track_qs = Track.objects.filter(
-        Q(user=user, provider=Track.PROVIDER_JUKEBOX_RADIO, artist_name__icontains=query) |
-        Q(user=user, provider=Track.PROVIDER_JUKEBOX_RADIO, album_name__icontains=query) |
-        Q(user=user, provider=Track.PROVIDER_JUKEBOX_RADIO, name__icontains=query)
+        Q(
+            user=user,
+            provider=Track.PROVIDER_JUKEBOX_RADIO,
+            artist_name__icontains=query,
+        )
+        | Q(
+            user=user,
+            provider=Track.PROVIDER_JUKEBOX_RADIO,
+            album_name__icontains=query,
+        )
+        | Q(user=user, provider=Track.PROVIDER_JUKEBOX_RADIO, name__icontains=query)
     )
 
     tracks = []
@@ -126,15 +140,18 @@ def _get_jukebox_radio_search_results(query, user):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Spotify
 
-def _get_spotify_search_results(query, formats, user):
-    Collection = apps.get_model('music', 'Collection')
-    Track = apps.get_model('music', 'Track')
 
-    formats = set(formats).intersection(set([Track.FORMAT_TRACK, Collection.FORMAT_ALBUM, Collection.FORMAT_PLAYLIST]))
+def _get_spotify_search_results(query, formats, user):
+    Collection = apps.get_model("music", "Collection")
+    Track = apps.get_model("music", "Track")
+
+    formats = set(formats).intersection(
+        set([Track.FORMAT_TRACK, Collection.FORMAT_ALBUM, Collection.FORMAT_PLAYLIST])
+    )
 
     data = {
         "q": query,
-        "type": ','.join(formats),
+        "type": ",".join(formats),
     }
 
     spotify_access_token = user.spotify_access_token
@@ -162,9 +179,7 @@ def _get_spotify_search_results(query, formats, user):
                     "provider": "spotify",
                     "external_id": item["uri"],
                     "name": item["name"],
-                    "artist_name": ", ".join(
-                        [a["name"] for a in item["artists"]]
-                    ),
+                    "artist_name": ", ".join([a["name"] for a in item["artists"]]),
                     "img_url": item["images"][0]["url"],
                 }
             )
@@ -190,9 +205,7 @@ def _get_spotify_search_results(query, formats, user):
                     "provider": "spotify",
                     "external_id": item["uri"],
                     "name": item["name"],
-                    "artist_name": ", ".join(
-                        [a["name"] for a in item["artists"]]
-                    ),
+                    "artist_name": ", ".join([a["name"] for a in item["artists"]]),
                     "album_name": item["album"]["name"],
                     "img_url": item["album"]["images"][0]["url"],
                 }
@@ -207,11 +220,12 @@ def _get_spotify_search_results(query, formats, user):
 YOUTUBE_KIND_PLAYLIST = "youtube#playlist"
 YOUTUBE_KIND_VIDEO = "youtube#video"
 
+
 def _get_youtube_search_results(query, formats):
-    '''
+    """
     Get YouTube search results
-    '''
-    Track = apps.get_model('music', 'Track')
+    """
+    Track = apps.get_model("music", "Track")
 
     formats = set(formats).intersection(set([Track.FORMAT_VIDEO]))
 
@@ -222,7 +236,7 @@ def _get_youtube_search_results(query, formats):
         "part": "snippet",
         "q": query,
         "key": settings.GOOGLE_API_KEY,
-        "type": ','.join(formats),
+        "type": ",".join(formats),
         "videoEmbeddable": True,
         "maxResults": 25,
     }
@@ -237,7 +251,7 @@ def _get_youtube_search_results(query, formats):
     response_json = response.json()
 
     cleaned_data = []
-    if 'items' not in response_json:
+    if "items" not in response_json:
         return cleaned_data
 
     for item in response_json["items"]:

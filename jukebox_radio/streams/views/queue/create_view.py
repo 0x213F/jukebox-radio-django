@@ -26,8 +26,12 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
         generic_uuid = request.POST.get("musicUuid")
         class_name = request.POST.get("class")
 
-        track = Track.objects.get(uuid=generic_uuid) if class_name == 'Track' else None
-        collection = Collection.objects.get(uuid=generic_uuid) if class_name == 'Collection' else None
+        track = Track.objects.get(uuid=generic_uuid) if class_name == "Track" else None
+        collection = (
+            Collection.objects.get(uuid=generic_uuid)
+            if class_name == "Collection"
+            else None
+        )
 
         if track:
             refresh_track_external_data(track, request.user)
@@ -35,7 +39,12 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
             refresh_collection_external_data(collection, request.user)
 
         try:
-            prev_queue_ptr = Queue.objects.get(stream=stream, next_queue_ptr=None, played_at__isnull=True, deleted_at__isnull=True)
+            prev_queue_ptr = Queue.objects.get(
+                stream=stream,
+                next_queue_ptr=None,
+                played_at__isnull=True,
+                deleted_at__isnull=True,
+            )
             is_head = False
         except Queue.DoesNotExist:
             prev_queue_ptr = None

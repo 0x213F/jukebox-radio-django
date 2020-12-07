@@ -29,8 +29,8 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
         f = tempfile.NamedTemporaryFile(delete=False)
         f.write(audio_file.read())
 
-        ext = 'ogg'
-        filename = f'garbage/{audio_file.name}.{ext}'
+        ext = "ogg"
+        filename = f"garbage/{audio_file.name}.{ext}"
         audio_segment = AudioSegment.from_mp3(f.name)
         audio_file = File(audio_segment.export(filename, format=ext))
 

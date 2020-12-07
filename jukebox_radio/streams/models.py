@@ -18,7 +18,9 @@ class Stream(models.Model):
 
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
-    now_playing = models.ForeignKey("music.Track", on_delete=models.CASCADE, null=True, blank=True)
+    now_playing = models.ForeignKey(
+        "music.Track", on_delete=models.CASCADE, null=True, blank=True
+    )
     played_at = models.DateTimeField(null=True, blank=True)
     is_playing = models.BooleanField(default=False)
 
@@ -30,7 +32,6 @@ class Stream(models.Model):
 
 
 class QueueQuerySet(models.QuerySet):
-
     def in_stream(self, stream):
         return self.filter(
             stream=stream,

@@ -12,21 +12,24 @@ class PlayerView(BaseView, LoginRequiredMixin):
         """
         TODO
         """
-        Collection = apps.get_model('music', 'Collection')
-        Stream = apps.get_model('streams', 'Stream')
-        Queue = apps.get_model('streams', 'Queue')
+        Collection = apps.get_model("music", "Collection")
+        Stream = apps.get_model("streams", "Stream")
+        Queue = apps.get_model("streams", "Queue")
 
         stream, _ = Stream.objects.get_or_create(user=request.user)
 
         queue_qs = Queue.objects.in_stream(stream)
 
-        format_choices = (
-            [('track', 'Track'), ('video', 'Video')] +
-            list(Collection.FORMAT_CHOICES)
+        format_choices = [("track", "Track"), ("video", "Video")] + list(
+            Collection.FORMAT_CHOICES
         )
 
-        return self.template_response(request, 'pages/player.html', {
-            'queues': queue_qs,
-            'FORMAT_CHOICES': format_choices,
-            'PROVIDER_CHOICES': GLOBAL_PROVIDER_CHOICES,
-        })
+        return self.template_response(
+            request,
+            "pages/player.html",
+            {
+                "queues": queue_qs,
+                "FORMAT_CHOICES": format_choices,
+                "PROVIDER_CHOICES": GLOBAL_PROVIDER_CHOICES,
+            },
+        )

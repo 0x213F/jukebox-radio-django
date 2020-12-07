@@ -23,9 +23,14 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
 
         if not stream.now_playing_id:
             try:
-                first_queue = Queue.objects.get(stream=stream, prev_queue_ptr=None, played_at__isnull=True, deleted_at__isnull=True)
+                first_queue = Queue.objects.get(
+                    stream=stream,
+                    prev_queue_ptr=None,
+                    played_at__isnull=True,
+                    deleted_at__isnull=True,
+                )
             except Queue.DoesNotExist:
-                raise ValueError('Queue is empty!')
+                raise ValueError("Queue is empty!")
 
             playing_at = timezone.now() + timedelta(seconds=1)
 

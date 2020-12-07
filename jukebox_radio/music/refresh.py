@@ -12,7 +12,7 @@ def refresh_track_external_data(track, user):
     elif track.provider == Track.PROVIDER_JUKEBOX_RADIO:
         return {}
     else:
-        raise ValueError(f'Track has bad provider: {track.uuid}, {track.provider}')
+        raise ValueError(f"Track has bad provider: {track.uuid}, {track.provider}")
 
 
 def refresh_collection_external_data(collection, user):
@@ -23,7 +23,7 @@ def refresh_collection_external_data(collection, user):
         elif collection.format == Collection.FORMAT_PLAYLIST:
             return _refresh_collection_spotify_playlist_data(collection, user)
     else:
-        raise ValueError(f'Track has bad provider: {track.uuid}, {track.provider}')
+        raise ValueError(f"Track has bad provider: {track.uuid}, {track.provider}")
 
 
 def _refresh_track_spotify_data(track, user):
@@ -51,7 +51,9 @@ def _refresh_track_youtube_data(track):
     response = requests.get(
         "https://www.googleapis.com/youtube/v3/videos",
         params=params,
-        headers={"Content-Type": "application/json",},
+        headers={
+            "Content-Type": "application/json",
+        },
     )
 
     response_json = response.json()
@@ -61,9 +63,7 @@ def _refresh_track_youtube_data(track):
     print(duration_raw)
 
     # TODO hours too
-    duration_minutes_raw = (
-        duration_raw[2:].split("M")[0] if "M" in duration_raw else 0
-    )
+    duration_minutes_raw = duration_raw[2:].split("M")[0] if "M" in duration_raw else 0
     duration_seconds_raw = (
         duration_raw.split("M")[1][:-1]
         if "M" in duration_raw

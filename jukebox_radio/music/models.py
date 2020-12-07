@@ -39,7 +39,6 @@ def upload_to_collections_jr_imgs(*args, **kwargs):
     )
 )
 class Track(models.Model):
-
     class Meta:
         unique_together = [
             "provider",
@@ -60,7 +59,9 @@ class Track(models.Model):
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     format = models.CharField(max_length=32, choices=FORMAT_CHOICES)
 
@@ -71,7 +72,9 @@ class Track(models.Model):
     album_name = models.CharField(max_length=200)
     duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
-    audio = models.FileField(null=True, blank=True, upload_to=upload_to_tracks_jr_audios)
+    audio = models.FileField(
+        null=True, blank=True, upload_to=upload_to_tracks_jr_audios
+    )
     external_id = models.CharField(null=True, blank=True, max_length=200)
 
     img = models.ImageField(null=True, blank=True, upload_to=upload_to_tracks_jr_imgs)
@@ -85,13 +88,13 @@ class Track(models.Model):
     @property
     def spotify_id(self):
         if not self.provider == self.PROVIDER_SPOTIFY:
-            raise ValueError(f'Cannot read `spotify_id` of track {self.uuid}')
+            raise ValueError(f"Cannot read `spotify_id` of track {self.uuid}")
         return self.external_id[14:]
 
     @property
     def youtube_id(self):
         if not self.provider == self.PROVIDER_YOUTUBE:
-            raise ValueError(f'Cannot read `youtube_id` of track {self.uuid}')
+            raise ValueError(f"Cannot read `youtube_id` of track {self.uuid}")
         return self.external_id
 
 
@@ -169,14 +172,14 @@ class Collection(models.Model):
     @property
     def spotify_id(self):
         if not self.provider == self.PROVIDER_SPOTIFY:
-            raise ValueError(f'Cannot read `spotify_id` of collection {self.uuid}')
+            raise ValueError(f"Cannot read `spotify_id` of collection {self.uuid}")
 
         if self.format == self.FORMAT_ALBUM:
             return self.external_id[14:]
         elif self.format == self.FORMAT_PLAYLIST:
             return self.external_id[17:]
         else:
-            raise ValueError(f'Unknown format of collection {self.uuid}')
+            raise ValueError(f"Unknown format of collection {self.uuid}")
 
 
 class Album(Collection):
