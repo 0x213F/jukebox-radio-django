@@ -268,6 +268,7 @@ def _get_youtube_search_results(query, formats):
                 "external_id": youtube_id,
                 "name": youtube_video_name,
                 "artist_name": youtube_channel_name,
+                "album_name": '',  # TODO maybe this shouldn't just be an empty string
                 "img_url": youtube_img_lg,
             }
         )

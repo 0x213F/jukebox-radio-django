@@ -1,6 +1,7 @@
 import requests
 
 from django.apps import apps
+from django.conf import settings
 
 
 def refresh_track_external_data(track, user):
@@ -45,7 +46,7 @@ def _refresh_track_youtube_data(track):
     params = {
         "part": "snippet,contentDetails",
         "id": track.youtube_id,
-        "key": secrets.GOOGLE_API_KEY,
+        "key": settings.GOOGLE_API_KEY,
     }
 
     response = requests.get(
@@ -60,18 +61,28 @@ def _refresh_track_youtube_data(track):
 
     # clean duration
     duration_raw = response_json["items"][0]["contentDetails"]["duration"]
-    print(duration_raw)
 
-    # TODO hours too
-    duration_minutes_raw = duration_raw[2:].split("M")[0] if "M" in duration_raw else 0
-    duration_seconds_raw = (
-        duration_raw.split("M")[1][:-1]
-        if "M" in duration_raw
-        else duration_raw[2:][:-1]
-    )
-    duration_ms = (60 * 1000 * int(duration_minutes_raw)) + (
-        1000 * int(duration_seconds_raw)
-    )
+    duration_ms = 0
+    mode = None
+    val = ''
+    for char in duration_raw:
+        if char in ['P', 'T']:
+            continue
+
+        if char in ['H', 'M', 'S']:
+            if char == 'H':
+                duration_ms += int(val) * 60 * 60 * 1000
+            elif char == 'M':
+                duration_ms += int(val) * 60 * 1000
+            elif char == 'S':
+                duration_ms += int(val) * 60 * 1000
+            else:
+                raise ValueError(f'Unexpected playtime character: {mode}')
+
+            val = ''
+            continue
+
+        val += char
 
     # TODO refresh more data points
     track.duration_ms = duration_ms
@@ -79,7 +90,6 @@ def _refresh_track_youtube_data(track):
 
 
 def _refresh_collection_spotify_album_data(collection, user):
-    spotify_id = spotify_uri[14:]
     response = requests.get(
         f"https://api.spotify.com/v1/albums/{collection.spotify_id}/tracks",
         headers={
