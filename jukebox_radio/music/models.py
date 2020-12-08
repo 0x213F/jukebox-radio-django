@@ -127,6 +127,10 @@ class CollectionListing(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # NOTE: it is possible for the tracks to change on an album/ playlist after
+    #       it is initially created.
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
 
 @pgtrigger.register(
     pgtrigger.Protect(
@@ -135,6 +139,11 @@ class CollectionListing(models.Model):
     )
 )
 class Collection(models.Model):
+    class Meta:
+        unique_together = [
+            "provider",
+            "external_id",
+        ]
 
     FORMAT_ALBUM = "album"
     FORMAT_PLAYLIST = "playlist"

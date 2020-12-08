@@ -31,6 +31,7 @@ class TextComment(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"[{self.user}] {self.text}"
@@ -56,6 +57,7 @@ class VoiceRecording(models.Model):
     timestamp_ms = models.IntegerField()
 
     created_at = models.DateTimeField(auto_now_add=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"[{self.user}] {self.duration_ms / 1000}s voice recording"
@@ -91,6 +93,7 @@ class TextCommentModification(models.Model):
     style = models.CharField(max_length=32, choices=STYLE_CHOICES)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.text_comment} ({self.start_ptr}, {self.end_ptr})"
