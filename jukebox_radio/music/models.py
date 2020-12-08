@@ -1,6 +1,7 @@
 import pgtrigger
 import uuid
 
+from django.apps import apps
 from django.db import models
 
 import pghistory
@@ -180,6 +181,30 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.name
+
+    def filter_tracks(self):
+        CollectionListing = apps.get_model('music', 'CollectionListing')
+        Track = apps.get_model('music', 'Track')
+        track_uuids = (
+            CollectionListing
+            .objects
+            .select_related('track')
+            .filter(collection=self)
+            .order_by('number')
+            .values_list('track', flat=True)
+        )
+        tracks = list(Track.objects.filter(uuid__in=track_uuids))
+
+        # sort the tracks according to CollectionListing values
+        track_map = {}
+        sorted_tracks = []
+        for track in tracks:
+            track_map[track.uuid] = track
+        for track_uuid in track_uuids:
+            sorted_tracks.append(track_map[track_uuid])
+
+        return sorted_tracks
+
 
     @property
     def spotify_id(self):

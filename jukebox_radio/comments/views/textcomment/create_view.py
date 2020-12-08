@@ -19,8 +19,6 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
         TextComment = apps.get_model("comments", "TextComment")
         Stream = apps.get_model("streams", "Stream")
 
-        print("!!!!")
-
         now = time_util.now()
 
         stream = Stream.objects.select_related("now_playing").get(user=request.user)

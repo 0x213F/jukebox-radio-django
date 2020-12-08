@@ -12,7 +12,7 @@ User = get_user_model()
 class QueueDeleteView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        Delete a Queue.
+        Remove from queue.
         """
         Queue = apps.get_model("streams", "Queue")
 
@@ -22,10 +22,11 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
             uuid=queue_uuid, user=request.user
         )
 
+        now = timezone.now()
         with transaction.atomic():
 
             # delete queue
-            queue.deleted_at = timezone.now()
+            queue.deleted_at = now
             queue.save()
 
             # fix prev pointer
@@ -36,8 +37,8 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
             queue.next_queue_ptr.prev_queue_ptr = queue.prev_queue_ptr
             queue.next_queue_ptr.save()
 
-        return self.http_response_200(
-            {
-                "uuid": queue_uuid,
-            }
-        )
+            if queue.is_abstract:
+                child_queue_qs = Queue.objects.filter(parent_queue_ptr=queue)
+                child_queue_qs.update(deleted_at=now)
+
+        return self.http_response_200({})
