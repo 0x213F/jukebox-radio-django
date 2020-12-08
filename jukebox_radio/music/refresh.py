@@ -145,16 +145,14 @@ def _refresh_collection_spotify_album_data(collection, user):
         track_eids.append(track_data["external_id"])
 
     # create Track objects if they do not already exist
+    # TODO refresh more data points
     Track.objects.bulk_create(tracks, ignore_conflicts=True)
     track_qs = Track.objects.filter(external_id__in=track_eids)
 
-    # see if CollectionListing objects already exist and have not changed
+    # wipe old CollectionListing objects
+    # TODO this is not ok
     cl_by_tracks_qs = CollectionListing.objects.filter(track__external_id__in=track_eids)
     cl_by_collection_qs = CollectionListing.objects.filter(collection=collection)
-    if cl_by_tracks_qs.count() == cl_by_collection_qs.count():
-        return
-
-    # wipe old CollectionListing objects
     now = timezone.now()
     cl_by_tracks_qs.update(deleted_at=now)
     cl_by_collection_qs.update(deleted_at=now)
@@ -183,6 +181,9 @@ def _refresh_collection_spotify_album_data(collection, user):
 
 
 def _refresh_collection_spotify_playlist_data(collection, user):
+    Track = apps.get_model("music", "Track")
+    CollectionListing = apps.get_model("music", "CollectionListing")
+
     response = requests.get(
         f"https://api.spotify.com/v1/playlists/{collection.spotify_id}",
         headers={
@@ -191,17 +192,73 @@ def _refresh_collection_spotify_playlist_data(collection, user):
         },
     )
     response_json = response.json()
-    print(response_json)
 
-    # TODO...
-    # items = response_json["tracks"]["items"]
-    # data = []
-    # for item in items:
-    #     data.append(
-    #         {
-    #             "spotify_uri": item["track"]["uri"],
-    #             "spotify_duration_ms": item["track"]["duration_ms"],
-    #             "spotify_name": item["track"]["name"],
-    #         }
-    #     )
-    # return data
+    # items are pre-sorted here
+    items = response_json["tracks"]["items"]
+    data = []
+    for item in items:
+        artist_names = map(lambda o: o["name"], item["track"]["artists"])
+        data.append(
+            {
+                "format": Track.FORMAT_TRACK,
+                "provider": Track.PROVIDER_SPOTIFY,
+                "external_id": item["track"]["uri"],
+                "name": item["track"]["name"],
+                "artist_name": ', '.join(artist_names),
+                "album_name": collection.name,
+                "duration_ms": item["track"]["duration_ms"],
+                "img_url": item["track"]["album"]["images"][0]["url"],
+            }
+        )
+
+    tracks = []
+    track_eids = []
+    for track_data in data:
+        tracks.append(
+            Track(
+                format=track_data["format"],
+                provider=track_data["provider"],
+                external_id=track_data["external_id"],
+                name=track_data["name"],
+                artist_name=track_data["artist_name"],
+                album_name=track_data["album_name"],
+                img_url=track_data["img_url"],
+                duration_ms=track_data["duration_ms"],
+            )
+        )
+        track_eids.append(track_data["external_id"])
+
+    # create Track objects if they do not already exist
+    # TODO refresh more data points
+    Track.objects.bulk_create(tracks, ignore_conflicts=True)
+    track_qs = Track.objects.filter(external_id__in=track_eids)
+
+    # wipe old CollectionListing objects to force refresh playlist
+    # TODO this is not ok
+    cl_by_tracks_qs = CollectionListing.objects.filter(track__external_id__in=track_eids)
+    cl_by_collection_qs = CollectionListing.objects.filter(collection=collection)
+    now = timezone.now()
+    cl_by_tracks_qs.update(deleted_at=now)
+    cl_by_collection_qs.update(deleted_at=now)
+
+    # sort tracks by order one more time
+    track_map = {}
+    for track in track_qs:
+        track_map[track.external_id] = track
+
+    tracks = []
+    for track_eid in track_eids:
+        tracks.append(track_map[track_eid])
+
+    # create CollectionListing objects if they do not already exist
+    collection_listings = []
+    for idx in range(len(tracks)):
+        track = tracks[idx]
+        collection_listings.append(
+            CollectionListing(
+                track=track,
+                collection=collection,
+                number=idx,
+            )
+        )
+    CollectionListing.objects.bulk_create(collection_listings)
