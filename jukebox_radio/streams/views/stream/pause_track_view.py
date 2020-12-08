@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -18,15 +19,14 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
+        if not stream.is_playing:
+            raise ValueError('Cannot pause a stream that is not already playing')
         if stream.is_paused:
             raise ValueError('Cannot pause a stream which is already paused')
 
         pausing_at = timezone.now() + timedelta(milliseconds=125)
 
-        with transaction.atomic():
-            stream.now_playing = first_queue.track
-            stream.paused_at = pausing_at
-            stream.is_playing = True
-            stream.save()
+        stream.paused_at = pausing_at
+        stream.save()
 
         return self.http_response_200({})

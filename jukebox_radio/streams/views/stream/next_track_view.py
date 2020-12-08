@@ -1,17 +1,13 @@
-from datetime import timedelta
-
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import transaction
-from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
 
 User = get_user_model()
 
 
-class StreamPlayTrackView(BaseView, LoginRequiredMixin):
+class StreamNextTrackView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
         In the user's stream, play the head of the queue.
@@ -23,16 +19,20 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        if stream.is_playing:
-            raise ValueError('Cannot play a stream which is already playing')
-        if not stream.is_paused:
-            raise ValueError('Cannot play a stream which is not paused')
+        try:
+            first_queue = Queue.objects.in_stream(stream)[0]
+        except IndexError:
+            raise ValueError("Queue is empty!")
 
-        playing_at = timezone.now() + timedelta(milliseconds=125)
-        paused_duration = playing_at - stream.paused_at
+        with transaction.atomic():
+            playing_at = timezone.now() + timedelta(milliseconds=125)
 
-        stream.played_at += paused_duration
-        stream.paused_at = None
-        stream.save()
+            stream.now_playing = first_queue.track
+            stream.played_at = playing_at
+            stream.paused_at = None
+            stream.save()
+
+            first_queue.played_at = playing_at
+            first_queue.save()
 
         return self.http_response_200({})

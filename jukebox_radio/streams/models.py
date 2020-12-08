@@ -25,7 +25,6 @@ class Stream(models.Model):
     )
     played_at = models.DateTimeField(null=True, blank=True)
     paused_at = models.DateTimeField(null=True, blank=True)
-    is_playing = models.BooleanField(default=False)
 
     recording_started_at = models.DateTimeField(null=True, blank=True)
     recording_ended_at = models.DateTimeField(null=True, blank=True)
@@ -41,7 +40,7 @@ class Stream(models.Model):
         is_paused = bool(self.paused_at)
         is_over = is_playing and now > self.played_at + timedelta(milliseconds=self.now_playing.duration_ms)
 
-        return is_playing and not is_paused and not is_over
+        return bool(is_playing and not is_paused and not is_over and self.now_playing_id)
 
     @property
     def is_paused(self):
@@ -50,6 +49,8 @@ class Stream(models.Model):
         is_playing = bool(self.played_at)
         is_paused = bool(self.paused_at)
         is_over = not is_playing or self.paused_at < self.played_at + timedelta(milliseconds=self.now_playing.duration_ms)
+
+        return bool(is_paused and not is_playing and not is_over and self.now_playing_id)
 
 
 class QueueQuerySet(models.QuerySet):

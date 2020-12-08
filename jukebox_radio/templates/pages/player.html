@@ -33,12 +33,12 @@
       <h3>Playback</h3>
 
       <div class="form-group">
-        <button class="btn btn-primary" type="submit">Play</button>
-        <button class="btn btn-primary disabled" type="submit" disabled>Pause</button>
+        <button class="btn btn-primary {% if not stream_is_playing %}disabled{% endif %}" id="playback-play" type="submit" {% if not stream_is_playing %}disabled{% endif %}>Play</button>
+        <button class="btn btn-primary {% if not stream_is_paused %}disabled{% endif %}" id="playback-pause" type="submit" {% if not stream_is_paused %}disabled{% endif %}>Pause</button>
       </div>
       <div class="form-group">
-        <button class="btn btn-outline-primary" type="submit">Rewind Track</button>
-        <button class="btn btn-outline-primary" type="submit">Skip Track</button>
+        <button class="btn btn-outline-primary" id="playback-previous" type="submit">Previous Track</button>
+        <button class="btn btn-outline-primary" id="playback-next" type="submit">Next Track</button>
       </div>
       <div class="form-group">
         <button class="btn btn-outline-secondary" type="submit">Scan Backward</button>
@@ -145,6 +145,7 @@
 {% block addedjavascript %}
 
   {% compress js %}
+  <script src="{% static 'js/api.js' %}"></script>
   <script src="{% static 'js/player.js' %}"></script>
   {% endcompress %}
 
