@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
@@ -12,7 +13,7 @@ User = get_user_model()
 class StreamPlayTrackView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        TODO
+        In the user's stream, play the head of the queue.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
@@ -21,33 +22,20 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        if not stream.now_playing_id:
-            try:
-                first_queue = Queue.objects.get(
-                    stream=stream,
-                    prev_queue_ptr=None,
-                    played_at__isnull=True,
-                    deleted_at__isnull=True,
-                )
-            except Queue.DoesNotExist:
-                raise ValueError("Queue is empty!")
+        try:
+            first_queue = Queue.objects.in_stream(stream)[0]
+        except KeyError:
+            raise ValueError("Queue is empty!")
 
-            playing_at = timezone.now() + timedelta(seconds=1)
+        playing_at = timezone.now() + timedelta(milliseconds=125)
 
-            # TODO ... wrap with transaction
+        with transaction.atomic():
             stream.now_playing = first_queue.track
             stream.played_at = playing_at
             stream.is_playing = True
             stream.save()
 
-            queue.is_head = False
-            queue.save()
+            first_queue.played_at = playing_at
+            first_queue.save()
 
-            next_queue = queue.next_queue_ptr
-            if next_queue:
-                next_queue.is_head = True
-
-            return self.http_response_200({})
-
-        else:
-            return self.http_response_200({})
+        return self.http_response_200({})

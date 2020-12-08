@@ -71,14 +71,11 @@ def get_search_results(user, provider_slug, query, formats):
     Track.objects.bulk_create(tracks, ignore_conflicts=True)
     Collection.objects.bulk_create(collections, ignore_conflicts=True)
 
-    print(track_uuids)
-
     # - - - - - - - - - - - - - -
     # Return relevant DB objects
     track_qs = Track.objects.filter(
         Q(uuid__in=track_uuids) | Q(external_id__in=track_eids)
     )
-    print(track_qs)
     collection_qs = Collection.objects.filter(external_id__in=collection_eids)
     db_objs = []
     for obj_qs in [track_qs, collection_qs]:

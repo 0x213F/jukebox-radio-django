@@ -14,7 +14,7 @@ User = get_user_model()
 class QueueCreateView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        TODO
+        Add to queue.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
@@ -45,11 +45,8 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
                 played_at__isnull=True,
                 deleted_at__isnull=True,
             )
-            is_head = False
         except Queue.DoesNotExist:
             prev_queue_ptr = None
-            is_head = True
-        next_queue_ptr = None
 
         is_abstract = bool(collection)
         queue = Queue.objects.create(
@@ -58,25 +55,37 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
             collection=collection,
             stream=stream,
             prev_queue_ptr=prev_queue_ptr,
-            next_queue_ptr=next_queue_ptr,
+            next_queue_ptr=None,
             is_abstract=is_abstract,
             parent_queue_ptr=None,
-            is_head=is_head,
-            is_tail=True,
         )
 
         if prev_queue_ptr:
             prev_queue_ptr.next_queue_ptr = queue
             prev_queue_ptr.save()
 
-        return self.http_response_200(
-            {
-                "trackUuid": track.uuid if track else None,
-                "collectionUuid": collection.uuid if collection else None,
-                "streamId": queue.stream_id,
-                "prevQueuePtr": queue.prev_queue_ptr_id,
-                "nextQueuePtr": queue.next_queue_ptr_id,
-                "isAbstract": queue.is_abstract,
-                "parentQueuePtrId": queue.parent_queue_ptr_id,
-            }
-        )
+        if collection:
+            next_queue_ptr = None
+            last_queue = None
+            tracks = collection.filter_tracks()
+            for _track in tracks:
+                temp_queue = Queue.objects.create(
+                    user=request.user,
+                    track=_track,
+                    collection=None,
+                    stream=stream,
+                    prev_queue_ptr=prev_queue_ptr,
+                    next_queue_ptr=None,
+                    is_abstract=False,
+                    parent_queue_ptr=queue,
+                )
+
+                prev_queue_ptr = queue
+                if last_queue:
+                    last_queue.next_queue_ptr = queue
+                    last_queue.save()
+
+                last_queue = temp_queue
+
+
+        return self.http_response_200({})

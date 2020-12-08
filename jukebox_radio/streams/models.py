@@ -22,6 +22,7 @@ class Stream(models.Model):
         "music.Track", on_delete=models.CASCADE, null=True, blank=True
     )
     played_at = models.DateTimeField(null=True, blank=True)
+    paused_at = models.DateTimeField(null=True, blank=True)
     is_playing = models.BooleanField(default=False)
 
     recording_started_at = models.DateTimeField(null=True, blank=True)
@@ -114,9 +115,6 @@ class Queue(models.Model):
         on_delete=models.CASCADE,
         null=True,
     )
-
-    is_head = models.BooleanField(default=False)
-    is_tail = models.BooleanField(default=False)
 
     played_at = models.DateTimeField(null=True, blank=True)
 
