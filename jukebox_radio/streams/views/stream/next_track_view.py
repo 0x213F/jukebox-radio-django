@@ -37,6 +37,11 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             stream.save()
 
             first_queue.played_at = playing_at
+            first_queue.is_head = True
             first_queue.save()
+
+            if first_queue.prev_queue_ptr_id:
+                first_queue.prev_queue_ptr.is_head = False
+                first_queue.prev_queue_ptr.save()
 
         return self.http_response_200({})
