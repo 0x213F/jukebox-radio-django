@@ -1,7 +1,9 @@
 import pgtrigger
 import uuid
+from datetime import timedelta
 
 from django.db import models
+from django.utils import timezone
 
 import pghistory
 import pgtrigger
@@ -31,6 +33,24 @@ class Stream(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def is_playing(self):
+        now = timezone.now()
+
+        is_playing = bool(self.played_at)
+        is_paused = bool(self.paused_at)
+        is_over = is_playing and now > self.played_at + timedelta(milliseconds=self.now_playing.duration_ms)
+
+        return is_playing and not is_paused and not is_over
+
+    @property
+    def is_paused(self):
+        now = timezone.now()
+
+        is_playing = bool(self.played_at)
+        is_paused = bool(self.paused_at)
+        is_over = not is_playing or self.paused_at < self.played_at + timedelta(milliseconds=self.now_playing.duration_ms)
+
 
 class QueueQuerySet(models.QuerySet):
     def in_stream(self, stream):
@@ -38,6 +58,7 @@ class QueueQuerySet(models.QuerySet):
             stream=stream,
             played_at__isnull=True,
             deleted_at__isnull=True,
+            parent_queue_ptr__isnull=True,
         )
 
         queue_list = list(queue_qs)

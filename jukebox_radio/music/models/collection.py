@@ -1,0 +1,159 @@
+import uuid
+
+from django.apps import apps
+from django.db import models
+
+import pgtrigger
+from unique_upload import unique_upload
+
+from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_SPOTIFY
+from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_YOUTUBE
+from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_JUKEBOX_RADIO
+from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_CHOICES
+
+
+def upload_to_collections_jr_imgs(*args, **kwargs):
+    return (
+        f"django-storage/music/collections/jr-imgs/" f"{unique_upload(*args, **kwargs)}"
+    )
+
+
+@pgtrigger.register(
+    pgtrigger.Protect(
+        name="append_only",
+        operation=(pgtrigger.Update | pgtrigger.Delete),
+    )
+)
+class Collection(models.Model):
+    class Meta:
+        unique_together = [
+            "provider",
+            "external_id",
+        ]
+
+    FORMAT_ALBUM = "album"
+    FORMAT_PLAYLIST = "playlist"
+    FORMAT_SESSION = "session"
+    FORMAT_CHOICES = (
+        (FORMAT_ALBUM, "Album"),
+        (FORMAT_PLAYLIST, "Playlist"),
+        (FORMAT_SESSION, "Session"),
+    )
+
+    PROVIDER_SPOTIFY = GLOBAL_PROVIDER_SPOTIFY
+    PROVIDER_YOUTUBE = GLOBAL_PROVIDER_YOUTUBE
+    PROVIDER_JUKEBOX_RADIO = GLOBAL_PROVIDER_JUKEBOX_RADIO
+    PROVIDER_CHOICES = GLOBAL_PROVIDER_CHOICES
+
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    format = models.CharField(max_length=32, choices=FORMAT_CHOICES)
+    provider = models.CharField(max_length=32, choices=PROVIDER_CHOICES)
+
+    name = models.CharField(max_length=200)
+    artist_name = models.CharField(max_length=200, null=True, blank=True)
+    duration_ms = models.PositiveIntegerField(null=True, blank=True)
+
+    external_id = models.CharField(null=True, max_length=200)
+
+    img = models.ImageField(null=True, upload_to=upload_to_collections_jr_imgs)
+    img_url = models.CharField(null=True, max_length=200)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+    def filter_tracks(self):
+        CollectionListing = apps.get_model('music', 'CollectionListing')
+        Track = apps.get_model('music', 'Track')
+        track_uuids = (
+            CollectionListing
+            .objects
+            .select_related('track')
+            .filter(collection=self)
+            .order_by('number')
+            .values_list('track', flat=True)
+        )
+        tracks = list(Track.objects.filter(uuid__in=track_uuids))
+
+        # sort the tracks according to CollectionListing values
+        track_map = {}
+        sorted_tracks = []
+        for track in tracks:
+            track_map[track.uuid] = track
+        for track_uuid in track_uuids:
+            sorted_tracks.append(track_map[track_uuid])
+
+        return sorted_tracks
+
+
+    @property
+    def spotify_id(self):
+        if not self.provider == self.PROVIDER_SPOTIFY:
+            raise ValueError(f"Cannot read `spotify_id` of collection {self.uuid}")
+
+        if self.format == self.FORMAT_ALBUM:
+            return self.external_id[14:]
+        elif self.format == self.FORMAT_PLAYLIST:
+            return self.external_id[17:]
+        else:
+            raise ValueError(f"Unknown format of collection {self.uuid}")
+
+
+class Album(Collection):
+    class Meta:
+        proxy = True
+        verbose_name = "Album"
+        verbose_name_plural = "Albums"
+
+
+class Playlist(Collection):
+    class Meta:
+        proxy = True
+        verbose_name = "Playlist"
+        verbose_name_plural = "Playlists"
+
+
+class Session(Collection):
+    class Meta:
+        proxy = True
+        verbose_name = "Session"
+        verbose_name_plural = "Sessions"
+
+
+@pgtrigger.register(
+    pgtrigger.Protect(
+        name="append_only",
+        operation=(pgtrigger.Update | pgtrigger.Delete),
+    )
+)
+class CollectionListing(models.Model):
+    class Meta:
+        unique_together = [
+            "track",
+            "collection",
+            "number",
+        ]
+
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    track = models.ForeignKey(
+        "music.Track",
+        on_delete=models.CASCADE,
+    )
+    collection = models.ForeignKey(
+        "music.Collection",
+        related_name="child_collection_listings",
+        on_delete=models.CASCADE,
+    )
+    number = models.PositiveIntegerField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # NOTE: it is possible for the tracks to change on an album/ playlist after
+    #       it is initially created.
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f'CollectionListing ({self.uuid})'
