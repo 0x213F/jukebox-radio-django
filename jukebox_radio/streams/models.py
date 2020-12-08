@@ -34,23 +34,33 @@ class Stream(models.Model):
 
     @property
     def is_playing(self):
-        now = timezone.now()
-
         is_playing = bool(self.played_at)
-        is_paused = bool(self.paused_at)
-        is_over = is_playing and now > self.played_at + timedelta(milliseconds=self.now_playing.duration_ms)
+        if not is_playing or not self.now_playing_id:
+            return False
 
-        return bool(is_playing and not is_paused and not is_over and self.now_playing_id)
+        is_paused = bool(self.paused_at)
+        if is_paused and self.paused_at > self.played_at:
+            return False
+
+        now = timezone.now()
+        within_bounds = now < self.played_at + timedelta(milliseconds=self.now_playing.duration_ms)
+
+        return within_bounds
 
     @property
     def is_paused(self):
-        now = timezone.now()
+        is_paused = bool(self.paused_at)
+        if not is_paused or not self.now_playing_id:
+            return False
 
         is_playing = bool(self.played_at)
-        is_paused = bool(self.paused_at)
-        is_over = not is_playing or self.paused_at < self.played_at + timedelta(milliseconds=self.now_playing.duration_ms)
+        if is_playing and self.played_at > self.paused_at:
+            return False
 
-        return bool(is_paused and not is_playing and not is_over and self.now_playing_id)
+        now = timezone.now()
+        within_bounds = self.paused_at - self.played_at < timedelta(milliseconds=self.now_playing.duration_ms)
+
+        return within_bounds
 
 
 class QueueQuerySet(models.QuerySet):

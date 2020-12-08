@@ -33,8 +33,8 @@
       <h3>Playback</h3>
 
       <div class="form-group">
-        <button class="btn btn-primary {% if not stream_is_playing %}disabled{% endif %}" id="playback-play" type="submit" {% if not stream_is_playing %}disabled{% endif %}>Play</button>
-        <button class="btn btn-primary {% if not stream_is_paused %}disabled{% endif %}" id="playback-pause" type="submit" {% if not stream_is_paused %}disabled{% endif %}>Pause</button>
+        <button class="btn btn-primary {% if stream_is_playing %}disabled{% endif %}" id="playback-play" type="submit" {% if stream_is_playing %}disabled{% endif %}>Play</button>
+        <button class="btn btn-primary {% if stream_is_paused %}disabled{% endif %}" id="playback-pause" type="submit" {% if stream_is_paused %}disabled{% endif %}>Pause</button>
       </div>
       <div class="form-group">
         <button class="btn btn-outline-primary" id="playback-previous" type="submit">Previous Track</button>

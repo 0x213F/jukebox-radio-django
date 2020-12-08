@@ -1,6 +1,9 @@
+from datetime import timedelta
+
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
 
@@ -25,6 +28,9 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
             raise ValueError('Cannot pause a stream which is already paused')
 
         pausing_at = timezone.now() + timedelta(milliseconds=125)
+
+        if (stream.played_at - pausing_at) > timedelta(milliseconds=stream.now_playing.duration_ms):
+            raise ValueError('Cannot pause since the track will be over by the time we try to pause')
 
         stream.paused_at = pausing_at
         stream.save()
