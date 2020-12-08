@@ -13,10 +13,22 @@ class CollectionListingAdminInline(admin.TabularInline):
     fk_name = "collection"
     extra = 0
 
-    readonly_fields = ("number",)
+    ordering = ("number",)
+
+    fields = ('list_track_name', 'list_track_number',)
+
+    readonly_fields = ("list_track_name", "list_track_number",)
 
     def has_add_permission(self, request, obj=None):
         return False
+
+    def list_track_name(self, obj):
+        return obj.track.name
+    list_track_name.short_description = 'TRACK NAME'
+
+    def list_track_number(self, obj):
+        return obj.number
+    list_track_number.short_description = 'TRACK NUMBER'
 
 
 @admin.register(apps.get_model("music.Track"))
@@ -40,47 +52,42 @@ class AlbumAdmin(admin.ModelAdmin):
 
     inlines = (CollectionListingAdminInline,)
 
-    fieldsets = (
-        (
-            "JUKEBOX RADIO",
-            {
-                "fields": (
-                    "jr_img",
-                    "jr_name",
-                ),
-            },
-        ),
-        (
-            "SPOTIFY",
-            {
-                "fields": (
-                    "spotify_img",
-                    "spotify_uri",
-                    "spotify_name",
-                ),
-            },
-        ),
-        (
-            "YOUTUBE",
-            {
-                "fields": (
-                    "youtube_img",
-                    "youtube_id",
-                    "youtube_name",
-                ),
-            },
-        ),
-    )
+    # fieldsets = (
+    #     (
+    #         "JUKEBOX RADIO",
+    #         {
+    #             "fields": (
+    #                 "jr_img",
+    #                 "jr_name",
+    #             ),
+    #         },
+    #     ),
+    #     (
+    #         "SPOTIFY",
+    #         {
+    #             "fields": (
+    #                 "spotify_img",
+    #                 "spotify_uri",
+    #                 "spotify_name",
+    #             ),
+    #         },
+    #     ),
+    #     (
+    #         "YOUTUBE",
+    #         {
+    #             "fields": (
+    #                 "youtube_img",
+    #                 "youtube_id",
+    #                 "youtube_name",
+    #             ),
+    #         },
+    #     ),
+    # )
 
     search_fields = (
-        "jr_name",
-        "jr_duration_ms",
-        "spotify_uri",
-        "spotify_name",
-        "spotify_duration_ms",
-        "youtube_id",
-        "youtube_name",
-        "youtube_duration_ms",
+        "name",
+        "artist_name",
+        "external_id",
     )
 
     def get_queryset(self, request):
@@ -102,44 +109,42 @@ class PlaylistAdmin(admin.ModelAdmin):
 
     inlines = (CollectionListingAdminInline,)
 
-    fieldsets = (
-        (
-            "JUKEBOX RADIO",
-            {
-                "fields": (
-                    "jr_img",
-                    "jr_name",
-                ),
-            },
-        ),
-        (
-            "SPOTIFY",
-            {
-                "fields": (
-                    "spotify_img",
-                    "spotify_uri",
-                    "spotify_name",
-                ),
-            },
-        ),
-        (
-            "YOUTUBE",
-            {
-                "fields": (
-                    "youtube_img",
-                    "youtube_id",
-                    "youtube_name",
-                ),
-            },
-        ),
-    )
+    # fieldsets = (
+    #     (
+    #         "JUKEBOX RADIO",
+    #         {
+    #             "fields": (
+    #                 "jr_img",
+    #                 "jr_name",
+    #             ),
+    #         },
+    #     ),
+    #     (
+    #         "SPOTIFY",
+    #         {
+    #             "fields": (
+    #                 "spotify_img",
+    #                 "spotify_uri",
+    #                 "spotify_name",
+    #             ),
+    #         },
+    #     ),
+    #     (
+    #         "YOUTUBE",
+    #         {
+    #             "fields": (
+    #                 "youtube_img",
+    #                 "youtube_id",
+    #                 "youtube_name",
+    #             ),
+    #         },
+    #     ),
+    # )
 
     search_fields = (
-        "jr_name",
-        "spotify_uri",
-        "spotify_name",
-        "youtube_id",
-        "youtube_name",
+        "name",
+        "artist_name",
+        "external_id",
     )
 
     def get_queryset(self, request):
@@ -157,7 +162,7 @@ class PlaylistAdmin(admin.ModelAdmin):
 
 
 @admin.register(apps.get_model("music.Session"))
-class MixAdmin(admin.ModelAdmin):
+class SessionAdmin(admin.ModelAdmin):
 
     inlines = (CollectionListingAdminInline,)
 

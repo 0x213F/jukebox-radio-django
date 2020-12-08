@@ -131,6 +131,9 @@ class CollectionListing(models.Model):
     #       it is initially created.
     deleted_at = models.DateTimeField(null=True, blank=True)
 
+    def __str__(self):
+        return f'CollectionListing ({self.uuid})'
+
 
 @pgtrigger.register(
     pgtrigger.Protect(
