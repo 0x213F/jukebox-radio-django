@@ -148,6 +148,8 @@ class Queue(models.Model):
         null=True,
     )
 
+    is_head = models.BooleanField(default=False)
+
     played_at = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

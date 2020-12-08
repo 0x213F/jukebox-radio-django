@@ -39,12 +39,13 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
             refresh_collection_external_data(collection, request.user)
 
         try:
-            prev_queue_ptr = Queue.objects.get(
-                stream=stream,
-                next_queue_ptr=None,
-                played_at__isnull=True,
-                deleted_at__isnull=True,
-            )
+            try:
+                prev_queue_ptr = Queue.objects.in_stream(stream)[-1]
+            except IndexError:
+                prev_queue_ptr = Queue.objects.get(
+                    stream=stream,
+                    is_head=True,
+                )
         except Queue.DoesNotExist:
             prev_queue_ptr = None
 

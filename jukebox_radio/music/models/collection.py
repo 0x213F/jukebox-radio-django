@@ -33,11 +33,9 @@ class Collection(models.Model):
 
     FORMAT_ALBUM = "album"
     FORMAT_PLAYLIST = "playlist"
-    FORMAT_SESSION = "session"
     FORMAT_CHOICES = (
         (FORMAT_ALBUM, "Album"),
         (FORMAT_PLAYLIST, "Playlist"),
-        (FORMAT_SESSION, "Session"),
     )
 
     PROVIDER_SPOTIFY = GLOBAL_PROVIDER_SPOTIFY
@@ -60,6 +58,7 @@ class Collection(models.Model):
     img_url = models.CharField(null=True, max_length=200)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -115,26 +114,13 @@ class Playlist(Collection):
         verbose_name_plural = "Playlists"
 
 
-class Session(Collection):
-    class Meta:
-        proxy = True
-        verbose_name = "Session"
-        verbose_name_plural = "Sessions"
-
-
 @pgtrigger.register(
     pgtrigger.Protect(
-        name="append_only",
-        operation=(pgtrigger.Update | pgtrigger.Delete),
+        name="protect_delete",
+        operation=pgtrigger.Delete,
     )
 )
 class CollectionListing(models.Model):
-    class Meta:
-        unique_together = [
-            "track",
-            "collection",
-            "number",
-        ]
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 

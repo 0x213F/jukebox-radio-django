@@ -33,12 +33,12 @@
       <h3>Playback</h3>
 
       <div class="form-group">
-        <button class="btn btn-primary {% if stream_is_playing %}disabled{% endif %}" id="playback-play" type="submit" {% if stream_is_playing %}disabled{% endif %}>Play</button>
-        <button class="btn btn-primary {% if stream_is_paused %}disabled{% endif %}" id="playback-pause" type="submit" {% if stream_is_paused %}disabled{% endif %}>Pause</button>
+        <button class="btn btn-primary {% if stream_is_playing or is_over %}disabled{% endif %}" id="playback-play" type="submit" {% if stream_is_playing or is_over %}disabled{% endif %}>Play</button>
+        <button class="btn btn-primary {% if stream_is_paused or is_over %}disabled{% endif %}" id="playback-pause" type="submit" {% if stream_is_paused or is_over %}disabled{% endif %}>Pause</button>
       </div>
       <div class="form-group">
-        <button class="btn btn-outline-primary" id="playback-previous" type="submit">Previous Track</button>
-        <button class="btn btn-outline-primary" id="playback-next" type="submit">Next Track</button>
+        <button class="btn btn-outline-primary {% if not stream_queue_exists %}disabled{% endif %}" id="playback-previous" type="submit" {% if not stream_queue_exists %}disabled{% endif %}>Previous Track</button>
+        <button class="btn btn-outline-primary {% if stream_queue_is_empty %}disabled{% endif %}" id="playback-next" type="submit" {% if stream_queue_is_empty %}disabled{% endif %}>Next Track</button>
       </div>
       <div class="form-group">
         <button class="btn btn-outline-secondary" type="submit">Scan Backward</button>

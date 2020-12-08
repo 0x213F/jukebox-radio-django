@@ -162,7 +162,6 @@ const musicSearchSubmit = function() {
       "video",
       "album",
       "playlist",
-      "session",
   ];
   for(let format of formatNames) {
     if(document.getElementsByName(format)[0].checked) {

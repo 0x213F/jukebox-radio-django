@@ -26,10 +26,34 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
         if not stream.now_playing_id:
             raise ValueError('Nothing is playing!')
 
+        queue = (
+            Queue
+            .objects
+            .select_related('prev_queue_ptr', 'prev_queue_ptr__track')
+            .get(stream=stream, is_head=True)
+        )
+
         playing_at = timezone.now() + timedelta(milliseconds=125)
 
-        stream.played_at = playing_at
-        stream.paused_at = None
-        stream.save()
+        if not stream.is_playing and not stream.is_paused:
+            with transaction.atomic():
+                stream.played_at = playing_at
+                stream.paused_at = None
+                stream.save()
+            return self.http_response_200({})
+
+        with transaction.atomic():
+            stream.now_playing = queue.prev_queue_ptr.track
+            stream.played_at = playing_at
+            stream.paused_at = None
+            stream.save()
+
+            queue.played_at = None
+            queue.is_head = False
+            queue.save()
+
+            queue.prev_queue_ptr.played_at = playing_at
+            queue.prev_queue_ptr.is_head = True
+            queue.prev_queue_ptr.save()
 
         return self.http_response_200({})
