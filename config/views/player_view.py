@@ -24,6 +24,8 @@ class PlayerView(BaseView, LoginRequiredMixin):
             Collection.FORMAT_CHOICES
         )
 
+        print(stream.is_playing, stream.is_paused)
+
         return self.template_response(
             request,
             "pages/player.html",
@@ -31,5 +33,7 @@ class PlayerView(BaseView, LoginRequiredMixin):
                 "queues": queue_qs,
                 "FORMAT_CHOICES": format_choices,
                 "PROVIDER_CHOICES": GLOBAL_PROVIDER_CHOICES,
+                "stream_is_playing": stream.is_playing,
+                "stream_is_paused": stream.is_paused,
             },
         )

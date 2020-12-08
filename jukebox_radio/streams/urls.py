@@ -3,10 +3,10 @@ from django.urls import path
 from jukebox_radio.streams.views.stream import (
     StreamPauseTrackView,
     StreamPlayTrackView,
-    StreamRewindTrackView,
+    StreamPreviousTrackView,
     StreamScanBackwardView,
     StreamScanForwardView,
-    StreamSkipTrackView,
+    StreamNextTrackView,
 )
 from jukebox_radio.streams.views.queue import (
     QueueCreateView,
@@ -24,9 +24,9 @@ urlpatterns = [
     ),
     path("stream/play-track/", view=StreamPlayTrackView.as_view(), name="stream-play"),
     path(
-        "stream/rewind-track/",
-        view=StreamRewindTrackView.as_view(),
-        name="stream-rewind-track",
+        "stream/previous-track/",
+        view=StreamPreviousTrackView.as_view(),
+        name="stream-previous-track",
     ),
     path(
         "stream/scan-backward/",
@@ -39,9 +39,9 @@ urlpatterns = [
         name="stream-scan-forward",
     ),
     path(
-        "stream/skip-track/",
-        view=StreamSkipTrackView.as_view(),
-        name="stream-skip-track",
+        "stream/next-track/",
+        view=StreamNextTrackView.as_view(),
+        name="stream-next-track",
     ),
     # Queue
     path("queue/create/", view=QueueCreateView.as_view(), name="queue-create"),
