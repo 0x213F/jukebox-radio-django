@@ -30,12 +30,14 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
             queue.save()
 
             # fix prev pointer
-            queue.prev_queue_ptr.next_queue_ptr = queue.next_queue_ptr
-            queue.prev_queue_ptr.save()
+            if queue.prev_queue_ptr:
+                queue.prev_queue_ptr.next_queue_ptr = queue.next_queue_ptr
+                queue.prev_queue_ptr.save()
 
             # fix next pointer
-            queue.next_queue_ptr.prev_queue_ptr = queue.prev_queue_ptr
-            queue.next_queue_ptr.save()
+            if queue.next_queue_ptr:
+                queue.next_queue_ptr.prev_queue_ptr = queue.prev_queue_ptr
+                queue.next_queue_ptr.save()
 
             if queue.is_abstract:
                 child_queue_qs = Queue.objects.filter(parent_queue_ptr=queue)

@@ -5,7 +5,7 @@ from django.apps import apps
 from django.conf import settings
 from django.db.models import Q
 
-from jukebox_radio.music.models import (
+from jukebox_radio.music.models.provider import (
     GLOBAL_PROVIDER_JUKEBOX_RADIO,
     GLOBAL_PROVIDER_SPOTIFY,
     GLOBAL_PROVIDER_YOUTUBE,
