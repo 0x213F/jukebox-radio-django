@@ -23,12 +23,12 @@ class StreamScanForwardView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.get(user=request.user)
 
         if not stream.is_playing:
-            raise ValueError('Stream has to be playing')
+            raise ValueError("Stream has to be playing")
 
         playing_at = stream.played_at - timedelta(seconds=10)
         now = timezone.now()
         if now >= playing_at + timedelta(milliseconds=stream.now_playing.duration_ms):
-            raise ValueError('Cannot scan past the end of the song')
+            raise ValueError("Cannot scan past the end of the song")
 
         stream.played_at = playing_at
         stream.save()

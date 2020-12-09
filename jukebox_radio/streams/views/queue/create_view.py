@@ -85,5 +85,4 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
                     prev_queue_ptr.save()
                 prev_queue_ptr = track_queue
 
-
         return self.http_response_200({})

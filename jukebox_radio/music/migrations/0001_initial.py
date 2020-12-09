@@ -10,51 +10,131 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Collection',
+            name="Collection",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('format', models.CharField(choices=[('album', 'Album'), ('playlist', 'Playlist')], max_length=32)),
-                ('provider', models.CharField(choices=[('spotify', 'Spotify'), ('youtube', 'YouTube'), ('jukebox_radio', 'Jukebox Radio')], max_length=32)),
-                ('name', models.CharField(max_length=200)),
-                ('artist_name', models.CharField(blank=True, max_length=200, null=True)),
-                ('duration_ms', models.PositiveIntegerField(blank=True, null=True)),
-                ('external_id', models.CharField(max_length=200, null=True)),
-                ('img', models.ImageField(null=True, upload_to=jukebox_radio.music.models.collection.upload_to_collections_jr_imgs)),
-                ('img_url', models.CharField(max_length=200, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "format",
+                    models.CharField(
+                        choices=[("album", "Album"), ("playlist", "Playlist")],
+                        max_length=32,
+                    ),
+                ),
+                (
+                    "provider",
+                    models.CharField(
+                        choices=[
+                            ("spotify", "Spotify"),
+                            ("youtube", "YouTube"),
+                            ("jukebox_radio", "Jukebox Radio"),
+                        ],
+                        max_length=32,
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                (
+                    "artist_name",
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                ("duration_ms", models.PositiveIntegerField(blank=True, null=True)),
+                ("external_id", models.CharField(max_length=200, null=True)),
+                (
+                    "img",
+                    models.ImageField(
+                        null=True,
+                        upload_to=jukebox_radio.music.models.collection.upload_to_collections_jr_imgs,
+                    ),
+                ),
+                ("img_url", models.CharField(max_length=200, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='CollectionListing',
+            name="CollectionListing",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('number', models.PositiveIntegerField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("number", models.PositiveIntegerField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Track',
+            name="Track",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('format', models.CharField(choices=[('track', 'Track'), ('video', 'Video')], max_length=32)),
-                ('provider', models.CharField(choices=[('spotify', 'Spotify'), ('youtube', 'YouTube'), ('jukebox_radio', 'Jukebox Radio')], max_length=32)),
-                ('name', models.CharField(max_length=200)),
-                ('artist_name', models.CharField(max_length=200)),
-                ('album_name', models.CharField(max_length=200)),
-                ('duration_ms', models.PositiveIntegerField(blank=True, null=True)),
-                ('audio', models.FileField(blank=True, null=True, upload_to=jukebox_radio.music.models.track.upload_to_tracks_jr_audios)),
-                ('external_id', models.CharField(blank=True, max_length=200, null=True)),
-                ('img', models.ImageField(blank=True, null=True, upload_to=jukebox_radio.music.models.track.upload_to_tracks_jr_imgs)),
-                ('img_url', models.CharField(blank=True, max_length=200, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "format",
+                    models.CharField(
+                        choices=[("track", "Track"), ("video", "Video")], max_length=32
+                    ),
+                ),
+                (
+                    "provider",
+                    models.CharField(
+                        choices=[
+                            ("spotify", "Spotify"),
+                            ("youtube", "YouTube"),
+                            ("jukebox_radio", "Jukebox Radio"),
+                        ],
+                        max_length=32,
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                ("artist_name", models.CharField(max_length=200)),
+                ("album_name", models.CharField(max_length=200)),
+                ("duration_ms", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "audio",
+                    models.FileField(
+                        blank=True,
+                        null=True,
+                        upload_to=jukebox_radio.music.models.track.upload_to_tracks_jr_audios,
+                    ),
+                ),
+                (
+                    "external_id",
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                (
+                    "img",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to=jukebox_radio.music.models.track.upload_to_tracks_jr_imgs,
+                    ),
+                ),
+                ("img_url", models.CharField(blank=True, max_length=200, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
         ),
     ]

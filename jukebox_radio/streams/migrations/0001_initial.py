@@ -10,54 +10,103 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('music', '0001_initial'),
-        ('pghistory', '0003_auto_20201023_1636'),
+        ("music", "0001_initial"),
+        ("pghistory", "0003_auto_20201023_1636"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Queue',
+            name="Queue",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('is_abstract', models.BooleanField()),
-                ('is_head', models.BooleanField(default=False)),
-                ('played_at', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("is_abstract", models.BooleanField()),
+                ("is_head", models.BooleanField(default=False)),
+                ("played_at", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Stream',
+            name="Stream",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('played_at', models.DateTimeField(blank=True, null=True)),
-                ('paused_at', models.DateTimeField(blank=True, null=True)),
-                ('recording_started_at', models.DateTimeField(blank=True, null=True)),
-                ('recording_ended_at', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("played_at", models.DateTimeField(blank=True, null=True)),
+                ("paused_at", models.DateTimeField(blank=True, null=True)),
+                ("recording_started_at", models.DateTimeField(blank=True, null=True)),
+                ("recording_ended_at", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='StreamEvent',
+            name="StreamEvent",
             fields=[
-                ('pgh_id', models.AutoField(primary_key=True, serialize=False)),
-                ('pgh_created_at', models.DateTimeField(auto_now_add=True)),
-                ('pgh_label', models.TextField(help_text='The event label.')),
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, serialize=False)),
-                ('played_at', models.DateTimeField(blank=True, null=True)),
-                ('paused_at', models.DateTimeField(blank=True, null=True)),
-                ('recording_started_at', models.DateTimeField(blank=True, null=True)),
-                ('recording_ended_at', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('now_playing', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', related_query_name='+', to='music.track')),
-                ('pgh_context', models.ForeignKey(db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pghistory.context')),
-                ('pgh_obj', models.ForeignKey(db_constraint=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='event', to='streams.stream')),
+                ("pgh_id", models.AutoField(primary_key=True, serialize=False)),
+                ("pgh_created_at", models.DateTimeField(auto_now_add=True)),
+                ("pgh_label", models.TextField(help_text="The event label.")),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4, editable=False, serialize=False
+                    ),
+                ),
+                ("played_at", models.DateTimeField(blank=True, null=True)),
+                ("paused_at", models.DateTimeField(blank=True, null=True)),
+                ("recording_started_at", models.DateTimeField(blank=True, null=True)),
+                ("recording_ended_at", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "now_playing",
+                    models.ForeignKey(
+                        blank=True,
+                        db_constraint=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="+",
+                        related_query_name="+",
+                        to="music.track",
+                    ),
+                ),
+                (
+                    "pgh_context",
+                    models.ForeignKey(
+                        db_constraint=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="+",
+                        to="pghistory.context",
+                    ),
+                ),
+                (
+                    "pgh_obj",
+                    models.ForeignKey(
+                        db_constraint=False,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="event",
+                        to="streams.stream",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

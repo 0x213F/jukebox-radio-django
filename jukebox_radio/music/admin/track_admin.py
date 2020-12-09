@@ -18,7 +18,11 @@ class CollectionListingAdminInline(admin.TabularInline):
 
     ordering = ("created_at",)
 
-    fields = ('list_collection_name', 'list_collection_provider', 'list_collection_format',)
+    fields = (
+        "list_collection_name",
+        "list_collection_provider",
+        "list_collection_format",
+    )
     list_display = fields
     readonly_fields = fields
 
@@ -37,22 +41,25 @@ class CollectionListingAdminInline(admin.TabularInline):
         return qs
 
     def list_collection_name(self, obj):
-        url = f'../../../{obj.collection.format}/{obj.collection_id}'
+        url = f"../../../{obj.collection.format}/{obj.collection_id}"
         return mark_safe(f'<a href="{url}">{obj.collection.name}</a>')
-    list_collection_name.short_description = 'COLLECTION'
+
+    list_collection_name.short_description = "COLLECTION"
 
     def list_collection_provider(self, obj):
         return obj.collection.get_provider_display()
-    list_collection_provider.short_description = 'PROVIDER'
+
+    list_collection_provider.short_description = "PROVIDER"
 
     def list_collection_format(self, obj):
         return obj.collection.get_format_display()
-    list_collection_format.short_description = 'FORMAT'
+
+    list_collection_format.short_description = "FORMAT"
 
 
 class ProviderListFilter(admin.SimpleListFilter):
-    title = 'provider'
-    parameter_name = 'provider'
+    title = "provider"
+    parameter_name = "provider"
 
     def lookups(self, request, model_admin):
         Track = apps.get_model("music", "Track")
@@ -66,8 +73,8 @@ class ProviderListFilter(admin.SimpleListFilter):
 
 
 class TrackFormatListFilter(admin.SimpleListFilter):
-    title = 'format'
-    parameter_name = 'format'
+    title = "format"
+    parameter_name = "format"
 
     def lookups(self, request, model_admin):
         Track = apps.get_model("music", "Track")
@@ -81,16 +88,16 @@ class TrackFormatListFilter(admin.SimpleListFilter):
 
 
 class TrackHasDurationFilter(admin.SimpleListFilter):
-    title = 'has duration'
-    parameter_name = 'has_duration'
+    title = "has duration"
+    parameter_name = "has_duration"
 
-    YES = 'yes'
-    NO = 'no'
+    YES = "yes"
+    NO = "no"
 
     def lookups(self, request, model_admin):
         return (
-            (True, 'Yes'),
-            (False, 'No'),
+            (True, "Yes"),
+            (False, "No"),
         )
 
     def queryset(self, request, queryset):
@@ -98,29 +105,33 @@ class TrackHasDurationFilter(admin.SimpleListFilter):
         if not value:
             return queryset
 
-        if value == 'True':
+        if value == "True":
             return queryset.filter(duration_ms__isnull=False)
-        elif value == 'False':
+        elif value == "False":
             return queryset.filter(duration_ms__isnull=True)
         else:
-            raise Exception('Invalid choice')
+            raise Exception("Invalid choice")
 
 
 @admin.register(apps.get_model("music.Track"))
 class TrackAdmin(admin.ModelAdmin):
-    list_filter = (ProviderListFilter, TrackFormatListFilter, TrackHasDurationFilter,)
+    list_filter = (
+        ProviderListFilter,
+        TrackFormatListFilter,
+        TrackHasDurationFilter,
+    )
 
     inlines = (CollectionListingAdminInline,)
 
     list_display = (
-        'list_uuid',
-        'list_name',
-        'list_album_name',
-        'list_artist_name',
-        'list_duration',
-        'list_image',
-        'provider',
-        'format',
+        "list_uuid",
+        "list_name",
+        "list_album_name",
+        "list_artist_name",
+        "list_duration",
+        "list_image",
+        "provider",
+        "format",
     )
 
     search_fields = (
@@ -133,26 +144,45 @@ class TrackAdmin(admin.ModelAdmin):
     )
 
     fieldsets = (
-        ("CONTENT", {
-            'fields': (
-                'list_image_large', 'list_audio',
-            ),
-        }),
-        ("INFORMATION", {
-            'fields': (
-                'name', 'album_name', 'artist_name',
-            ),
-        }),
-        ("ABOUT", {
-            'fields': (
-                'list_uuid', 'provider', 'format',
-            ),
-        }),
-        ("STATISTICS", {
-            'fields': (
-                'duration_ms', 'created_at', 'updated_at',
-            ),
-        }),
+        (
+            "CONTENT",
+            {
+                "fields": (
+                    "list_image_large",
+                    "list_audio",
+                ),
+            },
+        ),
+        (
+            "INFORMATION",
+            {
+                "fields": (
+                    "name",
+                    "album_name",
+                    "artist_name",
+                ),
+            },
+        ),
+        (
+            "ABOUT",
+            {
+                "fields": (
+                    "list_uuid",
+                    "provider",
+                    "format",
+                ),
+            },
+        ),
+        (
+            "STATISTICS",
+            {
+                "fields": (
+                    "duration_ms",
+                    "created_at",
+                    "updated_at",
+                ),
+            },
+        ),
     )
 
     def has_add_permission(self, request, obj=None):
@@ -169,63 +199,70 @@ class TrackAdmin(admin.ModelAdmin):
         return qs
 
     def list_uuid(self, obj):
-        return mark_safe(f'<tt>{obj.uuid}</tt>')
+        return mark_safe(f"<tt>{obj.uuid}</tt>")
 
     def list_name(self, obj):
         name = obj.name
         if len(name) < 32:
             return name
 
-        return name[:32] + '...'
-    list_name.short_description = 'NAME'
+        return name[:32] + "..."
+
+    list_name.short_description = "NAME"
 
     def list_album_name(self, obj):
         album_name = obj.album_name
         if len(album_name) < 32:
             return album_name
 
-        return album_name[:32] + '...'
-    list_album_name.short_description = 'ALBUM NAME'
+        return album_name[:32] + "..."
+
+    list_album_name.short_description = "ALBUM NAME"
 
     def list_artist_name(self, obj):
         artist_name = obj.artist_name
         if len(artist_name) < 64:
             return artist_name
 
-        return artist_name[:64] + '...'
-    list_artist_name.short_description = 'ARTIST NAME'
+        return artist_name[:64] + "..."
+
+    list_artist_name.short_description = "ARTIST NAME"
 
     def list_duration(self, obj):
         if not obj.duration_ms:
-            return ''
+            return ""
 
         vals = []
 
         hours = math.floor(obj.duration_ms / (1000 * 60 * 60))
         if hours:
-            vals.append(f'{hours} hours')
+            vals.append(f"{hours} hours")
 
         minutes = math.floor(obj.duration_ms / (1000 * 60))
         if minutes:
-            vals.append(f'{minutes} minutes')
+            vals.append(f"{minutes} minutes")
 
         seconds = obj.duration_ms % (1000 * 60) / 1000
         if seconds:
-            vals.append(f'{seconds} seconds')
+            vals.append(f"{seconds} seconds")
 
-        return ' '.join(vals)
-    list_duration.short_description = 'DURATION'
+        return " ".join(vals)
+
+    list_duration.short_description = "DURATION"
 
     def list_image(self, obj):
         url = obj.img_url or obj.img.url
         return mark_safe(f'<img src="{url}" style="height: 15px;" />')
-    list_image.short_description = 'IMAGE'
+
+    list_image.short_description = "IMAGE"
 
     def list_image_large(self, obj):
         url = obj.img_url or obj.img.url
         return mark_safe(f'<img src="{url}" style="height: 256px;" />')
-    list_image_large.short_description = 'IMAGE'
+
+    list_image_large.short_description = "IMAGE"
 
     def list_audio(self, obj):
         return obj.external_id or obj.audio
-    list_audio.short_description = 'AUDIO ID'
+
+    list_audio.short_description = "AUDIO ID"

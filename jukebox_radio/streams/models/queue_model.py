@@ -41,7 +41,7 @@ class QueueQuerySet(models.QuerySet):
                     break
 
             if initial_len == len(queue_list):
-                raise Exception('Infinite loop detected!')
+                raise Exception("Infinite loop detected!")
 
         return sorted_queue_list
 

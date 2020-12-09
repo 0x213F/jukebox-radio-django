@@ -9,60 +9,103 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='TextComment',
+            name="TextComment",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('text', models.TextField()),
-                ('timestamp_ms', models.IntegerField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("text", models.TextField()),
+                ("timestamp_ms", models.IntegerField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='TextCommentEvent',
+            name="TextCommentEvent",
             fields=[
-                ('pgh_id', models.AutoField(primary_key=True, serialize=False)),
-                ('pgh_created_at', models.DateTimeField(auto_now_add=True)),
-                ('pgh_label', models.TextField(help_text='The event label.')),
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, serialize=False)),
-                ('text', models.TextField()),
-                ('timestamp_ms', models.IntegerField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
+                ("pgh_id", models.AutoField(primary_key=True, serialize=False)),
+                ("pgh_created_at", models.DateTimeField(auto_now_add=True)),
+                ("pgh_label", models.TextField(help_text="The event label.")),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4, editable=False, serialize=False
+                    ),
+                ),
+                ("text", models.TextField()),
+                ("timestamp_ms", models.IntegerField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='TextCommentModification',
+            name="TextCommentModification",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('start_ptr', models.PositiveSmallIntegerField()),
-                ('end_ptr', models.PositiveSmallIntegerField()),
-                ('style', models.CharField(choices=[('highlight', 'Highlight'), ('strikethrough', 'Strikethrough'), ('underline', 'Underline')], max_length=32)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("start_ptr", models.PositiveSmallIntegerField()),
+                ("end_ptr", models.PositiveSmallIntegerField()),
+                (
+                    "style",
+                    models.CharField(
+                        choices=[
+                            ("highlight", "Highlight"),
+                            ("strikethrough", "Strikethrough"),
+                            ("underline", "Underline"),
+                        ],
+                        max_length=32,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='VoiceRecording',
+            name="VoiceRecording",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('audio', models.FileField(upload_to=jukebox_radio.comments.models.upload_to_comments_voice_recordings)),
-                ('transcript_data', models.JSONField()),
-                ('transcript_final', models.TextField(null=True)),
-                ('duration_ms', models.IntegerField()),
-                ('timestamp_ms', models.IntegerField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "audio",
+                    models.FileField(
+                        upload_to=jukebox_radio.comments.models.upload_to_comments_voice_recordings
+                    ),
+                ),
+                ("transcript_data", models.JSONField()),
+                ("transcript_final", models.TextField(null=True)),
+                ("duration_ms", models.IntegerField()),
+                ("timestamp_ms", models.IntegerField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
             ],
         ),
     ]

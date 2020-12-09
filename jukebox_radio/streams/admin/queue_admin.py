@@ -5,13 +5,13 @@ from django.utils.html import mark_safe
 
 
 class QueueWasPlayedFilter(admin.SimpleListFilter):
-    title = 'was played'
-    parameter_name = 'was_played'
+    title = "was played"
+    parameter_name = "was_played"
 
     def lookups(self, request, model_admin):
         return (
-            (True, 'Yes'),
-            (False, 'No'),
+            (True, "Yes"),
+            (False, "No"),
         )
 
     def queryset(self, request, queryset):
@@ -19,22 +19,22 @@ class QueueWasPlayedFilter(admin.SimpleListFilter):
         if not value:
             return queryset
 
-        if value == 'True':
+        if value == "True":
             return queryset.filter(played_at__isnull=False)
-        elif value == 'False':
+        elif value == "False":
             return queryset.filter(played_at__isnull=True)
         else:
-            raise Exception('Invalid choice')
+            raise Exception("Invalid choice")
 
 
 class QueueIsArchivedFilter(admin.SimpleListFilter):
-    title = 'is archived'
-    parameter_name = 'is_archived'
+    title = "is archived"
+    parameter_name = "is_archived"
 
     def lookups(self, request, model_admin):
         return (
-            (True, 'Yes'),
-            (False, 'No'),
+            (True, "Yes"),
+            (False, "No"),
         )
 
     def queryset(self, request, queryset):
@@ -42,26 +42,29 @@ class QueueIsArchivedFilter(admin.SimpleListFilter):
         if not value:
             return queryset
 
-        if value == 'True':
+        if value == "True":
             return queryset.filter(deleted_at__isnull=False)
-        elif value == 'False':
+        elif value == "False":
             return queryset.filter(deleted_at__isnull=True)
         else:
-            raise Exception('Invalid choice')
+            raise Exception("Invalid choice")
 
 
 @admin.register(apps.get_model("streams.Queue"))
 class QueueAdmin(admin.ModelAdmin):
-    list_filter = (QueueWasPlayedFilter, QueueIsArchivedFilter,)
+    list_filter = (
+        QueueWasPlayedFilter,
+        QueueIsArchivedFilter,
+    )
 
     list_display = (
-        'list_uuid',
-        'list_prev',
-        'list_next',
-        'list_parent',
-        'list_stream',
-        'user',
-        'list_content',
+        "list_uuid",
+        "list_prev",
+        "list_next",
+        "list_parent",
+        "list_stream",
+        "user",
+        "list_content",
     )
 
     search_fields = (
@@ -81,21 +84,38 @@ class QueueAdmin(admin.ModelAdmin):
     )
 
     fieldsets = (
-        ("PLAYBACK", {
-            'fields': (
-                'track', 'collection', 'played_at',
-            ),
-        }),
-        ("CONTEXT", {
-            'fields': (
-                'prev_queue_ptr', 'next_queue_ptr', 'parent_queue_ptr',
-            ),
-        }),
-        ("META", {
-            'fields': (
-                'is_abstract', 'is_head', 'created_at', 'updated_at', 'deleted_at',
-            ),
-        }),
+        (
+            "PLAYBACK",
+            {
+                "fields": (
+                    "track",
+                    "collection",
+                    "played_at",
+                ),
+            },
+        ),
+        (
+            "CONTEXT",
+            {
+                "fields": (
+                    "prev_queue_ptr",
+                    "next_queue_ptr",
+                    "parent_queue_ptr",
+                ),
+            },
+        ),
+        (
+            "META",
+            {
+                "fields": (
+                    "is_abstract",
+                    "is_head",
+                    "created_at",
+                    "updated_at",
+                    "deleted_at",
+                ),
+            },
+        ),
     )
 
     def has_add_permission(self, request, obj=None):
@@ -112,25 +132,31 @@ class QueueAdmin(admin.ModelAdmin):
         return qs
 
     def list_uuid(self, obj):
-        return mark_safe(f'<tt>{obj.uuid}</tt>')
-    list_uuid.short_description = 'UUID'
+        return mark_safe(f"<tt>{obj.uuid}</tt>")
+
+    list_uuid.short_description = "UUID"
 
     def list_prev(self, obj):
-        return mark_safe(f'<tt>{str(obj.uuid)[:8]}</tt>')
-    list_uuid.short_description = 'PREVIOUS'
+        return mark_safe(f"<tt>{str(obj.uuid)[:8]}</tt>")
+
+    list_uuid.short_description = "PREVIOUS"
 
     def list_next(self, obj):
-        return mark_safe(f'<tt>{str(obj.uuid)[:8]}</tt>')
-    list_uuid.short_description = 'NEXT'
+        return mark_safe(f"<tt>{str(obj.uuid)[:8]}</tt>")
+
+    list_uuid.short_description = "NEXT"
 
     def list_parent(self, obj):
-        return mark_safe(f'<tt>{str(obj.uuid)[:8]}</tt>')
-    list_uuid.short_description = 'PARENT'
+        return mark_safe(f"<tt>{str(obj.uuid)[:8]}</tt>")
+
+    list_uuid.short_description = "PARENT"
 
     def list_stream(self, obj):
-        return mark_safe(f'<tt>{str(obj.stream_id)[:8]}</tt>')
-    list_stream.short_description = 'STREAM'
+        return mark_safe(f"<tt>{str(obj.stream_id)[:8]}</tt>")
+
+    list_stream.short_description = "STREAM"
 
     def list_content(self, obj):
         return obj.track or obj.collection
-    list_content.short_description = 'CONTENT'
+
+    list_content.short_description = "CONTENT"

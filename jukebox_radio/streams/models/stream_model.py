@@ -41,7 +41,9 @@ class Stream(models.Model):
             return False
 
         now = timezone.now()
-        within_bounds = now < self.played_at + timedelta(milliseconds=self.now_playing.duration_ms)
+        within_bounds = now < self.played_at + timedelta(
+            milliseconds=self.now_playing.duration_ms
+        )
 
         return within_bounds
 
@@ -56,6 +58,8 @@ class Stream(models.Model):
             return False
 
         now = timezone.now()
-        within_bounds = self.paused_at - self.played_at < timedelta(milliseconds=self.now_playing.duration_ms)
+        within_bounds = self.paused_at - self.played_at < timedelta(
+            milliseconds=self.now_playing.duration_ms
+        )
 
         return within_bounds
