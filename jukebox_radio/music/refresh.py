@@ -65,22 +65,22 @@ def _refresh_track_youtube_data(track):
 
     duration_ms = 0
     mode = None
-    val = ''
+    val = ""
     for char in duration_raw:
-        if char in ['P', 'T']:
+        if char in ["P", "T"]:
             continue
 
-        if char in ['H', 'M', 'S']:
-            if char == 'H':
+        if char in ["H", "M", "S"]:
+            if char == "H":
                 duration_ms += int(val) * 60 * 60 * 1000
-            elif char == 'M':
+            elif char == "M":
                 duration_ms += int(val) * 60 * 1000
-            elif char == 'S':
+            elif char == "S":
                 duration_ms += int(val) * 60 * 1000
             else:
-                raise ValueError(f'Unexpected playtime character: {mode}')
+                raise ValueError(f"Unexpected playtime character: {mode}")
 
-            val = ''
+            val = ""
             continue
 
         val += char
@@ -114,7 +114,7 @@ def _refresh_collection_spotify_album_data(collection, user):
                 "provider": Track.PROVIDER_SPOTIFY,
                 "external_id": item["uri"],
                 "name": item["name"],
-                "artist_name": ', '.join(artist_names),
+                "artist_name": ", ".join(artist_names),
                 "album_name": collection.name,
                 "duration_ms": item["duration_ms"],
                 "img_url": collection.img_url,
@@ -151,7 +151,9 @@ def _refresh_collection_spotify_album_data(collection, user):
 
     # wipe old CollectionListing objects
     # TODO this is not ok
-    cl_by_tracks_qs = CollectionListing.objects.filter(track__external_id__in=track_eids)
+    cl_by_tracks_qs = CollectionListing.objects.filter(
+        track__external_id__in=track_eids
+    )
     cl_by_collection_qs = CollectionListing.objects.filter(collection=collection)
     now = timezone.now()
     cl_by_tracks_qs.update(deleted_at=now)
@@ -204,7 +206,7 @@ def _refresh_collection_spotify_playlist_data(collection, user):
                 "provider": Track.PROVIDER_SPOTIFY,
                 "external_id": item["track"]["uri"],
                 "name": item["track"]["name"],
-                "artist_name": ', '.join(artist_names),
+                "artist_name": ", ".join(artist_names),
                 "album_name": collection.name,
                 "duration_ms": item["track"]["duration_ms"],
                 "img_url": item["track"]["album"]["images"][0]["url"],
@@ -235,7 +237,9 @@ def _refresh_collection_spotify_playlist_data(collection, user):
 
     # wipe old CollectionListing objects to force refresh playlist
     # TODO this is not ok
-    cl_by_tracks_qs = CollectionListing.objects.filter(track__external_id__in=track_eids)
+    cl_by_tracks_qs = CollectionListing.objects.filter(
+        track__external_id__in=track_eids
+    )
     cl_by_collection_qs = CollectionListing.objects.filter(collection=collection)
     now = timezone.now()
     cl_by_tracks_qs.update(deleted_at=now)

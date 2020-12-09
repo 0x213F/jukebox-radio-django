@@ -19,7 +19,7 @@ class PlayerView(BaseView, LoginRequiredMixin):
         Queue = apps.get_model("streams", "Queue")
 
         if not request.user.is_authenticated:
-            return self.redirect_response('/')
+            return self.redirect_response("/")
 
         stream, _ = Stream.objects.get_or_create(user=request.user)
 
@@ -30,18 +30,39 @@ class PlayerView(BaseView, LoginRequiredMixin):
         )
 
         if not stream.is_playing and not stream.is_paused:
-            queue_history = Queue.objects.filter(stream=stream, played_at__isnull=False, deleted_at__isnull=True, is_abstract=False)
+            queue_history = Queue.objects.filter(
+                stream=stream,
+                played_at__isnull=False,
+                deleted_at__isnull=True,
+                is_abstract=False,
+            )
         else:
-            queue_history = Queue.objects.filter(stream=stream, played_at__isnull=False, is_head=False, deleted_at__isnull=True, is_abstract=False)
+            queue_history = Queue.objects.filter(
+                stream=stream,
+                played_at__isnull=False,
+                is_head=False,
+                deleted_at__isnull=True,
+                is_abstract=False,
+            )
 
         now = timezone.now()
-        within_bounds = stream.played_at and now < stream.played_at + timedelta(milliseconds=stream.now_playing.duration_ms)
+        within_bounds = stream.played_at and now < stream.played_at + timedelta(
+            milliseconds=stream.now_playing.duration_ms
+        )
 
         try:
             if not stream.paused_at:
-                progress = (timezone.now() - stream.played_at) / timedelta(milliseconds=stream.now_playing.duration_ms) * 100
+                progress = (
+                    (timezone.now() - stream.played_at)
+                    / timedelta(milliseconds=stream.now_playing.duration_ms)
+                    * 100
+                )
             else:
-                progress = (stream.paused_at - stream.played_at) / timedelta(milliseconds=stream.now_playing.duration_ms) * 100
+                progress = (
+                    (stream.paused_at - stream.played_at)
+                    / timedelta(milliseconds=stream.now_playing.duration_ms)
+                    * 100
+                )
         except Exception:
             progress = 0
 

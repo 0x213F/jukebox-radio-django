@@ -10,20 +10,20 @@ import pghistory
 class StreamAdmin(admin.ModelAdmin):
 
     list_display = (
-        'list_uuid',
-        'now_playing',
-        'list_is_playing',
-        'list_is_paused',
-        'user',
+        "list_uuid",
+        "now_playing",
+        "list_is_playing",
+        "list_is_paused",
+        "user",
     )
 
     search_fields = (
-        'uuid',
-        'user__email',
-        'now_playing__uuid',
-        'now_playing__name',
-        'now_playing__artist_name',
-        'now_playing__album_name',
+        "uuid",
+        "user__email",
+        "now_playing__uuid",
+        "now_playing__name",
+        "now_playing__artist_name",
+        "now_playing__album_name",
     )
 
     def has_add_permission(self, request, obj=None):
@@ -40,17 +40,20 @@ class StreamAdmin(admin.ModelAdmin):
         return qs
 
     def list_uuid(self, obj):
-        return mark_safe(f'<tt>{obj.uuid}</tt>')
-    list_uuid.short_description = 'UUID'
+        return mark_safe(f"<tt>{obj.uuid}</tt>")
+
+    list_uuid.short_description = "UUID"
 
     def list_is_playing(self, obj):
         return obj.is_playing
-    list_is_playing.short_description = 'IS PLAYING'
+
+    list_is_playing.short_description = "IS PLAYING"
     list_is_playing.boolean = True
 
     def list_is_paused(self, obj):
         return obj.is_paused
-    list_is_paused.short_description = 'IS PAUSED'
+
+    list_is_paused.short_description = "IS PAUSED"
     list_is_paused.boolean = True
 
     # NOTE: https://github.com/jyveapp/django-pghistory

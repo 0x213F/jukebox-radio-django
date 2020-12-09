@@ -24,14 +24,11 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.get(user=request.user)
 
         if not stream.now_playing_id:
-            raise ValueError('Nothing is playing!')
+            raise ValueError("Nothing is playing!")
 
-        queue = (
-            Queue
-            .objects
-            .select_related('prev_queue_ptr', 'prev_queue_ptr__track')
-            .get(stream=stream, is_head=True)
-        )
+        queue = Queue.objects.select_related(
+            "prev_queue_ptr", "prev_queue_ptr__track"
+        ).get(stream=stream, is_head=True)
 
         playing_at = timezone.now() + timedelta(milliseconds=125)
 

@@ -64,15 +64,13 @@ class Collection(models.Model):
         return self.name
 
     def filter_tracks(self):
-        CollectionListing = apps.get_model('music', 'CollectionListing')
-        Track = apps.get_model('music', 'Track')
+        CollectionListing = apps.get_model("music", "CollectionListing")
+        Track = apps.get_model("music", "Track")
         track_uuids = (
-            CollectionListing
-            .objects
-            .select_related('track')
+            CollectionListing.objects.select_related("track")
             .filter(collection=self, deleted_at__isnull=True)
-            .order_by('number')
-            .values_list('track', flat=True)
+            .order_by("number")
+            .values_list("track", flat=True)
         )
         tracks = list(Track.objects.filter(uuid__in=track_uuids))
 
@@ -85,7 +83,6 @@ class Collection(models.Model):
             sorted_tracks.append(track_map[track_uuid])
 
         return sorted_tracks
-
 
     @property
     def spotify_id(self):
@@ -142,4 +139,4 @@ class CollectionListing(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f'CollectionListing ({self.uuid})'
+        return f"CollectionListing ({self.uuid})"

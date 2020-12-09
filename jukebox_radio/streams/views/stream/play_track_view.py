@@ -24,9 +24,9 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.get(user=request.user)
 
         if stream.is_playing:
-            raise ValueError('Cannot play a stream which is already playing')
+            raise ValueError("Cannot play a stream which is already playing")
         if not stream.is_paused:
-            raise ValueError('Cannot play a stream which is not paused')
+            raise ValueError("Cannot play a stream which is not paused")
 
         playing_at = timezone.now() + timedelta(milliseconds=125)
         paused_duration = playing_at - stream.paused_at

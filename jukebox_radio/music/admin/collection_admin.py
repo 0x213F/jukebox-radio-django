@@ -19,7 +19,12 @@ class CollectionListingAdminInline(admin.TabularInline):
 
     ordering = ("number",)
 
-    fields = ('list_track_name', 'list_album_name', 'list_artist_name', 'list_track_number',)
+    fields = (
+        "list_track_name",
+        "list_album_name",
+        "list_artist_name",
+        "list_track_number",
+    )
     list_display = fields
     readonly_fields = fields
 
@@ -38,39 +43,43 @@ class CollectionListingAdminInline(admin.TabularInline):
         return qs
 
     def list_track_name(self, obj):
-        url = f'../../../track/{obj.track_id}'
+        url = f"../../../track/{obj.track_id}"
 
         name = obj.track.name
         if len(name) > 64:
-            name = name[:64] + '...'
+            name = name[:64] + "..."
 
         return mark_safe(f'<a href="{url}">{name}</a>')
-    list_track_name.short_description = 'TRACK'
+
+    list_track_name.short_description = "TRACK"
 
     def list_album_name(self, obj):
         name = obj.track.album_name
         if len(name) > 64:
-            name = name[:64] + '...'
+            name = name[:64] + "..."
 
         return name
-    list_album_name.short_description = 'ALBUM NAME'
+
+    list_album_name.short_description = "ALBUM NAME"
 
     def list_artist_name(self, obj):
         name = obj.track.artist_name
         if len(name) > 64:
-            name = name[:64] + '...'
+            name = name[:64] + "..."
 
         return name
-    list_artist_name.short_description = 'ARTIST NAME'
+
+    list_artist_name.short_description = "ARTIST NAME"
 
     def list_track_number(self, obj):
         return obj.number
-    list_track_number.short_description = 'TRACK NUMBER'
+
+    list_track_number.short_description = "TRACK NUMBER"
 
 
 class ProviderListFilter(admin.SimpleListFilter):
-    title = 'provider'
-    parameter_name = 'provider'
+    title = "provider"
+    parameter_name = "provider"
 
     def lookups(self, request, model_admin):
         Collection = apps.get_model("music", "Collection")
@@ -84,8 +93,8 @@ class ProviderListFilter(admin.SimpleListFilter):
 
 
 class CollectionFormatListFilter(admin.SimpleListFilter):
-    title = 'format'
-    parameter_name = 'format'
+    title = "format"
+    parameter_name = "format"
 
     def lookups(self, request, model_admin):
         Collection = apps.get_model("music", "Collection")
@@ -99,16 +108,16 @@ class CollectionFormatListFilter(admin.SimpleListFilter):
 
 
 class CollectionHasRelatedCollectionListingsFilter(admin.SimpleListFilter):
-    title = 'has tracks'
-    parameter_name = 'has_related_collection_listings'
+    title = "has tracks"
+    parameter_name = "has_related_collection_listings"
 
-    YES = 'yes'
-    NO = 'no'
+    YES = "yes"
+    NO = "no"
 
     def lookups(self, request, model_admin):
         return (
-            (True, 'Yes'),
-            (False, 'No'),
+            (True, "Yes"),
+            (False, "No"),
         )
 
     def queryset(self, request, queryset):
@@ -118,7 +127,7 @@ class CollectionHasRelatedCollectionListingsFilter(admin.SimpleListFilter):
         if not value:
             return queryset
 
-        if value == 'True':
+        if value == "True":
             return queryset.filter(
                 Exists(
                     CollectionListing.objects.filter(
@@ -126,7 +135,7 @@ class CollectionHasRelatedCollectionListingsFilter(admin.SimpleListFilter):
                     )
                 )
             )
-        elif value == 'False':
+        elif value == "False":
             return queryset.filter(
                 ~Exists(
                     CollectionListing.objects.filter(
@@ -135,46 +144,64 @@ class CollectionHasRelatedCollectionListingsFilter(admin.SimpleListFilter):
                 )
             )
         else:
-            raise Exception('Invalid choice')
+            raise Exception("Invalid choice")
 
 
 @admin.register(apps.get_model("music.Collection"))
 class CollectionAdmin(admin.ModelAdmin):
 
-    list_filter = (ProviderListFilter, CollectionFormatListFilter, CollectionHasRelatedCollectionListingsFilter,)
+    list_filter = (
+        ProviderListFilter,
+        CollectionFormatListFilter,
+        CollectionHasRelatedCollectionListingsFilter,
+    )
 
     inlines = (CollectionListingAdminInline,)
 
     list_display = (
-        'list_uuid',
-        'list_name',
-        'list_artist_name',
-        'list_image',
-        'provider',
-        'format',
+        "list_uuid",
+        "list_name",
+        "list_artist_name",
+        "list_image",
+        "provider",
+        "format",
     )
 
     fieldsets = (
-        ("CONTENT", {
-            'fields': (
-                'list_image_large',
-            ),
-        }),
-        ("INFORMATION", {
-            'fields': (
-                'name', 'artist_name',
-            ),
-        }),
-        ("ABOUT", {
-            'fields': (
-                'list_uuid', 'provider', 'format',
-            ),
-        }),
-        ("STATISTICS", {
-            'fields': (
-                'created_at', 'updated_at',
-            ),
-        }),
+        (
+            "CONTENT",
+            {
+                "fields": ("list_image_large",),
+            },
+        ),
+        (
+            "INFORMATION",
+            {
+                "fields": (
+                    "name",
+                    "artist_name",
+                ),
+            },
+        ),
+        (
+            "ABOUT",
+            {
+                "fields": (
+                    "list_uuid",
+                    "provider",
+                    "format",
+                ),
+            },
+        ),
+        (
+            "STATISTICS",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                ),
+            },
+        ),
     )
 
     def has_add_permission(self, request, obj=None):
@@ -187,30 +214,34 @@ class CollectionAdmin(admin.ModelAdmin):
         return False
 
     def list_uuid(self, obj):
-        return mark_safe(f'<tt>{obj.uuid}</tt>')
+        return mark_safe(f"<tt>{obj.uuid}</tt>")
 
     def list_name(self, obj):
         name = obj.name
         if len(name) < 32:
             return name
 
-        return name[:32] + '...'
-    list_name.short_description = 'NAME'
+        return name[:32] + "..."
+
+    list_name.short_description = "NAME"
 
     def list_artist_name(self, obj):
         artist_name = obj.artist_name
         if len(artist_name) < 64:
             return artist_name
 
-        return artist_name[:64] + '...'
-    list_artist_name.short_description = 'ARTIST NAME'
+        return artist_name[:64] + "..."
+
+    list_artist_name.short_description = "ARTIST NAME"
 
     def list_image(self, obj):
         url = obj.img_url or obj.img.url
         return mark_safe(f'<img src="{url}" style="height: 15px;" />')
-    list_image.short_description = 'IMAGE'
+
+    list_image.short_description = "IMAGE"
 
     def list_image_large(self, obj):
         url = obj.img_url or obj.img.url
         return mark_safe(f'<img src="{url}" style="height: 256px;" />')
-    list_image_large.short_description = 'IMAGE'
+
+    list_image_large.short_description = "IMAGE"

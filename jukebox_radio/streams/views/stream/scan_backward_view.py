@@ -23,7 +23,7 @@ class StreamScanBackwardView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.get(user=request.user)
 
         if not stream.is_playing:
-            raise ValueError('Stream has to be playing')
+            raise ValueError("Stream has to be playing")
 
         playing_at = stream.played_at + timedelta(seconds=10)
         lower_bound = timezone.now() + timedelta(milliseconds=125)

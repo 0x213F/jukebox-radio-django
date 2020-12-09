@@ -9,14 +9,16 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('music', '0001_initial'),
-        ('comments', '0001_initial'),
+        ("music", "0001_initial"),
+        ("comments", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='voicerecording',
-            name='track',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='music.track'),
+            model_name="voicerecording",
+            name="track",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="music.track"
+            ),
         ),
     ]
