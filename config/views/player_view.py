@@ -26,10 +26,12 @@ class PlayerView(BaseView, LoginRequiredMixin):
             Collection.FORMAT_CHOICES
         )
 
-        if stream.is_playing or stream.is_paused:
-            queue_history = Queue.objects.filter(stream=stream, played_at__isnull=False, is_head=False, deleted_at__isnull=True, parent_queue_ptr__isnull=True)
+        print(stream.is_playing, stream.is_paused)
+
+        if not stream.is_playing and not stream.is_paused:
+            queue_history = Queue.objects.filter(stream=stream, played_at__isnull=False, deleted_at__isnull=True, is_abstract=False)
         else:
-            queue_history = Queue.objects.filter(stream=stream, played_at__isnull=False, deleted_at__isnull=True, parent_queue_ptr__isnull=True)
+            queue_history = Queue.objects.filter(stream=stream, played_at__isnull=False, is_head=False, deleted_at__isnull=True, is_abstract=False)
 
         now = timezone.now()
         within_bounds = stream.played_at and now < stream.played_at + timedelta(milliseconds=stream.now_playing.duration_ms)
@@ -43,7 +45,7 @@ class PlayerView(BaseView, LoginRequiredMixin):
                 "PROVIDER_CHOICES": GLOBAL_PROVIDER_CHOICES,
                 "stream_is_playing": stream.is_playing,
                 "stream_is_paused": stream.is_paused,
-                "stream_queue_exists": queue_history.exists(),
+                "stream_queue_history_exists": queue_history.exists(),
                 "stream_queue_is_empty": not bool(queue_list),
                 "is_over": not within_bounds,
             },

@@ -70,7 +70,7 @@ class Collection(models.Model):
             CollectionListing
             .objects
             .select_related('track')
-            .filter(collection=self)
+            .filter(collection=self, deleted_at__isnull=True)
             .order_by('number')
             .values_list('track', flat=True)
         )

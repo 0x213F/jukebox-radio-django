@@ -67,10 +67,9 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
 
         if collection:
             next_queue_ptr = None
-            last_queue = None
             tracks = collection.filter_tracks()
             for _track in tracks:
-                temp_queue = Queue.objects.create(
+                track_queue = Queue.objects.create(
                     user=request.user,
                     track=_track,
                     collection=None,
@@ -81,12 +80,10 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
                     parent_queue_ptr=queue,
                 )
 
-                prev_queue_ptr = queue
-                if last_queue:
-                    last_queue.next_queue_ptr = queue
-                    last_queue.save()
-
-                last_queue = temp_queue
+                if prev_queue_ptr:
+                    prev_queue_ptr.next_queue_ptr = track_queue
+                    prev_queue_ptr.save()
+                prev_queue_ptr = track_queue
 
 
         return self.http_response_200({})

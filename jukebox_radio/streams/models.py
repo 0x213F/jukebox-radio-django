@@ -69,7 +69,7 @@ class QueueQuerySet(models.QuerySet):
             stream=stream,
             played_at__isnull=True,
             deleted_at__isnull=True,
-            parent_queue_ptr__isnull=True,
+            is_abstract=False,
         )
 
         queue_list = list(queue_qs)
@@ -83,6 +83,8 @@ class QueueQuerySet(models.QuerySet):
         del queue_list[0]
 
         while queue_list:
+            initial_len = len(queue_list)
+
             for idx in range(len(queue_list)):
                 queue = queue_list[idx]
 
@@ -95,6 +97,9 @@ class QueueQuerySet(models.QuerySet):
                     sorted_queue_list.insert(0, queue)
                     del queue_list[idx]
                     break
+
+            if initial_len == len(queue_list):
+                raise Exception('Infinite loop detected!')
 
         return sorted_queue_list
 
