@@ -8,8 +8,6 @@ from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 from django.utils.html import mark_safe
 
-from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_CHOICES
-
 User = get_user_model()
 
 
@@ -41,7 +39,7 @@ class CollectionListingAdminInline(admin.TabularInline):
     def list_collection_name(self, obj):
         url = f'../../../{obj.collection.format}/{obj.collection_id}'
         return mark_safe(f'<a href="{url}">{obj.collection.name}</a>')
-    list_collection_name.short_description = 'COLLECTION NAME'
+    list_collection_name.short_description = 'COLLECTION'
 
     def list_collection_provider(self, obj):
         return obj.collection.get_provider_display()
@@ -57,7 +55,8 @@ class ProviderListFilter(admin.SimpleListFilter):
     parameter_name = 'provider'
 
     def lookups(self, request, model_admin):
-        return GLOBAL_PROVIDER_CHOICES
+        Track = apps.get_model("music", "Track")
+        return Track.PROVIDER_CHOICES
 
     def queryset(self, request, queryset):
         value = self.value()
@@ -71,7 +70,8 @@ class TrackFormatListFilter(admin.SimpleListFilter):
     parameter_name = 'format'
 
     def lookups(self, request, model_admin):
-        return GLOBAL_PROVIDER_CHOICES
+        Track = apps.get_model("music", "Track")
+        return Track.FORMAT_CHOICES
 
     def queryset(self, request, queryset):
         value = self.value()
@@ -224,6 +224,8 @@ class TrackAdmin(admin.ModelAdmin):
     def list_image_large(self, obj):
         url = obj.img_url or obj.img.url
         return mark_safe(f'<img src="{url}" style="height: 256px;" />')
+    list_image_large.short_description = 'IMAGE'
 
     def list_audio(self, obj):
         return obj.external_id or obj.audio
+    list_audio.short_description = 'AUDIO ID'
