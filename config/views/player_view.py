@@ -29,8 +29,6 @@ class PlayerView(BaseView, LoginRequiredMixin):
             Collection.FORMAT_CHOICES
         )
 
-        print(stream.is_playing, stream.is_paused)
-
         if not stream.is_playing and not stream.is_paused:
             queue_history = Queue.objects.filter(stream=stream, played_at__isnull=False, deleted_at__isnull=True, is_abstract=False)
         else:
@@ -47,6 +45,8 @@ class PlayerView(BaseView, LoginRequiredMixin):
         except Exception:
             progress = 0
 
+        print(stream.is_playing, stream.is_paused, not within_bounds)
+
         return self.template_response(
             request,
             "pages/player.html",
@@ -54,7 +54,6 @@ class PlayerView(BaseView, LoginRequiredMixin):
                 "queues": queue_list,
                 "FORMAT_CHOICES": format_choices,
                 "PROVIDER_CHOICES": GLOBAL_PROVIDER_CHOICES,
-                "stream_now_playing": stream.now_playing,
                 "stream_now_playing": stream.now_playing,
                 "stream_is_playing": stream.is_playing,
                 "stream_is_paused": stream.is_paused,

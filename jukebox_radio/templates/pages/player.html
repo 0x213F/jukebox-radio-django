@@ -44,7 +44,6 @@
             <i>Nothing is playing...</i>
           {% endif %}
           </h5>
-          <p class="card-text">{% if is_over %}(the track is over){% endif %}</p>
 
           <br>
           <div class="card-title progress">
@@ -63,8 +62,8 @@
           </div>
           <br>
           <div class="card-title btn-group" role="group">
-            <button class="btn btn-outline-secondary {% if stream_is_playing or is_over %}disabled{% endif %}" id="playback-backward" type="submit" {% if stream_is_playing or is_over %}disabled{% endif %}>Scan Backward</button>
-            <button class="btn btn-outline-secondary {% if stream_is_playing or is_over %}disabled{% endif %}" id="playback-forward" type="submit" {% if stream_is_playing or is_over %}disabled{% endif %}>Scan Forward</button>
+            <button class="btn btn-outline-secondary {% if not stream_is_playing or is_over %}disabled{% endif %}" id="playback-backward" type="submit" {% if not stream_is_playing or is_over %}disabled{% endif %}>Scan Backward</button>
+            <button class="btn btn-outline-secondary {% if not stream_is_playing or is_over %}disabled{% endif %}" id="playback-forward" type="submit" {% if not stream_is_playing or is_over %}disabled{% endif %}>Scan Forward</button>
           </div>
         </div>
       </div>

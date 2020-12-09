@@ -68,3 +68,11 @@ Api.stream_next = function(callback) {
 Api.stream_previous = function(callback) {
   fetchFromServer('POST', '/streams/stream/previous-track/', {}, callback);
 }
+
+Api.stream_forward = function(callback) {
+  fetchFromServer('POST', '/streams/stream/scan-forward/', {}, callback);
+}
+
+Api.stream_backward = function(callback) {
+  fetchFromServer('POST', '/streams/stream/scan-backward/', {}, callback);
+}

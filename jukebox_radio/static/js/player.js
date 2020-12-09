@@ -122,6 +122,30 @@ const playbackNext = function() {
 
 document.getElementById("playback-next").onclick = playbackNext;
 
+// SCAN BACKWARD
+////////////////////////////////////////////////////////////////////////////////
+const playbackBackward = function() {
+  const callback = function() {
+          window.location.reload();
+        };
+
+  Api.stream_backward(callback);
+}
+
+document.getElementById("playback-backward").onclick = playbackBackward;
+
+// SCAN FORWARD
+////////////////////////////////////////////////////////////////////////////////
+const playbackForward = function() {
+  const callback = function() {
+          window.location.reload();
+        };
+
+  Api.stream_forward(callback);
+}
+
+document.getElementById("playback-forward").onclick = playbackForward;
+
 // ADD TO QUEUE
 ////////////////////////////////////////////////////////////////////////////////
 const addToQueueSubmit = function() {
