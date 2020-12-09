@@ -18,6 +18,9 @@ class PlayerView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model("streams", "Stream")
         Queue = apps.get_model("streams", "Queue")
 
+        if not request.user.is_authenticated:
+            return self.redirect_response('/')
+
         stream, _ = Stream.objects.get_or_create(user=request.user)
 
         queue_list = Queue.objects.in_stream(stream)
@@ -36,6 +39,14 @@ class PlayerView(BaseView, LoginRequiredMixin):
         now = timezone.now()
         within_bounds = stream.played_at and now < stream.played_at + timedelta(milliseconds=stream.now_playing.duration_ms)
 
+        try:
+            if not stream.paused_at:
+                progress = (timezone.now() - stream.played_at) / timedelta(milliseconds=stream.now_playing.duration_ms) * 100
+            else:
+                progress = (stream.paused_at - stream.played_at) / timedelta(milliseconds=stream.now_playing.duration_ms) * 100
+        except Exception:
+            progress = 0
+
         return self.template_response(
             request,
             "pages/player.html",
@@ -43,10 +54,13 @@ class PlayerView(BaseView, LoginRequiredMixin):
                 "queues": queue_list,
                 "FORMAT_CHOICES": format_choices,
                 "PROVIDER_CHOICES": GLOBAL_PROVIDER_CHOICES,
+                "stream_now_playing": stream.now_playing,
+                "stream_now_playing": stream.now_playing,
                 "stream_is_playing": stream.is_playing,
                 "stream_is_paused": stream.is_paused,
                 "stream_queue_history_exists": queue_history.exists(),
                 "stream_queue_is_empty": not bool(queue_list),
                 "is_over": not within_bounds,
+                "progress": progress,
             },
         )
