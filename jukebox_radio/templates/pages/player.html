@@ -32,57 +32,69 @@
       <!-- PLAYBACK ----------------------------------------------------------->
       <h3>Playback</h3>
 
-      <div class="form-group">
-        <button class="btn btn-primary {% if stream_is_playing or is_over %}disabled{% endif %}" id="playback-play" type="submit" {% if stream_is_playing or is_over %}disabled{% endif %}>Play</button>
-        <button class="btn btn-primary {% if stream_is_paused or is_over %}disabled{% endif %}" id="playback-pause" type="submit" {% if stream_is_paused or is_over %}disabled{% endif %}>Pause</button>
-      </div>
-      <div class="form-group">
-        <button class="btn btn-outline-primary {% if not stream_queue_history_exists %}disabled{% endif %}" id="playback-previous" type="submit" {% if not stream_queue_history_exists %}disabled{% endif %}>Previous Track</button>
-        <button class="btn btn-outline-primary {% if stream_queue_is_empty %}disabled{% endif %}" id="playback-next" type="submit" {% if stream_queue_is_empty %}disabled{% endif %}>Next Track</button>
-      </div>
-      <div class="form-group">
-        <button class="btn btn-outline-secondary" type="submit">Scan Backward</button>
-        <button class="btn btn-outline-secondary" type="submit">Scan Forward</button>
+      <div class="card text-dark bg-light mb-3" style="width: 100%;">
+        <div class="card-header">Playback</div>
+        <div class="card-body">
+          <h5 class="card-title">{{ stream_now_playing }}</h5>
+          <p class="card-text">{% if is_over %}(the track is over){% endif %}</p>
+
+          <br>
+          <div class="card-title progress">
+            <div class="progress-bar" role="progressbar" style="width: {{ progress }}%"></div>
+          </div>
+          <br>
+
+          <div class="card-title btn-group" role="group">
+            <button class="btn btn-primary {% if stream_is_paused or is_over %}disabled{% endif %}" id="playback-pause" type="submit" {% if stream_is_paused or is_over %}disabled{% endif %}>Pause</button>
+            <button class="btn btn-primary {% if stream_is_playing or is_over %}disabled{% endif %}" id="playback-play" type="submit" {% if stream_is_playing or is_over %}disabled{% endif %}>Play</button>
+          </div>
+          <br>
+          <div class="card-title btn-group" role="group">
+            <button class="btn btn-outline-primary {% if not stream_queue_history_exists %}disabled{% endif %}" id="playback-previous" type="submit" {% if not stream_queue_history_exists %}disabled{% endif %}>Previous Track</button>
+            <button class="btn btn-outline-primary {% if stream_queue_is_empty %}disabled{% endif %}" id="playback-next" type="submit" {% if stream_queue_is_empty %}disabled{% endif %}>Next Track</button>
+          </div>
+          <br>
+          <div class="card-title btn-group" role="group">
+            <button class="btn btn-outline-secondary {% if stream_is_playing or is_over %}disabled{% endif %}" id="playback-backward" type="submit" {% if stream_is_playing or is_over %}disabled{% endif %}>Scan Backward</button>
+            <button class="btn btn-outline-secondary {% if stream_is_playing or is_over %}disabled{% endif %}" id="playback-forward" type="submit" {% if stream_is_playing or is_over %}disabled{% endif %}>Scan Forward</button>
+          </div>
+        </div>
       </div>
 
       <!-- QUEUE -------------------------------------------------------------->
       <h3>Queue</h3>
-      <div class="form-group">
-        <table class="table">
+      <div class="form-group mb-3">
+        <ul class="list-group">
           {% for queue in queues %}
 
-          <tr>
-            <td>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
             {% if queue.track %}
               {{ queue.track.name }}
             {% elif queue.collection %}
               {{ queue.collection.name }}
             {% endif %}
-            </td>
-            <td><button class="btn btn-primary delete-queue" data-uuid="{{ queue.uuid }}">-</button>
-          </tr>
+            <button type="button" class="btn btn-light delete-queue" data-uuid="{{ queue.uuid }}">
+              <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+              </svg>
+            </button>
+          </li>
 
           {% endfor %}
-        </table>
+        </ul>
       </div>
 
       <!-- SEARCH ------------------------------------------------------------->
       <h3>Search</h3>
 
-      <div class="form-group">
-        <label class="col-sm-2 col-form-label">Query</label>
-        <div class="input-group col-sm-10" style="float: right;">
-          <div class="custom-file">
-            <input type="text" class="form-control fix-corners" id="search-query">
-          </div>
-
-          <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="button" id="music-search-button">Search</button>
-          </div>
-        </div>
+      <label class="col-sm-2 col-form-label">Query</label>
+      <div class="input-group input-group-lg mb-3">
+        <input type="text" class="form-control" id="search-query" aria-label="Sizing example input">
+        <button class="btn btn-outline-primary" type="button" id="music-search-button">Submit</button>
       </div>
 
-      <div class="form-group">
+      <div class="form-group mb-3">
         {% for provider_slug, provider_name in PROVIDER_CHOICES %}
         <div class="form-check form-check-inline">
           <input id="{{ provider_slug }}-id" class="form-check-input" type="checkbox" name="{{ provider_slug }}">
@@ -91,7 +103,7 @@
         {% endfor %}
       </div>
 
-      <div class="form-group">
+      <div class="form-group mb-3">
         {% for format_slug, format_name in FORMAT_CHOICES %}
         <div class="form-check form-check-inline">
           <input id="{{ format_slug }}-id" class="form-check-input" type="checkbox" name="{{ format_slug }}">
@@ -100,40 +112,40 @@
         {% endfor %}
       </div>
 
-      <div class="form-group">
-        <table id="search-results" class="table">
+      <div class="form-group mb-3">
+        <table id="search-results" class="table table-bordered">
         </table>
       </div>
 
       <!-- UPLOAD ------------------------------------------------------------->
       <h3>Upload</h3>
 
-      <div class="form-group">
-        <label for="audio-file">Audio file</label>
-        <input type="file" class="form-control-file" id="audio-file">
+      <div class="form-group mb-3">
+        <label for="audio-file mb-3">Audio file</label>
+        <input type="file" class="form-control" id="audio-file">
       </div>
 
-      <div class="form-group">
+      <div class="form-group mb-3">
         <label for="img-file">Image file</label>
-        <input type="file" class="form-control-file" id="img-file">
+        <input type="file" class="form-control" id="img-file">
       </div>
 
-      <div class="form-group">
+      <div class="form-group mb-3">
         <label for="track-name">Track name</label>
         <input type="text" class="form-control" id="track-name" placeholder="Track">
       </div>
 
-      <div class="form-group">
+      <div class="form-group mb-3">
         <label for="artist-name">Artist name</label>
         <input type="text" class="form-control" id="artist-name" placeholder="Artist">
       </div>
 
-      <div class="form-group">
+      <div class="form-group mb-3">
         <label for="album-name">Album name</label>
         <input type="text" class="form-control" id="album-name" placeholder="Album">
       </div>
 
-      <div class="form-group">
+      <div class="form-group mb-3">
         <button class="btn btn-primary" type="submit" id="track-create-button">Upload</button>
       </div>
 
