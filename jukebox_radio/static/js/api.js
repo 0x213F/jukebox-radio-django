@@ -3,8 +3,8 @@
 
 let Api = function() {};
 
-Api.text_comment_create = function(text) {
-  fetchFromServer('POST', '/comments/text-comment/create/', {'text': text});
+Api.text_comment_create = function(text, callback) {
+  fetchFromServer('POST', '/comments/text-comment/create/', {'text': text}, callback);
 }
 
 Api.music_search = function(providers, formats, query, callback) {
