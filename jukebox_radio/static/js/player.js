@@ -46,10 +46,13 @@ async function fetchFromServer(method = '', url = '', data = {}, successCallback
 
 // TEXT COMMENT CREATE
 ////////////////////////////////////////////////////////////////////////////////
-document.getElementById('text-comment-create-button').onclick = function() {
-  const text = document.getElementById('text').textContent;
+document.getElementById('comment-create-text-submit').onclick = function() {
+  const text = document.getElementById('comment-create-text').value,
+        callback = function() {
+          window.location.reload();
+        };
 
-  Api.text_comment_create(text);
+  Api.text_comment_create(text, callback);
 };
 
 // REMOVE FROM QUEUE
@@ -186,7 +189,7 @@ const musicSearchSubmit = function() {
           <td>${result.artist_name}</td>
           <td>
             <button class="btn btn-primary add-to-queue" data-class="${result.class}" data-uuid="${result.uuid}">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="position: relative; top: -2px;">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
               </svg>
             </button>

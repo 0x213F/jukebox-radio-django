@@ -16,17 +16,19 @@
       <!-- COMMENTS ----------------------------------------------------------->
       <h3>Comments</h3>
 
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <button class="btn btn-outline-secondary" type="button" id="record">Record</button>
-        </div>
-        <div class="custom-file">
-          <input type="text" class="form-control" id="text" style="border-radius: 0px;">
-        </div>
-
-        <div class="input-group-append">
-          <button class="btn btn-outline-primary" type="button" id="text-comment-create-button">Submit</button>
-        </div>
+      <div class="input-group input-group-lg mb-3">
+        <button class="btn btn-outline-secondary recording-off" type="button" id="comment-record-voice">
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-mic-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0V3z"/>
+            <path fill-rule="evenodd" d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"/>
+          </svg>
+        </button>
+        <input type="text" class="form-control" id="comment-create-text">
+        <button class="btn btn-outline-primary" type="button" id="comment-create-text-submit">
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chat-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+          </svg>
+        </button>
       </div>
 
       <!-- PLAYBACK ----------------------------------------------------------->
@@ -35,7 +37,13 @@
       <div class="card text-dark bg-light mb-3" style="width: 100%;">
         <div class="card-header">Playback</div>
         <div class="card-body">
-          <h5 class="card-title">{{ stream_now_playing }}</h5>
+          <h5 class="card-title">
+          {% if not is_over %}
+            {{ stream_now_playing }}
+          {% else %}
+            <i>Nothing is playing...</i>
+          {% endif %}
+          </h5>
           <p class="card-text">{% if is_over %}(the track is over){% endif %}</p>
 
           <br>
@@ -130,19 +138,19 @@
         <input type="file" class="form-control" id="img-file">
       </div>
 
-      <div class="form-group mb-3">
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="track-name" placeholder="Track name">
         <label for="track-name">Track name</label>
-        <input type="text" class="form-control" id="track-name" placeholder="Track">
       </div>
 
-      <div class="form-group mb-3">
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="artist-name" placeholder="Artist name">
         <label for="artist-name">Artist name</label>
-        <input type="text" class="form-control" id="artist-name" placeholder="Artist">
       </div>
 
-      <div class="form-group mb-3">
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="album-name" placeholder="Album name">
         <label for="album-name">Album name</label>
-        <input type="text" class="form-control" id="album-name" placeholder="Album">
       </div>
 
       <div class="form-group mb-3">
