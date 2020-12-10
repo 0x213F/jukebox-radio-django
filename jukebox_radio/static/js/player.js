@@ -55,6 +55,15 @@ document.getElementById('comment-create-text-submit').onclick = function() {
   Api.text_comment_create(text, callback);
 };
 
+// VOICE RECORDING CREATE
+////////////////////////////////////////////////////////////////////////////////
+document.getElementById('comment-record-voice').onclick = function() {
+  handleVoiceRecording();
+};
+
+
+handleVoiceRecording
+
 // REMOVE FROM QUEUE
 ////////////////////////////////////////////////////////////////////////////////
 const removeFromQueueSubmit = function() {

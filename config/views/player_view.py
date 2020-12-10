@@ -14,6 +14,7 @@ class PlayerView(BaseView, LoginRequiredMixin):
         """
         TODO
         """
+        TextComment = apps.get_model("comments", "TextComment")
         Collection = apps.get_model("music", "Collection")
         Stream = apps.get_model("streams", "Stream")
         Queue = apps.get_model("streams", "Queue")
@@ -66,7 +67,23 @@ class PlayerView(BaseView, LoginRequiredMixin):
         except Exception:
             progress = 0
 
-        print(stream.is_playing, stream.is_paused, not within_bounds)
+        # TEXT COMMENTS
+        text_comment_qs = (
+            TextComment.objects.select_related("user", "track")
+            .filter(track=stream.now_playing, user=request.user)
+            .order_by("timestamp_ms")
+        )
+        text_comments = []
+        for text_comment in text_comment_qs:
+            text_comments.append(
+                {
+                    "uuid": text_comment.uuid,
+                    "userUsername": text_comment.user.username,
+                    "text": text_comment.text,
+                    "trackUuid": text_comment.track.uuid,
+                    "timestampMilliseconds": text_comment.timestamp_ms / 1000,
+                }
+            )
 
         return self.template_response(
             request,
@@ -82,5 +99,6 @@ class PlayerView(BaseView, LoginRequiredMixin):
                 "stream_queue_is_empty": not bool(queue_list),
                 "is_over": not within_bounds,
                 "progress": progress,
+                "text_comments": text_comments,
             },
         )
