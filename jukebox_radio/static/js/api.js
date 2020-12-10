@@ -7,6 +7,16 @@ Api.text_comment_create = function(text, callback) {
   fetchFromServer('POST', '/comments/text-comment/create/', {'text': text}, callback);
 }
 
+Api.voice_recording_create = function(audioFile, transcriptFinal, transcriptData, callback) {
+  fetchFromServer(
+    'POST',
+    '/comments/voice-recording/create/',
+    {'transcriptFinal': transcriptFinal, 'transcriptData': transcriptData},
+    callback,
+    {audioFile: audioFile}
+  );
+}
+
 Api.music_search = function(providers, formats, query, callback) {
 
   const data = {

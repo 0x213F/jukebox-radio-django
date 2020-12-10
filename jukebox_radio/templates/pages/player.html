@@ -13,8 +13,22 @@
       <h1>Player</h1>
       <br>
 
+      <div id='foobar'></div>
+
       <!-- COMMENTS ----------------------------------------------------------->
       <h3>Comments</h3>
+
+      <div class="form-group mb-3">
+        <ul class="list-group">
+          {% for text_comment in text_comments %}
+
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            ({{ text_comment.timestampMilliseconds }} s) {{ text_comment.text }}
+          </li>
+
+          {% endfor %}
+        </ul>
+      </div>
 
       <div class="input-group input-group-lg mb-3">
         <button class="btn btn-outline-secondary recording-off" type="button" id="comment-record-voice">
@@ -165,6 +179,7 @@
 
   {% compress js %}
   <script src="{% static 'js/api.js' %}"></script>
+  <script src="{% static 'js/voice_recorder.js' %}"></script>
   <script src="{% static 'js/player.js' %}"></script>
   {% endcompress %}
 

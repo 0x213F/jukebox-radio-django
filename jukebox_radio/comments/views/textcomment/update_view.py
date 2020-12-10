@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class TextCommentUpdateView(BaseView, LoginRequiredMixin):
-    def delete(self, request, **kwargs):
+    def post(self, request, **kwargs):
         """
         Update a TextComment. A side effect is that this clears all related
         TextCommentModification objects.
@@ -17,11 +17,11 @@ class TextCommentUpdateView(BaseView, LoginRequiredMixin):
         TextComment = apps.get_model("comments", "TextComment")
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
-        text_comment_uuid = request.DELETE.get("textCommentUuid")
+        text_comment_uuid = request.POST.get("textCommentUuid")
         text_comment = TextComment.objects.get(
             uuid=text_comment_uuid, user=request.user
         )
-        text_comment.text = request.PUT.get("text")
+        text_comment.text = request.POST.get("text")
         text_comment.save()
 
         text_comment_modification_qs = TextCommentModification.objects.filter(

@@ -19,11 +19,11 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
         voice_recording_qs = (
             VoiceRecording.objects.select_related("user", "track")
             .filter(track__uuid=track_uuid, user=request.user)
-            .order_by("created_at")
+            .order_by("timestamp_ms")
         )
         voice_recordings = []
         for voice_recording in voice_recording_qs:
-            voice_recording.append(
+            voice_recordings.append(
                 {
                     "uuid": voice_recording.uuid,
                     "user": voice_recording.user.username,

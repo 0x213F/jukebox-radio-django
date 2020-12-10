@@ -18,11 +18,11 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
         text_comment_qs = (
             TextComment.objects.select_related("user", "track")
             .filter(track__uuid=track_uuid, user=request.user)
-            .order_by("created_at")
+            .order_by("duration_ms")
         )
         text_comments = []
         for text_comment in text_comment_qs:
-            text_comment.append(
+            text_comments.append(
                 {
                     "uuid": text_comment.uuid,
                     "userUsername": text_comment.user.username,

@@ -41,16 +41,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="{% url 'home' %}">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'account_email' %}">Account <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="{% url 'account_email' %}">Account</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'settings' %}">Settings <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="{% url 'settings' %}">Settings</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'player' %}">Player <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="{% url 'player' %}">Player</a>
             </li>
             {% if request.user.is_authenticated %}
               <li class="nav-item">
