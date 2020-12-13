@@ -11,12 +11,12 @@ from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_JUKEBOX_RADIO
 from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_CHOICES
 
 
-def upload_to_tracks_jr_audios(*args, **kwargs):
-    return f"django-storage/music/tracks/jr-audios/" f"{unique_upload(*args, **kwargs)}"
+def upload_to_tracks_audios(*args, **kwargs):
+    return f"django-storage/music/tracks/audios/" f"{unique_upload(*args, **kwargs)}"
 
 
-def upload_to_tracks_jr_imgs(*args, **kwargs):
-    return f"django-storage/music/tracks/jr-imgs/" f"{unique_upload(*args, **kwargs)}"
+def upload_to_tracks_imgs(*args, **kwargs):
+    return f"django-storage/music/tracks/imgs/" f"{unique_upload(*args, **kwargs)}"
 
 
 @pgtrigger.register(
@@ -60,11 +60,11 @@ class Track(models.Model):
     duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
     audio = models.FileField(
-        null=True, blank=True, upload_to=upload_to_tracks_jr_audios
+        null=True, blank=True, upload_to=upload_to_tracks_audios
     )
     external_id = models.CharField(null=True, blank=True, max_length=200)
 
-    img = models.ImageField(null=True, blank=True, upload_to=upload_to_tracks_jr_imgs)
+    img = models.ImageField(null=True, blank=True, upload_to=upload_to_tracks_imgs)
     img_url = models.CharField(null=True, blank=True, max_length=200)
 
     created_at = models.DateTimeField(auto_now_add=True)

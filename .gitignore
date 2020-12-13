@@ -276,3 +276,6 @@ jukebox_radio/media/
 .env
 .envs/*
 !.envs/.template/
+
+# Spleeter
+pretrained_models/

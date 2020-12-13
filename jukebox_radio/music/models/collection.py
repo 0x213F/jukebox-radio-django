@@ -12,9 +12,9 @@ from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_JUKEBOX_RADIO
 from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_CHOICES
 
 
-def upload_to_collections_jr_imgs(*args, **kwargs):
+def upload_to_collections_imgs(*args, **kwargs):
     return (
-        f"django-storage/music/collections/jr-imgs/" f"{unique_upload(*args, **kwargs)}"
+        f"django-storage/music/collections/imgs/" f"{unique_upload(*args, **kwargs)}"
     )
 
 
@@ -54,7 +54,7 @@ class Collection(models.Model):
 
     external_id = models.CharField(null=True, max_length=200)
 
-    img = models.ImageField(null=True, upload_to=upload_to_collections_jr_imgs)
+    img = models.ImageField(null=True, upload_to=upload_to_collections_imgs)
     img_url = models.CharField(null=True, max_length=200)
 
     created_at = models.DateTimeField(auto_now_add=True)
