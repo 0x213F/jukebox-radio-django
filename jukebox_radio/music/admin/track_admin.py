@@ -11,6 +11,40 @@ from django.utils.html import mark_safe
 User = get_user_model()
 
 
+class StemAdminInline(admin.TabularInline):
+    model = apps.get_model("music.Stem")
+    fk_name = "track"
+    extra = 0
+
+    ordering = ("instrument",)
+
+    fields = (
+        "instrument",
+        "list_url",
+    )
+    list_display = fields
+    readonly_fields = fields
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs
+
+    def list_url(self, obj):
+        url = obj.audio.url
+        return mark_safe(f'<a href="{url}">{url}</a>')
+
+    list_url.short_description = "URL"
+
+
 class CollectionListingAdminInline(admin.TabularInline):
     model = apps.get_model("music.CollectionListing")
     fk_name = "track"
@@ -121,7 +155,7 @@ class TrackAdmin(admin.ModelAdmin):
         TrackHasDurationFilter,
     )
 
-    inlines = (CollectionListingAdminInline,)
+    inlines = (StemAdminInline, CollectionListingAdminInline,)
 
     list_display = (
         "list_uuid",

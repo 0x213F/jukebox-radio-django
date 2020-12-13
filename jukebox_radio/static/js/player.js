@@ -250,8 +250,6 @@ document.getElementById("search-query").addEventListener("keyup", function(event
 // UPLOAD TRACK
 ////////////////////////////////////////////////////////////////////////////////
 document.getElementById('track-create-button').onclick = function() {
-  const text = document.getElementById('text').textContent;
-
   Api.music_create_track(
     document.getElementById('audio-file').files[0],
     document.getElementById('img-file').files[0],
