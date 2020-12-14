@@ -16,5 +16,3 @@ django-anymail[amazon_ses]==8.0  # https://github.com/anymail/django-anymail
 # include them
 django-debug-toolbar==3.1.1  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.0.9  # https://github.com/django-extensions/django-extensions
-uvloop==0.14.0
-httptools==0.0.5
