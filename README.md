@@ -25,7 +25,7 @@ Some manual adjustments to the application must be made.
 
     docker-compose -f local.yml run --rm django python manage.py shell_plus
 
-
+<!-- br -->
 
     # Update the Site object
     Site.objects.update(domain="localhost:3000")
