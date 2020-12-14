@@ -15,12 +15,10 @@
     <h3>Spotify</h3>
 
     <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <div class="input-group-text">
-          <input type="checkbox" disabled {% if spotify_is_already_authorized %}checked{% endif %}>
-        </div>
+      <div class="input-group-text">
+        <input class="form-check-input" type="checkbox" disabled {% if spotify_is_already_authorized %}checked{% endif %}>
       </div>
-      <div type="text" class="form-control"><a href="{{ spotify_authorization_url }}">Authorize Spotify</a></div>
+      <a class="form-control" href="{{ spotify_authorization_url }}">Authorize Spotify</a>
     </div>
 
   </div>

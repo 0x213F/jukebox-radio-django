@@ -54,9 +54,9 @@ class Track(models.Model):
 
     provider = models.CharField(max_length=32, choices=PROVIDER_CHOICES)
 
-    name = models.CharField(max_length=200)
-    artist_name = models.CharField(max_length=200)
-    album_name = models.CharField(max_length=200)
+    name = models.TextField()
+    artist_name = models.TextField()
+    album_name = models.TextField()
     duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
     audio = models.FileField(

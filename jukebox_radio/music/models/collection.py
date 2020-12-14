@@ -48,8 +48,8 @@ class Collection(models.Model):
     format = models.CharField(max_length=32, choices=FORMAT_CHOICES)
     provider = models.CharField(max_length=32, choices=PROVIDER_CHOICES)
 
-    name = models.CharField(max_length=200)
-    artist_name = models.CharField(max_length=200, null=True, blank=True)
+    name = models.TextField()
+    artist_name = models.TextField(null=True, blank=True)
     duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
     external_id = models.CharField(null=True, max_length=200)
