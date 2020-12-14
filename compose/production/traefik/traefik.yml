@@ -26,8 +26,8 @@ certificatesResolvers:
 http:
   routers:
     web-router:
-      rule: "Host(`jukebox.radio`) || Host(`www.jukebox.radio`)"
-      
+      rule: "Host(`jukeboxrad.io`) || Host(`www.jukeboxrad.io`)"
+
       entryPoints:
         - web
       middlewares:
@@ -36,8 +36,8 @@ http:
       service: django
 
     web-secure-router:
-      rule: "Host(`jukebox.radio`) || Host(`www.jukebox.radio`)"
-      
+      rule: "Host(`jukeboxrad.io`) || Host(`www.jukeboxrad.io`)"
+
       entryPoints:
         - web-secure
       middlewares:
@@ -48,7 +48,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: "Host(`jukebox.radio`)"
+      rule: "Host(`jukeboxrad.io`)"
       entryPoints:
         - flower
       service: flower
