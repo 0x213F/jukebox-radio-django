@@ -1,16 +1,20 @@
-import requests
 from cryptography.fernet import Fernet
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from config import celery_app
+
+from jukebox_radio.networking.actions import make_request
 
 User = get_user_model()
 
 
 @celery_app.task()
 def refresh_spotify_access_tokens():
+    Request = apps.get_model('networking', 'Request')
+
     cipher_suite = Fernet(settings.FERNET_KEY)
     user_qs = User.objects.filter(encrypted_spotify_refresh_token__isnull=False)
 
@@ -22,14 +26,18 @@ def refresh_spotify_access_tokens():
             token_utf8 = cipher_suite.decrypt(encrypted_token_utf8)
             token = token_utf8.decode("utf-8")
 
-            response = requests.post(
+            data = {
+                "grant_type": "refresh_token",
+                "refresh_token": token,
+                "client_id": settings.SPOTIFY_CLIENT_ID,
+                "client_secret": settings.SPOITFY_CLIENT_SECRET,
+            }
+
+            response = make_request(
+                Request.TYPE_POST,
                 "https://accounts.spotify.com/api/token",
-                data={
-                    "grant_type": "refresh_token",
-                    "refresh_token": token,
-                    "client_id": secrets.SPOTIFY_CLIENT_ID,
-                    "client_secret": secrets.SPOITFY_CLIENT_SECRET,
-                },
+                data=data,
+                user=user,
             )
             response_json = response.json()
 
@@ -41,7 +49,8 @@ def refresh_spotify_access_tokens():
             user.encrypted_spotify_access_token = encrypted_token
             user.save()
 
-        except Exception:
+        except Exception as e:
+            print(e)
             user.encrypted_spotify_access_token = None
             user.encrypted_spotify_refresh_token = None
             user.spotify_scope = None

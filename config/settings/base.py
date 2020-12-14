@@ -82,8 +82,9 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "jukebox_radio.comments.apps.CommentsConfig",
     "jukebox_radio.music.apps.MusicConfig",
-    "jukebox_radio.users.apps.UsersConfig",
+    "jukebox_radio.networking.apps.NetworkingConfig",
     "jukebox_radio.streams.apps.StreamsConfig",
+    "jukebox_radio.users.apps.UsersConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
