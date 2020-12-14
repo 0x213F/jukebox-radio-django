@@ -25,18 +25,25 @@ Some manual adjustments to the application must be made.
 
     docker-compose -f local.yml run --rm django python manage.py shell_plus
 
+
+
     # Update the Site object
-    In [1]: Site.objects.update(domain="localhost:3000")
-    Out[1]: 1
+    Site.objects.update(domain="localhost:3000")
 
     # Create cron schedule
-    In [2]: tz = timezone.get_current_timezone()
-    In [3]: crontab = CrontabSchedule.objects.create(minute='26', hour='*', day_of_week='*', day_of_month='*', month_of_year='*', timezone=tz)
+    tz = timezone.get_current_timezone()
+    crontab = CrontabSchedule.objects.create(
+        minute='26',
+        hour='*',
+        day_of_week='*',
+        day_of_month='*',
+        month_of_year='*',
+        timezone=tz,
+    )
 
-    # Register cron task
-    In [4]: task_name = 'jukebox_radio.users.tasks.refresh_spotify_access_tokens'
-    In [5]: PeriodicTask.objects.create(name=task_name, task=task_name, crontab=crontab)
-    Out[5]: <PeriodicTask: jukebox_radio.users.tasks.refresh_spotify_access_tokens: 27 * * * * (m/h/d/dM/MY) UTC>
+    # Register cron tasks
+    task_name = 'jukebox_radio.users.tasks.refresh_spotify_access_tokens'
+    PeriodicTask.objects.create(name=task_name, task=task_name, crontab=crontab)
 
 Run the following to start the Django server.
 
