@@ -234,6 +234,7 @@ class TrackAdmin(admin.ModelAdmin):
 
     def list_uuid(self, obj):
         return mark_safe(f"<tt>{obj.uuid}</tt>")
+    list_uuid.short_description = 'UUID'
 
     def list_name(self, obj):
         name = obj.name
@@ -297,6 +298,9 @@ class TrackAdmin(admin.ModelAdmin):
     list_image_large.short_description = "IMAGE"
 
     def list_audio(self, obj):
-        return obj.external_id or obj.audio
+        if obj.external_id:
+            return obj.external_id
+        url = obj.audio.url
+        return mark_safe(f'<a href="{url}">{url}</a>')
 
     list_audio.short_description = "AUDIO ID"

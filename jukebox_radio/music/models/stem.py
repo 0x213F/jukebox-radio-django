@@ -33,6 +33,8 @@ class Stem(models.Model):
         (INSTRUMENT_OTHER, "Other"),
     )
 
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     track = models.ForeignKey(
         "music.Track",
         on_delete=models.CASCADE,
@@ -41,3 +43,6 @@ class Stem(models.Model):
     instrument = models.CharField(max_length=32, choices=INSTRUMENT_CHOICES)
 
     audio = models.FileField(upload_to=upload_to_stems_audios)
+
+    def __str__(self):
+        return self.uuid
