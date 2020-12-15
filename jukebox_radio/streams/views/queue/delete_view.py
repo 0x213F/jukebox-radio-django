@@ -12,7 +12,9 @@ User = get_user_model()
 class QueueDeleteView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        Remove from queue.
+        When a user deletes something from the queue. In this case, what is
+        actually happening is queue archival. The queue is deleted in the
+        application layer but persists in the database.
         """
         Queue = apps.get_model("streams", "Queue")
 
@@ -29,18 +31,16 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
             queue.deleted_at = now
             queue.save()
 
-            # fix prev pointer
-            if queue.prev_queue_ptr:
-                queue.prev_queue_ptr.next_queue_ptr = queue.next_queue_ptr
-                queue.prev_queue_ptr.save()
+            # fix prev pointers
+            next_queue_qs = Queue.objects.filter(next_queue_ptr=queue)
+            next_queue_qs.update(next_queue_ptr=queue.next_queue_ptr)
 
-            # fix next pointer
-            if queue.next_queue_ptr:
-                queue.next_queue_ptr.prev_queue_ptr = queue.prev_queue_ptr
-                queue.next_queue_ptr.save()
+            # fix next pointers
+            prev_queue_qs = Queue.objects.filter(prev_queue_ptr=queue)
+            prev_queue_qs.update(prev_queue_ptr=queue.prev_queue_ptr)
 
-            if queue.is_abstract:
-                child_queue_qs = Queue.objects.filter(parent_queue_ptr=queue)
-                child_queue_qs.update(deleted_at=now)
+            # delete child queues
+            child_queue_qs = Queue.objects.filter(parent_queue_ptr=queue)
+            child_queue_qs.update(deleted_at=now)
 
         return self.http_response_200({})

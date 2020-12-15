@@ -70,6 +70,15 @@ class Queue(models.Model):
         null=True,
     )
 
+    start_at = models.PositiveIntegerField(null=True, blank=True)
+    end_at = models.PositiveIntegerField(null=True, blank=True)
+
+    play_with_stem_separation = models.BooleanField(default=False)
+    play_bass_stem = models.BooleanField(null=True, blank=True)
+    play_drums_stem = models.BooleanField(null=True, blank=True)
+    play_vocals_stem = models.BooleanField(null=True, blank=True)
+    play_other_stem = models.BooleanField(null=True, blank=True)
+
     stream = models.ForeignKey(
         "streams.Stream",
         related_name="+",
