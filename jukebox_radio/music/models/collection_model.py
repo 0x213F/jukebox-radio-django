@@ -6,10 +6,10 @@ from django.db import models
 import pgtrigger
 from unique_upload import unique_upload
 
-from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_SPOTIFY
-from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_YOUTUBE
-from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_JUKEBOX_RADIO
-from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_CHOICES
+from jukebox_radio.music.const import GLOBAL_PROVIDER_SPOTIFY
+from jukebox_radio.music.const import GLOBAL_PROVIDER_YOUTUBE
+from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
+from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
 
 
 def upload_to_collections_imgs(*args, **kwargs):
@@ -67,7 +67,7 @@ class Collection(models.Model):
     def __str__(self):
         return self.name
 
-    def filter_tracks(self):
+    def list_tracks(self):
         CollectionListing = apps.get_model("music", "CollectionListing")
         Track = apps.get_model("music", "Track")
         track_uuids = (

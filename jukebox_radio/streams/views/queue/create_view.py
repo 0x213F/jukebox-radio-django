@@ -63,7 +63,7 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
-        next_queue_ptr, prev_queue_ptr = get_and_validate_queue_objs(
+        prev_queue_ptr, next_queue_ptr = get_and_validate_queue_objs(
             stream, request.user, prev_queue_uuid, next_queue_uuid
         )
 
@@ -110,9 +110,12 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
             if collection:
 
                 # Here we add all the required child queues for each collection
-                # listing (i.e. track on album, track in playlist, et al.) in the
-                # collection
-                tracks = collection.filter_tracks()
+                # listing (i.e. track on album, track in playlist, et al.) in
+                # the collection
+                tracks = collection.list_tracks()
+                if not tracks:
+                    raise ValueError(f'Collection has no tracks: {collection.uuid}')
+
                 for _track in tracks:
                     track_queue = Queue.objects.create(
                         user=request.user,
@@ -125,12 +128,14 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
                         parent_queue_ptr=queue,
                     )
 
+                    # This logic is only *not* called when a collection is
+                    # being added to a stream with *zero* related queue objects
                     if prev_queue_ptr:
                         prev_queue_ptr.next_queue_ptr = track_queue
                         prev_queue_ptr.save()
                     prev_queue_ptr = track_queue
 
-                _track = tracks.last()
+                _track = tracks[-1]
                 _track.next_queue_ptr = next_queue_ptr
                 _track.save()
 
