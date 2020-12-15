@@ -4,13 +4,13 @@
 let Api = function() {};
 
 Api.text_comment_create = function(text, callback) {
-  fetchFromServer('POST', '/comments/text-comment/create', {'text': text}, callback);
+  fetchFromServer('POST', '/comments/text-comment/create/', {'text': text}, callback);
 }
 
 Api.voice_recording_create = function(audioFile, transcriptFinal, transcriptData, callback) {
   fetchFromServer(
     'POST',
-    '/comments/voice-recording/create',
+    '/comments/voice-recording/create/',
     {'transcriptFinal': transcriptFinal, 'transcriptData': transcriptData},
     callback,
     {audioFile: audioFile}
@@ -35,7 +35,7 @@ Api.stream_create_queue = function(dataClass, uuid, callback) {
     musicUuid: uuid,
   };
 
-  fetchFromServer('POST', '/streams/queue/create', data, callback);
+  fetchFromServer('POST', '/streams/queue/create/', data, callback);
 }
 
 Api.stream_delete_queue = function(uuid, callback) {
@@ -44,7 +44,7 @@ Api.stream_delete_queue = function(uuid, callback) {
     queueUuid: uuid,
   };
 
-  fetchFromServer('POST', '/streams/queue/delete', data, callback);
+  fetchFromServer('POST', '/streams/queue/delete/', data, callback);
 }
 
 Api.music_create_track = function(audio_file, img_file, track_name, artist_name, album_name, callback) {
@@ -60,29 +60,29 @@ Api.music_create_track = function(audio_file, img_file, track_name, artist_name,
     img_file: img_file,
   }
 
-  fetchFromServer('POST', '/music/track/create', data, callback, files);
+  fetchFromServer('POST', '/music/track/create/', data, callback, files);
 }
 
 Api.stream_play = function(callback) {
-  fetchFromServer('POST', '/streams/stream/play-track', {}, callback);
+  fetchFromServer('POST', '/streams/stream/play-track/', {}, callback);
 }
 
 Api.stream_pause = function(callback) {
-  fetchFromServer('POST', '/streams/stream/pause-track', {}, callback);
+  fetchFromServer('POST', '/streams/stream/pause-track/', {}, callback);
 }
 
 Api.stream_next = function(callback) {
-  fetchFromServer('POST', '/streams/stream/next-track', {}, callback);
+  fetchFromServer('POST', '/streams/stream/next-track/', {}, callback);
 }
 
 Api.stream_previous = function(callback) {
-  fetchFromServer('POST', '/streams/stream/previous-track', {}, callback);
+  fetchFromServer('POST', '/streams/stream/previous-track/', {}, callback);
 }
 
 Api.stream_forward = function(callback) {
-  fetchFromServer('POST', '/streams/stream/scan-forward', {}, callback);
+  fetchFromServer('POST', '/streams/stream/scan-forward/', {}, callback);
 }
 
 Api.stream_backward = function(callback) {
-  fetchFromServer('POST', '/streams/stream/scan-backward', {}, callback);
+  fetchFromServer('POST', '/streams/stream/scan-backward/', {}, callback);
 }
