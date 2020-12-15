@@ -18,6 +18,10 @@ services:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     command: /start
+    deploy:
+      resources:
+        reservations:
+          memory: 1G
 
   postgres:
     build:
@@ -29,6 +33,10 @@ services:
       - production_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.production/.postgres
+    deploy:
+      resources:
+        reservations:
+          memory: 1G
 
   traefik:
     build:
@@ -51,6 +59,10 @@ services:
     <<: *django
     image: jukebox_radio_production_celeryworker
     command: /start-celeryworker
+    deploy:
+      resources:
+        reservations:
+          memory: 1G
 
   celerybeat:
     <<: *django
@@ -62,7 +74,7 @@ services:
     image: jukebox_radio_production_flower
     command: /start-flower
 
-  
+
   awscli:
     build:
       context: .

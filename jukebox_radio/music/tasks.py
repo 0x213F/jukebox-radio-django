@@ -23,6 +23,8 @@ def generate_stems_for_track(track_uuid):
     Track = apps.get_model('music', 'Track')
     Stem = apps.get_model('music', 'Stem')
 
+    print('GENERATING STEMS!')
+
     track = Track.objects.get(uuid=track_uuid)
 
     if track.provider != Track.PROVIDER_JUKEBOX_RADIO:
