@@ -1,8 +1,8 @@
-import requests
-
 from django.apps import apps
 from django.conf import settings
 from django.utils import timezone
+
+from jukebox_radio.networking.actions import make_request
 
 
 def refresh_track_external_data(track, user):
@@ -29,7 +29,9 @@ def refresh_collection_external_data(collection, user):
 
 
 def _refresh_track_spotify_data(track, user):
-    response = requests.get(
+    Request = apps.get_model("networking", "Request")
+    response = make_request(
+        Request.TYPE_GET,
         f"https://api.spotify.com/v1/tracks/{track.spotify_id}",
         headers={
             "Authorization": f"Bearer {user.spotify_access_token}",
@@ -44,18 +46,19 @@ def _refresh_track_spotify_data(track, user):
 
 
 def _refresh_track_youtube_data(track):
-    params = {
+    Request = apps.get_model("networking", "Request")
+
+    data = {
         "part": "snippet,contentDetails",
         "id": track.youtube_id,
         "key": settings.GOOGLE_API_KEY,
     }
 
-    response = requests.get(
+    response = make_request(
+        Request.TYPE_GET,
         "https://www.googleapis.com/youtube/v3/videos",
-        params=params,
-        headers={
-            "Content-Type": "application/json",
-        },
+        data=data,
+        headers={"Content-Type": "application/json"},
     )
 
     response_json = response.json()
@@ -93,8 +96,10 @@ def _refresh_track_youtube_data(track):
 def _refresh_collection_spotify_album_data(collection, user):
     Track = apps.get_model("music", "Track")
     CollectionListing = apps.get_model("music", "CollectionListing")
+    Request = apps.get_model("networking", "Request")
 
-    response = requests.get(
+    response = make_request(
+        Request.TYPE_GET,
         f"https://api.spotify.com/v1/albums/{collection.spotify_id}/tracks",
         headers={
             "Authorization": f"Bearer {user.spotify_access_token}",
@@ -185,8 +190,10 @@ def _refresh_collection_spotify_album_data(collection, user):
 def _refresh_collection_spotify_playlist_data(collection, user):
     Track = apps.get_model("music", "Track")
     CollectionListing = apps.get_model("music", "CollectionListing")
+    Request = apps.get_model("networking", "Request")
 
-    response = requests.get(
+    response = make_request(
+        Request.TYPE_GET,
         f"https://api.spotify.com/v1/playlists/{collection.spotify_id}",
         headers={
             "Authorization": f"Bearer {user.spotify_access_token}",

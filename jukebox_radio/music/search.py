@@ -5,11 +5,10 @@ from django.apps import apps
 from django.conf import settings
 from django.db.models import Q
 
-from jukebox_radio.music.models.provider import (
-    GLOBAL_PROVIDER_JUKEBOX_RADIO,
-    GLOBAL_PROVIDER_SPOTIFY,
-    GLOBAL_PROVIDER_YOUTUBE,
-)
+from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_JUKEBOX_RADIO
+from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_SPOTIFY
+from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_YOUTUBE
+from jukebox_radio.networking.actions import make_request
 
 
 def get_search_results(user, provider_slug, query, formats):
@@ -141,6 +140,7 @@ def _get_jukebox_radio_search_results(query, user):
 def _get_spotify_search_results(query, formats, user):
     Collection = apps.get_model("music", "Collection")
     Track = apps.get_model("music", "Track")
+    Request = apps.get_model("networking", "Request")
 
     formats = set(formats).intersection(
         set([Track.FORMAT_TRACK, Collection.FORMAT_ALBUM, Collection.FORMAT_PLAYLIST])
@@ -153,9 +153,10 @@ def _get_spotify_search_results(query, formats, user):
 
     spotify_access_token = user.spotify_access_token
 
-    response = requests.get(
-        f"https://api.spotify.com/v1/search",
-        params=data,
+    response = make_request(
+        Request.TYPE_GET,
+        "https://api.spotify.com/v1/search",
+        data=data,
         headers={
             "Authorization": f"Bearer {spotify_access_token}",
             "Content-Type": "application/json",
@@ -223,13 +224,14 @@ def _get_youtube_search_results(query, formats):
     Get YouTube search results
     """
     Track = apps.get_model("music", "Track")
+    Request = apps.get_model("networking", "Request")
 
     formats = set(formats).intersection(set([Track.FORMAT_VIDEO]))
 
     if not formats:
         return []
 
-    params = {
+    data = {
         "part": "snippet",
         "q": query,
         "key": settings.GOOGLE_API_KEY,
@@ -238,9 +240,10 @@ def _get_youtube_search_results(query, formats):
         "maxResults": 25,
     }
 
-    response = requests.get(
+    response = make_request(
+        Request.TYPE_GET,
         "https://www.googleapis.com/youtube/v3/search",
-        params=params,
+        data=data,
         headers={
             "Content-Type": "application/json",
         },
