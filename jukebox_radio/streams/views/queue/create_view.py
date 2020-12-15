@@ -1,17 +1,17 @@
 import json
 
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.music.refresh import refresh_collection_external_data
 from jukebox_radio.music.refresh import refresh_track_external_data
 
-User = get_user_model()
 
-
-def get_and_validate_queue_objs(stream, prev_queue_uuid, next_queue_uuid):
+def get_and_validate_queue_objs(stream, user, prev_queue_uuid, next_queue_uuid):
+    """
+    Lookup neighboring queues needed to create a new queue.
+    """
 
     # NOTE: For now, the client isn't sending up next or prev queue UUIDs. So
     #       just lookup the most recent queue and use that as the prev value.
@@ -31,7 +31,7 @@ def get_and_validate_queue_objs(stream, prev_queue_uuid, next_queue_uuid):
 
     # TODO: Eventually, require that the client sends either next or prev
     #       queue. Use the code below instead and delete the above code.
-    # related_queue = Queue.objects.filter(uuid_in=[prev_queue_uuid, next_queue_uuid]).get()
+    # related_queue = Queue.objects.filter(uuid_in=[prev_queue_uuid, next_queue_uuid], stream=stream, user=user).get()
     # if related_queue and related_queue.parent_queue_ptr:
     #     raise ValueError(
     #         "You are trying to attach to a queue that has a parent. Try "
@@ -63,7 +63,7 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
         next_queue_ptr, prev_queue_ptr = get_and_validate_queue_objs(
-            stream, prev_queue_uuid, next_queue_uuid
+            stream, request.user, prev_queue_uuid, next_queue_uuid
         )
 
         # The client either sent a track or a collection UUID. We use class to
@@ -104,6 +104,10 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
             related_queue_qs.update(next_queue_ptr=queue)
 
         if collection:
+
+            # Here we add all the required child queues for each collection
+            # listing (i.e. track on album, track in playlist, et al.) in the
+            # collection
             tracks = collection.filter_tracks()
             for _track in tracks:
                 track_queue = Queue.objects.create(
@@ -122,4 +126,5 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
                     prev_queue_ptr.save()
                 prev_queue_ptr = track_queue
 
+        # TODO: return something meaningful
         return self.http_response_200({})
