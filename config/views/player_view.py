@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
-from jukebox_radio.music.models.provider import GLOBAL_PROVIDER_CHOICES
+from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
 
 
 class PlayerView(BaseView, LoginRequiredMixin):

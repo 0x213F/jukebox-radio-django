@@ -137,19 +137,19 @@ class QueueAdmin(admin.ModelAdmin):
     list_uuid.short_description = "UUID"
 
     def list_prev(self, obj):
-        return mark_safe(f"<tt>{str(obj.uuid)[:8]}</tt>")
+        return mark_safe(f"<tt>{str(obj.prev_queue_ptr_id)[:8]}</tt>")
 
-    list_uuid.short_description = "PREVIOUS"
+    list_prev.short_description = "PREVIOUS"
 
     def list_next(self, obj):
-        return mark_safe(f"<tt>{str(obj.uuid)[:8]}</tt>")
+        return mark_safe(f"<tt>{str(obj.next_queue_ptr_id)[:8]}</tt>")
 
-    list_uuid.short_description = "NEXT"
+    list_next.short_description = "NEXT"
 
     def list_parent(self, obj):
-        return mark_safe(f"<tt>{str(obj.uuid)[:8]}</tt>")
+        return mark_safe(f"<tt>{str(obj.parent_queue_ptr_id)[:8]}</tt>")
 
-    list_uuid.short_description = "PARENT"
+    list_parent.short_description = "PARENT"
 
     def list_stream(self, obj):
         return mark_safe(f"<tt>{str(obj.stream_id)[:8]}</tt>")
