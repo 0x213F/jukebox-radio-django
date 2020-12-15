@@ -1,5 +1,3 @@
-from urllib.parse import urlencode
-
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -11,7 +9,7 @@ from jukebox_radio.music.search import get_search_results
 class MusicSearchView(BaseView, LoginRequiredMixin):
     def get(self, request, **kwargs):
         """
-        Given a query, get relevant collections.
+        Given a query, get relevant tracks and collections.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")

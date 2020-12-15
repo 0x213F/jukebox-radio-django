@@ -19,7 +19,12 @@ import pgtrigger
     )
 )
 class Request(models.Model):
+    """
+    Logs for outgoing requests. There is a pgtrigger to protect inserts to
+    promote using the following interface:
 
+      jukebox_radio.networking.actions.make_request
+    """
     TYPE_GET = 'get'
     TYPE_POST = 'post'
     TYPE_CHOICES = (

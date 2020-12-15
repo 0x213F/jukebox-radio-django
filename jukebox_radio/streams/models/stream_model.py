@@ -13,7 +13,9 @@ import pgtrigger
 )
 @pghistory.track(pghistory.Snapshot("stream.snapshot"))
 class Stream(models.Model):
-
+    """
+    Keeps track of playback. You could also think of this as a radio station.
+    """
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
@@ -63,3 +65,9 @@ class Stream(models.Model):
         )
 
         return within_bounds
+
+    @property
+    def now_playing_duration(self):
+        if not self.now_playing_id:
+            return None
+        return timedelta(milliseconds=self.now_playing.duration_ms)

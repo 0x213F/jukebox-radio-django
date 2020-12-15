@@ -1,20 +1,16 @@
 from datetime import timedelta
 
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import transaction
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
-
-User = get_user_model()
 
 
 class StreamPlayTrackView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        In the user's stream, play the head of the queue.
+        When a user plays a paused stream.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")

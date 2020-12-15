@@ -20,6 +20,11 @@ app_name = "streams"
 urlpatterns = [
     # Stream
     path(
+        "stream/next-track/",
+        view=StreamNextTrackView.as_view(),
+        name="stream-next-track",
+    ),
+    path(
         "stream/pause-track/", view=StreamPauseTrackView.as_view(), name="stream-pause"
     ),
     path("stream/play-track/", view=StreamPlayTrackView.as_view(), name="stream-play"),
@@ -37,11 +42,6 @@ urlpatterns = [
         "stream/scan-forward/",
         view=StreamScanForwardView.as_view(),
         name="stream-scan-forward",
-    ),
-    path(
-        "stream/next-track/",
-        view=StreamNextTrackView.as_view(),
-        name="stream-next-track",
     ),
     # Queue
     path("queue/create/", view=QueueCreateView.as_view(), name="queue-create"),

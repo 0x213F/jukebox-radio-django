@@ -1,19 +1,17 @@
 from datetime import timedelta
 
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
 
-User = get_user_model()
-
 
 class StreamScanForwardView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        Scan forward 10 seconds.
+        Scan the stream forwards 10 seconds e.g. double tapping left or right
+        in a video streaming app.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
