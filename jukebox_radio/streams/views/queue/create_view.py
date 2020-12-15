@@ -2,6 +2,7 @@ import json
 
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 
 from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.music.refresh import refresh_collection_external_data
@@ -12,20 +13,20 @@ def get_and_validate_queue_objs(stream, user, prev_queue_uuid, next_queue_uuid):
     """
     Lookup neighboring queues needed to create a new queue.
     """
+    Queue = apps.get_model("streams", "Queue")
 
     # NOTE: For now, the client isn't sending up next or prev queue UUIDs. So
     #       just lookup the most recent queue and use that as the prev value.
-    if not related_queue:
+    try:
         try:
-            try:
-                prev_queue_ptr = Queue.objects.in_stream(stream)[-1]
-            except IndexError:
-                prev_queue_ptr = Queue.objects.get(
-                    stream=stream,
-                    is_head=True,
-                )
-        except Queue.DoesNotExist:
-            prev_queue_ptr = None
+            prev_queue_ptr = Queue.objects.in_stream(stream)[-1]
+        except IndexError:
+            prev_queue_ptr = Queue.objects.get(
+                stream=stream,
+                is_head=True,
+            )
+    except Queue.DoesNotExist:
+        prev_queue_ptr = None
 
     return prev_queue_ptr, None
 
@@ -82,49 +83,56 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
         if collection:
             refresh_collection_external_data(collection, request.user)
 
-        # Create the queue
-        queue = Queue.objects.create(
-            user=request.user,
-            track=track,
-            collection=collection,
-            stream=stream,
-            prev_queue_ptr_id=prev_queue_uuid,
-            next_queue_ptr_id=next_queue_uuid,
-            is_abstract=is_abstract,
-            parent_queue_ptr=None,
-        )
+        with transaction.atomic():
 
-        # Fix pointers
-        if prev_queue_ptr:
-            related_queue_qs = Queue.objects.filter(prev_queue_ptr=prev_queue_ptr)
-            related_queue_qs.update(prev_queue_ptr=queue)
+            # Create the queue
+            queue = Queue.objects.create(
+                user=request.user,
+                track=track,
+                collection=collection,
+                stream=stream,
+                prev_queue_ptr=prev_queue_ptr,
+                next_queue_ptr=next_queue_ptr,
+                is_abstract=is_abstract,
+                parent_queue_ptr=None,
+            )
 
-        if next_queue_ptr:
-            related_queue_qs = Queue.objects.filter(next_queue_ptr=next_queue_ptr)
-            related_queue_qs.update(next_queue_ptr=queue)
-
-        if collection:
-
-            # Here we add all the required child queues for each collection
-            # listing (i.e. track on album, track in playlist, et al.) in the
-            # collection
-            tracks = collection.filter_tracks()
-            for _track in tracks:
-                track_queue = Queue.objects.create(
-                    user=request.user,
-                    track=_track,
-                    collection=None,
-                    stream=stream,
-                    prev_queue_ptr=prev_queue_ptr,
-                    next_queue_ptr=None,
-                    is_abstract=False,
-                    parent_queue_ptr=queue,
-                )
-
+            # Fix pointers
+            if track:
                 if prev_queue_ptr:
-                    prev_queue_ptr.next_queue_ptr = track_queue
+                    prev_queue_ptr.next_queue_ptr = queue
                     prev_queue_ptr.save()
-                prev_queue_ptr = track_queue
+
+                if next_queue_ptr:
+                    next_queue_ptr.prev_queue_ptr = queue
+                    next_queue_ptr.save()
+
+            if collection:
+
+                # Here we add all the required child queues for each collection
+                # listing (i.e. track on album, track in playlist, et al.) in the
+                # collection
+                tracks = collection.filter_tracks()
+                for _track in tracks:
+                    track_queue = Queue.objects.create(
+                        user=request.user,
+                        track=_track,
+                        collection=None,
+                        stream=stream,
+                        prev_queue_ptr=prev_queue_ptr,
+                        next_queue_ptr=None,
+                        is_abstract=False,
+                        parent_queue_ptr=queue,
+                    )
+
+                    if prev_queue_ptr:
+                        prev_queue_ptr.next_queue_ptr = track_queue
+                        prev_queue_ptr.save()
+                    prev_queue_ptr = track_queue
+
+                _track = tracks.last()
+                _track.next_queue_ptr = next_queue_ptr
+                _track.save()
 
         # TODO: return something meaningful
         return self.http_response_200({})

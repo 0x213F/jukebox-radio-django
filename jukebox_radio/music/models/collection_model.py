@@ -25,6 +25,10 @@ def upload_to_collections_imgs(*args, **kwargs):
     )
 )
 class Collection(models.Model):
+    """
+    Typically an album or a playlist, this model is a singular interface for
+    all collections of tracks.
+    """
     class Meta:
         unique_together = [
             "provider",
@@ -98,6 +102,9 @@ class Collection(models.Model):
 
 
 class Album(Collection):
+    '''
+    Proxy model for albums.
+    '''
     class Meta:
         proxy = True
         verbose_name = "Album"
@@ -105,6 +112,9 @@ class Album(Collection):
 
 
 class Playlist(Collection):
+    '''
+    Proxy model for playlists.
+    '''
     class Meta:
         proxy = True
         verbose_name = "Playlist"
@@ -118,6 +128,10 @@ class Playlist(Collection):
     )
 )
 class CollectionListing(models.Model):
+    """
+    This is the custom through table that keeps track of what tracks are in a
+    collection as well as what order they go in.
+    """
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 

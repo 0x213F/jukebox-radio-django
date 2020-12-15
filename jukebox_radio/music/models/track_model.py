@@ -26,6 +26,9 @@ def upload_to_tracks_imgs(*args, **kwargs):
     )
 )
 class Track(models.Model):
+    """
+    A singular piece of streamable media. All queue root nodes point to tracks.
+    """
     class Meta:
         unique_together = [
             "provider",

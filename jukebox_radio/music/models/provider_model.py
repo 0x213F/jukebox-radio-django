@@ -1,3 +1,6 @@
+"""
+These shared constants are used throughout the project.
+"""
 GLOBAL_PROVIDER_SPOTIFY = "spotify"
 GLOBAL_PROVIDER_YOUTUBE = "youtube"
 GLOBAL_PROVIDER_JUKEBOX_RADIO = "jukebox_radio"

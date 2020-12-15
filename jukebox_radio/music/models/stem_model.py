@@ -22,6 +22,10 @@ def upload_to_stems_audios(*args, **kwargs):
     )
 )
 class Stem(models.Model):
+    """
+    An isolated part of a track. Only Jukebox Radio tracks may have stems. For
+    example: an audio file containing just the drums of an uploaded track.
+    """
     INSTRUMENT_BASS = "bass"
     INSTRUMENT_DRUMS = "drums"
     INSTRUMENT_VOCALS = "vocals"
@@ -45,4 +49,4 @@ class Stem(models.Model):
     audio = models.FileField(upload_to=upload_to_stems_audios)
 
     def __str__(self):
-        return self.uuid
+        return str(self.uuid)

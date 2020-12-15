@@ -6,10 +6,8 @@ import uuid
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
-from django.conf import settings
 
 from pydub import AudioSegment
-from spleeter.separator import Separator
 
 from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.music.tasks import generate_stems_for_track
@@ -18,7 +16,7 @@ from jukebox_radio.music.tasks import generate_stems_for_track
 class TrackCreateView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        Given a query, get relevant collections.
+        Create a track from upload. Kick off async task to generate stems.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")

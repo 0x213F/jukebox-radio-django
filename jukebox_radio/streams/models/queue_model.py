@@ -7,6 +7,10 @@ import pgtrigger
 
 class QueueQuerySet(models.QuerySet):
     def in_stream(self, stream):
+        """
+        Get a list of all the queue items not yet played in a stream. Only root
+        nodes of the queue tree are returned.
+        """
         queue_qs = self.filter(
             stream=stream,
             played_at__isnull=True,
@@ -50,6 +54,26 @@ class QueueQuerySet(models.QuerySet):
     pgtrigger.Protect(name="protect_deletes", operation=pgtrigger.Delete)
 )
 class Queue(models.Model):
+    '''
+    A queue is a piece of content (either a track or collection) selected to
+    play in a stream. There are two important data structures used here.
+
+      1: LINKED LIST - This is responsible for the order in which tracks are
+                       played. Each of these is a child node of the tree
+                       explained in 2: and points to a track, not a collection.
+      2: TREE        - This is responsbile for the tree like structure to each
+                       queued item. For example, when I queue up an album
+                       (collection) it creates a queue item for the album and
+                       for each track on the album. This allows the user to
+                       remove either the album or individual tracks from the
+                       queue.
+
+    Non-abstract queues point to a track.
+
+    Abstract queues point to a collection and must have children nodes. In the
+    application logic, queue tree depth is limited to a 1. In the future, a
+    recursive tree structure with unlimited depth is possible.
+    '''
 
     objects = QueueQuerySet.as_manager()
 

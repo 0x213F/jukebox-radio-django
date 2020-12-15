@@ -1,20 +1,17 @@
 from datetime import timedelta
 
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
 
-User = get_user_model()
-
 
 class StreamNextTrackView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        In the user's stream, play the head of the queue.
+        When a user wants to play the "up next queue item" right now.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
@@ -28,8 +25,8 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
         except IndexError:
             raise ValueError("Queue is empty!")
 
+        playing_at = timezone.now() + timedelta(milliseconds=125)
         with transaction.atomic():
-            playing_at = timezone.now() + timedelta(milliseconds=125)
 
             stream.now_playing = first_queue.track
             stream.played_at = playing_at
@@ -40,6 +37,8 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             first_queue.is_head = True
             first_queue.save()
 
+            # This condition will only be hit once: when the first queue is
+            # created in a stream
             if first_queue.prev_queue_ptr_id:
                 first_queue.prev_queue_ptr.is_head = False
                 first_queue.prev_queue_ptr.save()
