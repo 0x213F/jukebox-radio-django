@@ -77,6 +77,7 @@ THIRD_PARTY_APPS = [
     "pgconnection",
     "pgtrigger",
     "pghistory",
+    "strict_fields",
 ]
 
 LOCAL_APPS = [
@@ -329,3 +330,6 @@ FERNET_KEY = env("FERNET_KEY")
 GOOGLE_API_KEY = env("GOOGLE_API_KEY")
 
 AUDIO_SEGMENT_PROCESSING_LENGTH = int(env("AUDIO_SEGMENT_PROCESSING_LENGTH"))
+
+# https://django-strict-fields.readthedocs.io/en/latest/#modifying-all-the-problematic-fields
+STRICT_FIELDS_HARDEN_DJANGOS_FIELDS = True
