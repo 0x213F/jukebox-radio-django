@@ -58,16 +58,14 @@ Or run in a detached (background) mode.
 ### Digital Ocean
 First, you need to [create a Digital Ocean account](https://m.do.co/c/137a789f8b35).
 
-Once that is setup, create a new project. Inside that project, register the domain that you want by creating 3 NS records and 2 A records (`@`, `www`).
+Once that is setup, create a new project. Inside that project, register your domain by creating 3 NS records and 2 A records (`@`, `www`).
 
-Inside that project, create a `Docker 19.03.12 on Ubuntu 20.04` droplet from the marketplace. Make sure to setup your SSH keys.
+Inside that project, create a `Docker 19.03.12 on Ubuntu 20.04` droplet from the marketplace.
 
-SSH into the droplet. Create a SSH key on the server, then add that SSH key to your GitHub profile. Finally, clone this repository.
-
-Now that you have got a machine running Docker, you can follow the "Docker" instructions in the above section.
+Now that you have a machine running Docker, you can follow the "Docker" instructions in the above section.
 
 ## Getting started
-Now that you have your very own Jukebox Radio, commence the kicking tires!
+Now that you have your very own instance of Jukebox Radio, commence the kicking tires!
 
 Below are the domains that you may access.
 
@@ -75,7 +73,7 @@ Below are the domains that you may access.
 - Admin website at `localhost:3000/admin`
 - Celery admin website at `localhost:5555`
 
-To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+To create a normal user account, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
 
 ## Developing
 Now that you have a working local setup, let us dive into the code setup. This project was created from [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
