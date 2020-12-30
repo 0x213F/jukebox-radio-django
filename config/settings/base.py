@@ -1,6 +1,7 @@
 """
 Base settings to build other settings files upon.
 """
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -308,6 +309,7 @@ STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
@@ -315,7 +317,7 @@ REST_FRAMEWORK = {
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
-CORS_URLS_REGEX = r"^/api/.*$"
+CORS_URLS_REGEX = r'^.*$'
 
 # Your stuff...
 # ------------------------------------------------------------------------------
@@ -332,4 +334,10 @@ GOOGLE_API_KEY = env("GOOGLE_API_KEY")
 AUDIO_SEGMENT_PROCESSING_LENGTH = int(env("AUDIO_SEGMENT_PROCESSING_LENGTH"))
 
 # https://django-strict-fields.readthedocs.io/en/latest/#modifying-all-the-problematic-fields
-STRICT_FIELDS_HARDEN_DJANGOS_FIELDS = True
+# NOTE: this breaks AbstractUser
+# STRICT_FIELDS_HARDEN_DJANGOS_FIELDS = True
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=14),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
+}

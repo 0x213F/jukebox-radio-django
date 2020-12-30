@@ -21,6 +21,7 @@ django-compressor==2.4  # https://github.com/django-compressor/django-compressor
 django-redis==4.12.1  # https://github.com/jazzband/django-redis
 # Django REST Framework
 djangorestframework==3.12.1  # https://github.com/encode/django-rest-framework
+djangorestframework-simplejwt==4.6.0
 django-cors-headers==3.5.0 # https://github.com/adamchainz/django-cors-headers
 
 # More...
@@ -45,5 +46,5 @@ black==20.8b1
 ffmpeg-python==0.2.0
 pydub==0.24.1
 
-tensorflow-cpu==2.4.0
+tensorflow-cpu==2.3.1
 spleeter==2.0.2

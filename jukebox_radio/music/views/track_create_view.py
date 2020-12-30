@@ -21,12 +21,12 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
 
-        track_name = request.POST.get("track_name")
-        artist_name = request.POST.get("artist_name")
-        album_name = request.POST.get("album_name")
+        track_name = request.POST.get("trackName")
+        artist_name = request.POST.get("artistName")
+        album_name = request.POST.get("albumName")
 
-        audio_file = request.FILES.get("audio_file")
-        img_file = request.FILES.get("img_file")
+        audio_file = request.FILES.get("audioFile")
+        image_file = request.FILES.get("imageFile")
 
         # Morph audio into OGG
         upload_file_ext = pathlib.Path(audio_file.temporary_file_path()).suffix[1:]
@@ -49,7 +49,7 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
             artist_name=artist_name,
             album_name=album_name,
             audio=audio_file,
-            img=img_file,
+            img=image_file,
             duration_ms=audio_segment.duration_seconds * 1000,
         )
 

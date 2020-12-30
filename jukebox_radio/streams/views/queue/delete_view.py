@@ -1,3 +1,5 @@
+import json
+
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
@@ -18,7 +20,10 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        queue_uuid = request.POST.get("queueUuid")
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        queue_uuid = body['queueUuid']
         queue = Queue.objects.select_related("prev_queue_ptr", "next_queue_ptr").get(
             uuid=queue_uuid, stream=stream, user=request.user
         )

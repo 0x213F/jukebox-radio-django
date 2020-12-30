@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 
 from django.apps import apps
@@ -30,7 +31,8 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
         if not stream.now_playing or track_is_over:
             return self.http_response_400("No track is currently playing in the stream")
 
-        text = request.POST.get("text")
+        text = request.POST['text']
+
         text_comment = TextComment.objects.create(
             user=request.user,
             text=text,
@@ -40,10 +42,12 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
 
         return self.http_response_200(
             {
+                "class": text_comment.__class__.__name__,
                 "uuid": text_comment.uuid,
                 "userUsername": text_comment.user.username,
                 "text": text_comment.text,
-                "trackId": text_comment.track_id,
+                "trackUuid": text_comment.track_id,
                 "timestampMilliseconds": text_comment.timestamp_ms,
+                "modifications": [],
             }
         )

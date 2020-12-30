@@ -3,7 +3,7 @@ from django.urls import path
 from jukebox_radio.comments.views.textcomment import (
     TextCommentCreateView,
     TextCommentDeleteView,
-    TextCommentUpdateView,
+    TextCommentListView,
 )
 from jukebox_radio.comments.views.textcommentmodification import (
     TextCommentModificationCreateView,
@@ -31,9 +31,9 @@ urlpatterns = [
         name="text-comment-delete",
     ),
     path(
-        "text-comment/update/",
-        view=TextCommentUpdateView.as_view(),
-        name="text-comment-update",
+        "text-comment/list/",
+        view=TextCommentListView.as_view(),
+        name="text-comment-list",
     ),
     # TextCommentModification
     path(

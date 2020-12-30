@@ -9,11 +9,15 @@ from django.http import (
 from django.template.response import TemplateResponse
 from django.views import View
 
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
-class BaseView(View):
+
+class BaseView(APIView):
     """
     Inherits from Django View.
     """
+    permission_classes = (IsAuthenticated,)
 
     def http_response_200(self, data=None):
         """
