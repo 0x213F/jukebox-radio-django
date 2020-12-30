@@ -7,6 +7,8 @@ import pghistory
 import pgtrigger
 from unique_upload import unique_upload
 
+from jukebox_radio.core import time as time_util
+
 
 def upload_to_comments_voice_recordings(*args, **kwargs):
     return (
@@ -36,11 +38,21 @@ class TextComment(models.Model):
     def __str__(self):
         return f"[{self.user}] {self.text}"
 
+    def archive(self):
+        self.deleted_at = time_util.now()
+        self.save()
+
 
 @pgtrigger.register(
     pgtrigger.Protect(
-        name="append_only",
-        operation=(pgtrigger.Update | pgtrigger.Delete),
+        name="protect_deletes",
+        operation=pgtrigger.Delete,
+    )
+)
+@pgtrigger.register(
+    pgtrigger.Protect(
+        name="protect_updates",
+        operation=pgtrigger.Update,
     )
 )
 class VoiceRecording(models.Model):
@@ -62,21 +74,23 @@ class VoiceRecording(models.Model):
     def __str__(self):
         return f"[{self.user}] {self.duration_ms / 1000}s voice recording"
 
+    @pgtrigger.ignore('comments.VoiceRecording:protect_updates')
+    def archive(self):
+        self.deleted_at = time_util.now()
+        self.save()
+
 
 @pgtrigger.register(
-    pgtrigger.Protect(
-        name="append_only",
-        operation=(pgtrigger.Update | pgtrigger.Delete),
-    )
+    pgtrigger.Protect(name="protect_deletes", operation=pgtrigger.Delete)
 )
 class TextCommentModification(models.Model):
 
     STYLE_HIGHLIGHT = "highlight"
-    STYLE_STRIKETHROUGH = "strikethrough"
+    STYLE_STRIKE_THROUGH = "strike-through"
     STYLE_UNDERLINE = "underline"
     STYLE_CHOICES = (
         (STYLE_HIGHLIGHT, "Highlight"),
-        (STYLE_STRIKETHROUGH, "Strikethrough"),
+        (STYLE_STRIKE_THROUGH, "Strikethrough"),
         (STYLE_UNDERLINE, "Underline"),
     )
 
@@ -85,6 +99,7 @@ class TextCommentModification(models.Model):
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     text_comment = models.ForeignKey(
         "comments.TextComment",
+        related_name="modifications",
         on_delete=models.CASCADE,
     )
 

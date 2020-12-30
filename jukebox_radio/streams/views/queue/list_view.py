@@ -18,12 +18,15 @@ class QueueListView(BaseView, LoginRequiredMixin):
 
         queues = []
         for queue in queue_qs:
+            track_name = queue.track and queue.track.name
+            collection_name = queue.collection and queue.collection.name
+            track_duration_ms = queue.track and queue.track.duration_ms
             queues.append(
                 {
                     "uuid": queue.uuid,
-                    "trackName": queue.track.name,
-                    "collectionName": queue.collection.name,
-                    "trackDurationMs": queue.track.duration_ms,
+                    "trackName": track_name,
+                    "collectionName": collection_name,
+                    "trackDurationMs": track_duration_ms,
                     "parentQueuePtrUuid": queue.parent_queue_ptr_id,
                     "isAbstract": queue.is_abstract,
                 }

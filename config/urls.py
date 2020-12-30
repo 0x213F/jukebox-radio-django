@@ -5,7 +5,13 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
-from rest_framework.authtoken.views import obtain_auth_token
+
+# from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from config.views import SettingsView
 from config.views import PlayerView
@@ -33,8 +39,10 @@ if settings.DEBUG:
 urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
-    # DRF auth token
-    path("auth-token/", obtain_auth_token),
+    # DRF JWT auth tokens
+    path("auth/obtain-tokens/", TokenObtainPairView.as_view(), name="auth-obtain-tokens"),
+    path("auth/refresh-token/", TokenRefreshView.as_view(), name="auth-refresh-token"),
+    path("auth/verify-token/", TokenVerifyView.as_view(), name="auth-verify-token"),
 ]
 
 if settings.DEBUG:

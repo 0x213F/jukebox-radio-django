@@ -286,7 +286,7 @@ class TrackAdmin(admin.ModelAdmin):
     list_duration.short_description = "DURATION"
 
     def list_image(self, obj):
-        url = obj.img_url or obj.img.url
+        url = obj.img_url or '' # obj.img.url
         return mark_safe(f'<img src="{url}" style="height: 15px;" />')
 
     list_image.short_description = "IMAGE"

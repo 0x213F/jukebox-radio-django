@@ -215,3 +215,7 @@ sentry_sdk.init(
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+CORS_ORIGIN_WHITELIST = (
+    'https://jukebox.radio',
+    'https://jukeboxrad.io',
+)
