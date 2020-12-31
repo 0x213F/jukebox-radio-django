@@ -3,6 +3,7 @@ import json
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
@@ -20,11 +21,8 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-
-        queue_uuid = body['queueUuid']
-        queue = Queue.objects.select_related("prev_queue_ptr", "next_queue_ptr").get(
+        queue_uuid = request.POST['queueUuid']
+        queue = Queue.objects.get(
             uuid=queue_uuid, stream=stream, user=request.user
         )
 
@@ -35,17 +33,15 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
             queue.deleted_at = now
             queue.save()
 
-            # fix prev pointers
-            next_queue_qs = Queue.objects.filter(next_queue_ptr=queue)
-            next_queue_qs.update(next_queue_ptr=queue.next_queue_ptr)
+            # fix offset for up next indexes
+            children_queue_count = queue.children.count()
+            offset = max(1, children_queue_count)
+            relative_up_next = Queue.objects.filter(
+                stream=stream, index__gt=queue.index, deleted_at__isnull=True
+            )
+            relative_up_next.update(index=F('index') - offset)
 
-            # fix next pointers
-            prev_queue_qs = Queue.objects.filter(prev_queue_ptr=queue)
-            prev_queue_qs.update(prev_queue_ptr=queue.prev_queue_ptr)
+            # also delete children
+            queue.children.all().update(deleted_at=now)
 
-            # delete child queues
-            child_queue_qs = Queue.objects.filter(parent_queue_ptr=queue)
-            child_queue_qs.update(deleted_at=now)
-
-        # TODO: return something meaningful
-        return self.http_response_200({})
+        return self.http_response_200()

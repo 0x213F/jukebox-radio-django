@@ -14,21 +14,42 @@ class QueueListView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model('streams', 'Stream')
 
         stream = Stream.objects.get(user=request.user)
-        queue_qs = Queue.objects.in_stream(stream)
+        queue_qs = Queue.objects.up_next(stream)
 
         queues = []
         for queue in queue_qs:
+
+            children = []
+            for child in queue.ordered_children:
+                track_name = child.track and child.track.name
+                track_duration_ms = child.track and child.track.duration_ms
+                children.append({
+                    "uuid": child.uuid,
+                    "index": child.index,
+                    "trackName": track_name,
+                    "trackDurationMs": track_duration_ms,
+                    "parentUuid": child.parent_id,
+                    "isAbstract": child.is_abstract,
+                    "children": [],
+                    "isDeleted": bool(child.deleted_at),
+                    "depth": 1,
+                })
+
             track_name = queue.track and queue.track.name
             collection_name = queue.collection and queue.collection.name
             track_duration_ms = queue.track and queue.track.duration_ms
             queues.append(
                 {
                     "uuid": queue.uuid,
+                    "index": queue.index,
                     "trackName": track_name,
                     "collectionName": collection_name,
                     "trackDurationMs": track_duration_ms,
-                    "parentQueuePtrUuid": queue.parent_queue_ptr_id,
+                    "parentUuid": queue.parent_id,
                     "isAbstract": queue.is_abstract,
+                    "children": children,
+                    "isDeleted": False,
+                    "depth": 0,
                 }
             )
 
