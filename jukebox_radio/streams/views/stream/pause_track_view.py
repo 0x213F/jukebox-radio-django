@@ -24,7 +24,7 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
         if stream.is_paused:
             raise ValueError("Cannot pause a stream which is already paused")
 
-        pausing_at = timezone.now() + timedelta(milliseconds=125)
+        pausing_at = timezone.now() + timedelta(milliseconds=100)
         if (stream.played_at - pausing_at) > stream.now_playing_duration:
             raise ValueError(
                 "Cannot pause since the track will be over by the time we try to pause"
@@ -33,4 +33,6 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
         stream.paused_at = pausing_at
         stream.save()
 
-        return self.http_response_200({})
+        return self.http_response_200({
+            "pausedAt": int(stream.paused_at.timestamp()),
+        })

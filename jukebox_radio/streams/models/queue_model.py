@@ -73,6 +73,30 @@ class QueueQuerySet(models.QuerySet):
     def get_head(self, stream):
         return Queue.objects.get(stream=stream, is_head=True, deleted_at__isnull=True)
 
+    def get_prev(self, stream):
+        head = Queue.objects.get_head(stream)
+        try:
+            return Queue.objects.get(
+                stream=stream,
+                index=(head.index - 1),
+                is_abstract=False,
+                deleted_at__isnull=True,
+            )
+        except Queue.DoesNotExist:
+            return None
+
+    def get_next(self, stream):
+        head = Queue.objects.get_head(stream)
+        try:
+            return Queue.objects.get(
+                stream=stream,
+                index=(head.index + 1),
+                is_abstract=False,
+                deleted_at__isnull=True,
+            )
+        except Queue.DoesNotExist:
+            return None
+
     def up_next_tracks(self, stream):
         queue_head = Queue.objects.get_head(stream)
         if not queue_head:

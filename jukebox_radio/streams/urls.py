@@ -1,6 +1,7 @@
 from django.urls import path
 
 from jukebox_radio.streams.views.stream import (
+    StreamGetView,
     StreamPauseTrackView,
     StreamPlayTrackView,
     StreamPreviousTrackView,
@@ -19,6 +20,11 @@ from jukebox_radio.streams.views.queue import (
 app_name = "streams"
 urlpatterns = [
     # Stream
+    path(
+        "stream/get/",
+        view=StreamGetView.as_view(),
+        name="stream-get",
+    ),
     path(
         "stream/next-track/",
         view=StreamNextTrackView.as_view(),
