@@ -20,39 +20,25 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        if not stream.now_playing_id:
-            raise ValueError("Nothing is playing!")
+        last_head = Queue.objects.get_head(stream)
+        next_head = Queue.objects.get_prev(stream)
 
-        queue = Queue.objects.select_related(
-            "prev_queue_ptr", "prev_queue_ptr__track"
-        ).get(stream=stream, is_head=True)
+        if not next_head:
+            raise ValueError('Nothing to play next!')
 
-        playing_at = timezone.now() + timedelta(milliseconds=125)
-
-        # NOTE: This is a required but temporary block of logic. This case is
-        #       hit when a track stops playing and the next queue item is not
-        #       automatically played. That behavior is not expected in the long
-        #       run.
-        if not stream.is_playing and not stream.is_paused:
-            stream.played_at = playing_at
-            stream.paused_at = None
-            stream.save()
-            return self.http_response_200({})
-
+        playing_at = timezone.now()
         with transaction.atomic():
-            stream.now_playing = queue.prev_queue_ptr.track
+
+            stream.now_playing = next_head.track
             stream.played_at = playing_at
             stream.paused_at = None
             stream.save()
 
-            # Update the current head of the queue
-            queue.played_at = None
-            queue.is_head = False
-            queue.save()
+            next_head.played_at = playing_at
+            next_head.is_head = True
+            next_head.save()
 
-            # Mark the new head of the queue
-            queue.prev_queue_ptr.played_at = playing_at
-            queue.prev_queue_ptr.is_head = True
-            queue.prev_queue_ptr.save()
+            last_head.is_head = False
+            last_head.save()
 
         return self.http_response_200({})

@@ -19,6 +19,9 @@ class QueueListView(BaseView, LoginRequiredMixin):
         queues = []
         for queue in queue_qs:
 
+            if queue.collection and not queue.ordered_children:
+                continue
+
             children = []
             for child in queue.ordered_children:
                 track_name = child.track and child.track.name

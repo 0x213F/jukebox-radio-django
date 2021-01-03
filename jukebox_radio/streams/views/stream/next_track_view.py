@@ -20,27 +20,25 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        try:
-            first_queue = Queue.objects.in_stream(stream)[0]
-        except IndexError:
-            raise ValueError("Queue is empty!")
+        last_head = Queue.objects.get_head(stream)
+        next_head = Queue.objects.get_next(stream)
+
+        if not next_head:
+            raise ValueError('Nothing to play next!')
 
         playing_at = timezone.now() + timedelta(milliseconds=125)
         with transaction.atomic():
 
-            stream.now_playing = first_queue.track
+            stream.now_playing = next_head.track
             stream.played_at = playing_at
             stream.paused_at = None
             stream.save()
 
-            first_queue.played_at = playing_at
-            first_queue.is_head = True
-            first_queue.save()
+            next_head.played_at = playing_at
+            next_head.is_head = True
+            next_head.save()
 
-            # This condition will only be hit once: when the first queue is
-            # created in a stream
-            if first_queue.prev_queue_ptr_id:
-                first_queue.prev_queue_ptr.is_head = False
-                first_queue.prev_queue_ptr.save()
+            last_head.is_head = False
+            last_head.save()
 
         return self.http_response_200({})

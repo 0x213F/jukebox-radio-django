@@ -24,20 +24,22 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
-        end_of_the_track = stream.played_at + timedelta(
-            milliseconds=stream.now_playing.duration_ms
-        )
-        track_is_over = stream.now_playing and now > end_of_the_track
-        if not stream.now_playing or track_is_over:
+        if not stream.is_playing and not stream.is_paused:
             return self.http_response_400("No track is currently playing in the stream")
 
         text = request.POST['text']
+
+        timestamp_ms = (
+            time_util.ms(now - stream.played_at)
+            if stream.is_playing else
+            time_util.ms(stream.played_at - stream.paused_at)
+        )
 
         text_comment = TextComment.objects.create(
             user=request.user,
             text=text,
             track=stream.now_playing,
-            timestamp_ms=time_util.ms(now - stream.played_at),
+            timestamp_ms=timestamp_ms,
         )
 
         return self.http_response_200(

@@ -1,3 +1,4 @@
+from .get_view import StreamGetView
 from .pause_track_view import StreamPauseTrackView
 from .play_track_view import StreamPlayTrackView
 from .previous_track_view import StreamPreviousTrackView
