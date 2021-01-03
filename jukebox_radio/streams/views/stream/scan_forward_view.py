@@ -27,7 +27,7 @@ class StreamScanForwardView(BaseView, LoginRequiredMixin):
         now = timezone.now()
         track_ends_at = playing_at + timedelta(milliseconds=stream.now_playing.duration_ms)
         if track_ends_at <= now:
-            raise ValueError("Cannot scan past the end of the song")
+            return self.http_response_400("Cannot scan past the end of the song")
 
         stream.played_at = playing_at
         stream.save()

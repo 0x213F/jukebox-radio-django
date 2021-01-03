@@ -41,7 +41,12 @@ class BaseView(APIView):
         """
         BAD REQUEST
         """
-        return HttpResponseBadRequest(message)
+        return JsonResponse({
+            "system": {
+                "status": 400,
+                "message": message,
+            },
+        }, status=400)
 
     def http_response_403(self, message):
         """
