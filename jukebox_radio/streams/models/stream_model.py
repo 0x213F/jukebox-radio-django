@@ -16,6 +16,7 @@ class Stream(models.Model):
     """
     Keeps track of playback. You could also think of this as a radio station.
     """
+
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)

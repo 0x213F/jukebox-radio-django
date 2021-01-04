@@ -74,7 +74,7 @@ class VoiceRecording(models.Model):
     def __str__(self):
         return f"[{self.user}] {self.duration_ms / 1000}s voice recording"
 
-    @pgtrigger.ignore('comments.VoiceRecording:protect_updates')
+    @pgtrigger.ignore("comments.VoiceRecording:protect_updates")
     def archive(self):
         self.deleted_at = time_util.now()
         self.save()
@@ -85,13 +85,13 @@ class VoiceRecording(models.Model):
 )
 class TextCommentModification(models.Model):
 
-    STYLE_UNDERLINE = 'underline'
-    STYLE_BOX = 'box'
-    STYLE_CIRCLE = 'circle'
-    STYLE_HIGHLIGHT = 'highlight'
-    STYLE_STRIKE_THROUGH = 'strike-through'
-    STYLE_CROSSED_OFF = 'crossed-off'
-    STYLE_BRACKET = 'bracket'
+    STYLE_UNDERLINE = "underline"
+    STYLE_BOX = "box"
+    STYLE_CIRCLE = "circle"
+    STYLE_HIGHLIGHT = "highlight"
+    STYLE_STRIKE_THROUGH = "strike-through"
+    STYLE_CROSSED_OFF = "crossed-off"
+    STYLE_BRACKET = "bracket"
 
     STYLE_CHOICES = (
         (STYLE_UNDERLINE, "Underline"),

@@ -13,9 +13,7 @@ from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
 
 
 def upload_to_collections_imgs(*args, **kwargs):
-    return (
-        f"django-storage/music/collections/imgs/" f"{unique_upload(*args, **kwargs)}"
-    )
+    return f"django-storage/music/collections/imgs/" f"{unique_upload(*args, **kwargs)}"
 
 
 @pgtrigger.register(
@@ -29,6 +27,7 @@ class Collection(models.Model):
     Typically an album or a playlist, this model is a singular interface for
     all collections of tracks.
     """
+
     class Meta:
         unique_together = [
             "provider",
@@ -102,9 +101,10 @@ class Collection(models.Model):
 
 
 class Album(Collection):
-    '''
+    """
     Proxy model for albums.
-    '''
+    """
+
     class Meta:
         proxy = True
         verbose_name = "Album"
@@ -112,9 +112,10 @@ class Album(Collection):
 
 
 class Playlist(Collection):
-    '''
+    """
     Proxy model for playlists.
-    '''
+    """
+
     class Meta:
         proxy = True
         verbose_name = "Playlist"

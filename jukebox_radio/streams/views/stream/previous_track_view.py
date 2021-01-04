@@ -24,7 +24,7 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
         next_head = Queue.objects.get_prev(stream)
 
         if not next_head:
-            raise ValueError('Nothing to play next!')
+            raise ValueError("Nothing to play next!")
 
         playing_at = timezone.now()
         with transaction.atomic():

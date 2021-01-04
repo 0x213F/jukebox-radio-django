@@ -25,16 +25,19 @@ class Request(models.Model):
 
       jukebox_radio.networking.actions.make_request
     """
-    TYPE_GET = 'get'
-    TYPE_POST = 'post'
+
+    TYPE_GET = "get"
+    TYPE_POST = "post"
     TYPE_CHOICES = (
-        (TYPE_GET, 'GET'),
-        (TYPE_POST, 'POST'),
+        (TYPE_GET, "GET"),
+        (TYPE_POST, "POST"),
     )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     type = models.CharField(max_length=32, choices=TYPE_CHOICES)
     url = models.URLField(max_length=200)

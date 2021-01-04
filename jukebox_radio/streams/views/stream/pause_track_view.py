@@ -33,6 +33,8 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
         stream.paused_at = pausing_at
         stream.save()
 
-        return self.http_response_200({
-            "pausedAt": int(stream.paused_at.timestamp()),
-        })
+        return self.http_response_200(
+            {
+                "pausedAt": int(stream.paused_at.timestamp()),
+            }
+        )

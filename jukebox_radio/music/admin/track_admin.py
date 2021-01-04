@@ -155,7 +155,10 @@ class TrackAdmin(admin.ModelAdmin):
         TrackHasDurationFilter,
     )
 
-    inlines = (StemAdminInline, CollectionListingAdminInline,)
+    inlines = (
+        StemAdminInline,
+        CollectionListingAdminInline,
+    )
 
     list_display = (
         "list_uuid",
@@ -234,7 +237,8 @@ class TrackAdmin(admin.ModelAdmin):
 
     def list_uuid(self, obj):
         return mark_safe(f"<tt>{obj.uuid}</tt>")
-    list_uuid.short_description = 'UUID'
+
+    list_uuid.short_description = "UUID"
 
     def list_name(self, obj):
         name = obj.name
@@ -286,7 +290,7 @@ class TrackAdmin(admin.ModelAdmin):
     list_duration.short_description = "DURATION"
 
     def list_image(self, obj):
-        url = obj.img_url or '' # obj.img.url
+        url = obj.img_url or ""  # obj.img.url
         return mark_safe(f'<img src="{url}" style="height: 15px;" />')
 
     list_image.short_description = "IMAGE"

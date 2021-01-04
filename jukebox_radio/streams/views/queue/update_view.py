@@ -20,13 +20,13 @@ class QueueUpdateView(BaseView, LoginRequiredMixin):
         queue = Queue.objects.get(uuid=queueUuid, stream=stream, user=request.user)
 
         request_attributes = [
-            'startAt',
-            'endAt',
-            'playWithStemSeparation',
-            'playBassStem',
-            'playDrumsStem',
-            'playVocalsStem',
-            'playOtherStem',
+            "startAt",
+            "endAt",
+            "playWithStemSeparation",
+            "playBassStem",
+            "playDrumsStem",
+            "playVocalsStem",
+            "playOtherStem",
         ]
 
         for request_attribute in request_attributes:
@@ -38,7 +38,7 @@ class QueueUpdateView(BaseView, LoginRequiredMixin):
             value = request.POST.get(request_attribute)
 
             # camelCase to snake_case
-            model_attribute = re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+            model_attribute = re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
 
             setattr(queue, model_attribute, value)
 

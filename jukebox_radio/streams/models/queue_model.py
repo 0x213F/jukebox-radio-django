@@ -10,13 +10,14 @@ import pgtrigger
 
 
 class QueueManager(models.Manager):
-
-    @pgtrigger.ignore('streams.Queue:protect_inserts')
-    def create_queue(self, index=None, stream=None, track=None, collection=None, user=None, **kwargs):
+    @pgtrigger.ignore("streams.Queue:protect_inserts")
+    def create_queue(
+        self, index=None, stream=None, track=None, collection=None, user=None, **kwargs
+    ):
         """
         Custom create method
         """
-        Queue = apps.get_model('streams', 'Queue')
+        Queue = apps.get_model("streams", "Queue")
 
         if not index:
             last_queue = Queue.objects.last_queue(stream)
@@ -24,28 +25,32 @@ class QueueManager(models.Manager):
 
         queue_head = Queue.objects.get_head(stream)
         if queue_head.index >= index:
-            raise ValueError('Index value is too small')
+            raise ValueError("Index value is too small")
 
         # NOTE: This is a little hacky. We calculate the offset that in queue
         #       indexes need to be bumped up by.
         _tracks = collection.list_tracks() if collection else [None]
         if not len(_tracks):
-            raise ValueError(f'Collection has no tracks: {collection.uuid}')
+            raise ValueError(f"Collection has no tracks: {collection.uuid}")
         offset = len(_tracks)
 
         with transaction.atomic():
             up_next_tracks = Queue.objects.up_next_tracks(stream)
-            up_next_tracks.update(index=F('index') + offset)
+            up_next_tracks.update(index=F("index") + offset)
 
             queues = []
 
-            parent_queue = Queue(
-                stream=stream,
-                index=(index + offset),
-                user=user,
-                collection=collection,
-                is_abstract=True,
-            ) if collection else None
+            parent_queue = (
+                Queue(
+                    stream=stream,
+                    index=(index + offset),
+                    user=user,
+                    collection=collection,
+                    is_abstract=True,
+                )
+                if collection
+                else None
+            )
             if parent_queue:
                 queues.append(parent_queue)
 
@@ -66,9 +71,8 @@ class QueueManager(models.Manager):
 
 
 class QueueQuerySet(models.QuerySet):
-
     def last_queue(self, stream):
-        return self.filter(stream=stream, deleted_at__isnull=True).order_by('-index')[0]
+        return self.filter(stream=stream, deleted_at__isnull=True).order_by("-index")[0]
 
     def get_head(self, stream):
         return Queue.objects.get(stream=stream, is_head=True, deleted_at__isnull=True)
@@ -106,7 +110,7 @@ class QueueQuerySet(models.QuerySet):
             stream=stream,
             is_abstract=False,
             deleted_at__isnull=True,
-        ).order_by('index')
+        ).order_by("index")
 
     def up_next(self, stream):
         queue_head = Queue.objects.get_head(stream)
@@ -114,17 +118,16 @@ class QueueQuerySet(models.QuerySet):
             return Queue.objects.none()
 
         return (
-            self
-            .prefetch_related(
+            self.prefetch_related(
                 Prefetch(
-                    'children',
+                    "children",
                     queryset=(
                         Queue.objects.filter(
                             index__gt=queue_head.index,
                             deleted_at__isnull=True,
-                        ).order_by('index')
+                        ).order_by("index")
                     ),
-                    to_attr='ordered_children',
+                    to_attr="ordered_children",
                 )
             )
             .filter(
@@ -132,8 +135,24 @@ class QueueQuerySet(models.QuerySet):
                 stream=stream,
                 parent__isnull=True,
                 deleted_at__isnull=True,
-            ).order_by('index')
+            )
+            .order_by("index")
         )
+
+    def last_up(self, stream):
+        queue_head = Queue.objects.get_head(stream)
+        if not queue_head:
+            return Queue.objects.none()
+
+        print(queue_head.index - 10, queue_head.index)
+
+        return self.filter(
+            index__gte=queue_head.index - 10,
+            index__lt=queue_head.index,
+            stream=stream,
+            is_abstract=False,
+            deleted_at__isnull=True,
+        ).order_by("index")
 
 
 @pgtrigger.register(
@@ -143,7 +162,7 @@ class QueueQuerySet(models.QuerySet):
     pgtrigger.Protect(name="protect_inserts", operation=pgtrigger.Insert)
 )
 class Queue(models.Model):
-    '''
+    """
     A queue is a piece of content (either a track or collection) selected to
     play in a stream. There are two important data structures used here.
 
@@ -162,7 +181,8 @@ class Queue(models.Model):
     Abstract queues point to a collection and must have children nodes. In the
     application logic, queue tree depth is limited to a 1. In the future, a
     recursive tree structure with unlimited depth is possible.
-    '''
+    """
+
     INITIAL_INDEX = 1
 
     objects = QueueManager.from_queryset(QueueQuerySet)()

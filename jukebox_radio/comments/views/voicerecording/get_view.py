@@ -18,7 +18,9 @@ class VoiceRecordingGetView(BaseView, LoginRequiredMixin):
 
         voice_recording = VoiceRecording.objects.get(uuid=voice_recording_uuid)
 
-        return self.http_response_200({
-            'uuid': voice_recording.uuid,
-            'url': voice_recording.audio.url,
-        })
+        return self.http_response_200(
+            {
+                "uuid": voice_recording.uuid,
+                "url": voice_recording.audio.url,
+            }
+        )

@@ -20,7 +20,7 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.get(user=request.user)
 
         if not stream.is_playing and not stream.is_paused:
-            return self.http_response_200([]) 
+            return self.http_response_200([])
 
         track_uuid = stream.now_playing_id
 
@@ -28,9 +28,11 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
             TextComment.objects.select_related("user", "track")
             .prefetch_related(
                 Prefetch(
-                    'modifications',
-                    queryset=TextCommentModification.objects.filter(deleted_at__isnull=True).order_by('start_ptr'),
-                    to_attr='ordered_modifications',
+                    "modifications",
+                    queryset=TextCommentModification.objects.filter(
+                        deleted_at__isnull=True
+                    ).order_by("start_ptr"),
+                    to_attr="ordered_modifications",
                 )
             )
             .filter(track__uuid=track_uuid, user=request.user, deleted_at__isnull=True)
@@ -41,13 +43,15 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
 
             text_comment_modifications = []
             for modification in text_comment.ordered_modifications:
-                text_comment_modifications.append({
-                    'uuid': modification.uuid,
-                    'type': modification.style,
-                    'startPtr': modification.start_ptr,
-                    'endPtr': modification.end_ptr,
-                    'animate': False,
-                })
+                text_comment_modifications.append(
+                    {
+                        "uuid": modification.uuid,
+                        "type": modification.style,
+                        "startPtr": modification.start_ptr,
+                        "endPtr": modification.end_ptr,
+                        "animate": False,
+                    }
+                )
 
             text_comments.append(
                 {
