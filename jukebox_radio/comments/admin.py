@@ -30,18 +30,13 @@ class TextCommentAdmin(admin.ModelAdmin):
 @admin.register(apps.get_model("comments.VoiceRecording"))
 class VoiceRecordingAdmin(admin.ModelAdmin):
 
-    order_by = (
-        'created_at',
-    )
+    order_by = ("created_at",)
 
-
-    list_display = (
-        'created_at',
-    )
+    list_display = ("created_at",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.order_by('created_at')
+        qs = qs.order_by("created_at")
         return qs
 
 

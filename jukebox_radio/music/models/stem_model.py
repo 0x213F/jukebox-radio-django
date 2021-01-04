@@ -26,6 +26,7 @@ class Stem(models.Model):
     An isolated part of a track. Only Jukebox Radio tracks may have stems. For
     example: an audio file containing just the drums of an uploaded track.
     """
+
     INSTRUMENT_BASS = "bass"
     INSTRUMENT_DRUMS = "drums"
     INSTRUMENT_VOCALS = "vocals"

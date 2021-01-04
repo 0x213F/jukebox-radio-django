@@ -13,7 +13,7 @@ User = get_user_model()
 
 @celery_app.task()
 def refresh_spotify_access_tokens():
-    Request = apps.get_model('networking', 'Request')
+    Request = apps.get_model("networking", "Request")
 
     cipher_suite = Fernet(settings.FERNET_KEY)
     user_qs = User.objects.filter(encrypted_spotify_refresh_token__isnull=False)

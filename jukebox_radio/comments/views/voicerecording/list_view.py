@@ -9,7 +9,6 @@ User = get_user_model()
 
 
 class VoiceRecordingListView(BaseView, LoginRequiredMixin):
-
     @csrf_exempt
     def get(self, request, **kwargs):
         """

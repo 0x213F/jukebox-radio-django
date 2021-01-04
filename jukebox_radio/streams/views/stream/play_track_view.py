@@ -31,6 +31,8 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
         stream.paused_at = None
         stream.save()
 
-        return self.http_response_200({
-            "playedAt": int(stream.played_at.timestamp()),
-        })
+        return self.http_response_200(
+            {
+                "playedAt": int(stream.played_at.timestamp()),
+            }
+        )

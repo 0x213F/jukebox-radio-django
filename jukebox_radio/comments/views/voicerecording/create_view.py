@@ -35,7 +35,7 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
 
         ext = "ogg"
         filename = f"garbage/{uuid.uuid4()}.{ext}"
-        audio_segment = AudioSegment.from_file(f.name, 'mp3')
+        audio_segment = AudioSegment.from_file(f.name, "mp3")
         audio_file = File(audio_segment.export(filename, format=ext))
         duration_ms = audio_segment.duration_seconds * 1000
 

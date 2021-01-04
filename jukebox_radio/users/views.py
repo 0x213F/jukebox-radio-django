@@ -20,7 +20,7 @@ class UserConnectSpotifyView(BaseView, LoginRequiredMixin):
         Spotify redirects a user to this URL after the Spotify authorization
         process.
         """
-        Request = apps.get_model('networking', 'Request')
+        Request = apps.get_model("networking", "Request")
 
         settings_url = reverse("settings")
         user = request.user

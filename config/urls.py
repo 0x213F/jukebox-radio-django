@@ -40,7 +40,9 @@ urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
     # DRF JWT auth tokens
-    path("auth/obtain-tokens/", TokenObtainPairView.as_view(), name="auth-obtain-tokens"),
+    path(
+        "auth/obtain-tokens/", TokenObtainPairView.as_view(), name="auth-obtain-tokens"
+    ),
     path("auth/refresh-token/", TokenRefreshView.as_view(), name="auth-refresh-token"),
     path("auth/verify-token/", TokenVerifyView.as_view(), name="auth-verify-token"),
 ]

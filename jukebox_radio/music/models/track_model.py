@@ -29,6 +29,7 @@ class Track(models.Model):
     """
     A singular piece of streamable media. All queue root nodes point to tracks.
     """
+
     class Meta:
         unique_together = [
             "provider",
@@ -62,9 +63,7 @@ class Track(models.Model):
     album_name = models.TextField()
     duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
-    audio = models.FileField(
-        null=True, blank=True, upload_to=upload_to_tracks_audios
-    )
+    audio = models.FileField(null=True, blank=True, upload_to=upload_to_tracks_audios)
     external_id = models.CharField(null=True, blank=True, max_length=200)
 
     img = models.ImageField(null=True, blank=True, upload_to=upload_to_tracks_imgs)

@@ -17,6 +17,7 @@ class BaseView(APIView):
     """
     Inherits from Django View.
     """
+
     permission_classes = (IsAuthenticated,)
 
     def http_response_200(self, data=None):
@@ -41,12 +42,15 @@ class BaseView(APIView):
         """
         BAD REQUEST
         """
-        return JsonResponse({
-            "system": {
-                "status": 400,
-                "message": message,
+        return JsonResponse(
+            {
+                "system": {
+                    "status": 400,
+                    "message": message,
+                },
             },
-        }, status=400)
+            status=400,
+        )
 
     def http_response_403(self, message):
         """

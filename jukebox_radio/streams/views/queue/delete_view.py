@@ -21,10 +21,8 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        queue_uuid = request.POST['queueUuid']
-        queue = Queue.objects.get(
-            uuid=queue_uuid, stream=stream, user=request.user
-        )
+        queue_uuid = request.POST["queueUuid"]
+        queue = Queue.objects.get(uuid=queue_uuid, stream=stream, user=request.user)
 
         now = timezone.now()
         with transaction.atomic():
@@ -39,7 +37,7 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
             relative_up_next = Queue.objects.filter(
                 stream=stream, index__gt=queue.index, deleted_at__isnull=True
             )
-            relative_up_next.update(index=F('index') - offset)
+            relative_up_next.update(index=F("index") - offset)
 
             # also delete children
             queue.children.all().update(deleted_at=now)

@@ -11,7 +11,14 @@ SECRET_KEY = env(
     default="x9uZAo34Lia44NhZ2t9rCDmNWV7b4pSOE3yStlYnk1ujmXUgU1Rw6jqQvw1T9fhc",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "jukebox.radio", "jukeboxrad.io", "143.110.229.8"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "0.0.0.0",
+    "127.0.0.1",
+    "jukebox.radio",
+    "jukeboxrad.io",
+    "143.110.229.8",
+]
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -61,6 +68,6 @@ CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:3002',
+    "http://localhost:3000",
+    "http://localhost:3002",
 ]

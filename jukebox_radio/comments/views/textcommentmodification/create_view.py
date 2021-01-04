@@ -39,10 +39,12 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
             style=style,
         )
 
-        return self.http_response_200({
-            "uuid": text_comment_modification.uuid,
-            "type": text_comment_modification.style,
-            "startPtr": text_comment_modification.start_ptr,
-            "endPtr": text_comment_modification.end_ptr,
-            "animate": True,
-        })
+        return self.http_response_200(
+            {
+                "uuid": text_comment_modification.uuid,
+                "type": text_comment_modification.style,
+                "startPtr": text_comment_modification.start_ptr,
+                "endPtr": text_comment_modification.end_ptr,
+                "animate": True,
+            }
+        )
