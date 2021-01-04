@@ -35,7 +35,7 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
 
         ext = "ogg"
         filename = f"garbage/{uuid.uuid4()}.{ext}"
-        audio_segment = AudioSegment.from_file(f.name, 'webm')
+        audio_segment = AudioSegment.from_file(f.name, 'mp3')
         audio_file = File(audio_segment.export(filename, format=ext))
         duration_ms = audio_segment.duration_seconds * 1000
 
@@ -67,12 +67,13 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
 
         return self.http_response_200(
             {
+                "class": voice_recording.__class__.__name__,
                 "uuid": voice_recording.uuid,
                 "user": voice_recording.user.username,
                 "transcriptData": voice_recording.transcript_data,
                 "transcriptFinal": voice_recording.transcript_final,
                 "durationMilliseconds": voice_recording.duration_ms,
-                "trackId": voice_recording.track_id,
+                "trackUuid": voice_recording.track_id,
                 "timestampMilliseconds": voice_recording.timestamp_ms,
             }
         )

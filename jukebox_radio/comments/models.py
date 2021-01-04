@@ -85,13 +85,22 @@ class VoiceRecording(models.Model):
 )
 class TextCommentModification(models.Model):
 
-    STYLE_HIGHLIGHT = "highlight"
-    STYLE_STRIKE_THROUGH = "strike-through"
-    STYLE_UNDERLINE = "underline"
+    STYLE_UNDERLINE = 'underline'
+    STYLE_BOX = 'box'
+    STYLE_CIRCLE = 'circle'
+    STYLE_HIGHLIGHT = 'highlight'
+    STYLE_STRIKE_THROUGH = 'strike-through'
+    STYLE_CROSSED_OFF = 'crossed-off'
+    STYLE_BRACKET = 'bracket'
+
     STYLE_CHOICES = (
-        (STYLE_HIGHLIGHT, "Highlight"),
-        (STYLE_STRIKE_THROUGH, "Strikethrough"),
         (STYLE_UNDERLINE, "Underline"),
+        (STYLE_BOX, "Box"),
+        (STYLE_CIRCLE, "Circle"),
+        (STYLE_HIGHLIGHT, "Highlight"),
+        (STYLE_STRIKE_THROUGH, "Strike-through"),
+        (STYLE_CROSSED_OFF, "Crossed-off"),
+        (STYLE_BRACKET, "Bracket"),
     )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
