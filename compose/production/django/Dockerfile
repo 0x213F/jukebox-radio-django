@@ -20,6 +20,8 @@ RUN apt-get update \
   && apt-get install -y gettext \
   # FFmpeg
   && apt-get install -y ffmpeg \
+  # libsndfile
+  && apt-get install libsndfile1 \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
