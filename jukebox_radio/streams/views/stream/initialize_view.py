@@ -11,6 +11,7 @@ class StreamInitializeView(BaseView, LoginRequiredMixin):
         """
         When a user initializes a stream (right after login).
         """
+        Queue = apps.get_model("streams", "Queue")
         Stream = apps.get_model("streams", "Stream")
 
         stream, created = Stream.objects.get_or_create(user=request.user)
