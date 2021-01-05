@@ -27,12 +27,12 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
         playing_at = timezone.now()
         paused_duration = playing_at - stream.paused_at
 
-        stream.played_at += paused_duration
+        stream.started_at += paused_duration
         stream.paused_at = None
         stream.save()
 
         return self.http_response_200(
             {
-                "playedAt": int(stream.played_at.timestamp()),
+                "playedAt": int(stream.started_at.timestamp()),
             }
         )

@@ -23,12 +23,12 @@ class StreamScanBackwardView(BaseView, LoginRequiredMixin):
         if not stream.is_playing:
             raise ValueError("Stream has to be playing")
 
-        playing_at = stream.played_at + timedelta(seconds=10)
+        playing_at = stream.started_at + timedelta(seconds=10)
         lower_bound = timezone.now() + timedelta(milliseconds=125)
         if playing_at > lower_bound:
             playing_at = lower_bound
 
-        stream.played_at = playing_at
+        stream.started_at = playing_at
         stream.save()
 
         return self.http_response_200({})

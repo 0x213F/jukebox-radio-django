@@ -20,7 +20,7 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
         generic_uuid = request.POST.get("genericUuid")
         index = request.POST.get("index", None)
 
-        stream = Stream.objects.select_related("now_playing").get(user=request.user)
+        stream = Stream.objects.get(user=request.user)
 
         # The client either sent a track or a collection UUID. We use class to
         # determine which table to query.

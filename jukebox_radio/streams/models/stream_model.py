@@ -22,9 +22,9 @@ class Stream(models.Model):
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     now_playing = models.ForeignKey(
-        "music.Track", on_delete=models.CASCADE, null=True, blank=True
+        "streams.Queue", on_delete=models.CASCADE, null=True, blank=True, related_name="+"
     )
-    played_at = models.DateTimeField(null=True, blank=True)
+    started_at = models.DateTimeField(null=True, blank=True)
     paused_at = models.DateTimeField(null=True, blank=True)
 
     recording_started_at = models.DateTimeField(null=True, blank=True)
@@ -35,17 +35,17 @@ class Stream(models.Model):
 
     @property
     def is_playing(self):
-        is_playing = bool(self.played_at)
-        if not is_playing or not self.now_playing_id:
+        is_playing = bool(self.started_at)
+        if not is_playing or not self.now_playing_id or not self.now_playing.track_id:
             return False
 
         is_paused = bool(self.paused_at)
-        if is_paused and self.paused_at > self.played_at:
+        if is_paused and self.paused_at > self.started_at:
             return False
 
         now = timezone.now()
-        within_bounds = now < self.played_at + timedelta(
-            milliseconds=self.now_playing.duration_ms
+        within_bounds = now < self.started_at + timedelta(
+            milliseconds=self.now_playing.track.duration_ms
         )
 
         return within_bounds
@@ -53,22 +53,22 @@ class Stream(models.Model):
     @property
     def is_paused(self):
         is_paused = bool(self.paused_at)
-        if not is_paused or not self.now_playing_id:
+        if not is_paused or not self.now_playing_id or not self.now_playing.track_id:
             return False
 
-        is_playing = bool(self.played_at)
-        if is_playing and self.played_at > self.paused_at:
+        is_playing = bool(self.started_at)
+        if is_playing and self.started_at > self.paused_at:
             return False
 
         now = timezone.now()
-        within_bounds = self.paused_at - self.played_at < timedelta(
-            milliseconds=self.now_playing.duration_ms
+        within_bounds = self.paused_at - self.started_at < timedelta(
+            milliseconds=self.now_playing.track.duration_ms
         )
 
         return within_bounds
 
     @property
     def now_playing_duration(self):
-        if not self.now_playing_id:
+        if not self.now_playing_id or not self.now_playing.track_id:
             return None
-        return timedelta(milliseconds=self.now_playing.duration_ms)
+        return timedelta(milliseconds=self.now_playing.track.duration_ms)

@@ -20,10 +20,10 @@ class StreamAdmin(admin.ModelAdmin):
     search_fields = (
         "uuid",
         "user__email",
-        "now_playing__uuid",
-        "now_playing__name",
-        "now_playing__artist_name",
-        "now_playing__album_name",
+        "now_playing__track__uuid",
+        "now_playing__track__name",
+        "now_playing__track__artist_name",
+        "now_playing__track__album_name",
     )
 
     def has_add_permission(self, request, obj=None):
