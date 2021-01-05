@@ -10,6 +10,18 @@ import pgtrigger
 
 
 class QueueManager(models.Manager):
+
+    @pgtrigger.ignore("streams.Queue:protect_inserts")
+    def create_initial_queue(self, stream):
+        """
+        Custom create method
+        """
+        Queue = apps.get_model("streams", "Queue")
+
+        return Queue.objects.create(
+            stream=stream, user=stream.user, index=Queue.INITIAL_INDEX, is_head=True, is_abstract=False
+        )
+
     @pgtrigger.ignore("streams.Queue:protect_inserts")
     def create_queue(
         self, index=None, stream=None, track=None, collection=None, user=None, **kwargs

@@ -19,8 +19,6 @@ class StreamInitializeView(BaseView, LoginRequiredMixin):
         if not created:
             return self.http_response_200()
 
-        Queue.objects.create(
-            stream=stream, user=request.user, index=Queue.INITIAL_INDEX, is_head=True, is_abstract=False
-        )
+        Queue.objects.create_initial_queue(stream)
 
         return self.http_response_200()
