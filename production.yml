@@ -1,8 +1,6 @@
 version: '3'
 
 volumes:
-  production_postgres_data: {}
-  production_postgres_data_backups: {}
   production_traefik: {}
 
 services:
@@ -12,31 +10,11 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: jukebox_radio_production_django
     depends_on:
-      - postgres
       - redis
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     command: /start
-    deploy:
-      resources:
-        reservations:
-          memory: 1G
-
-  postgres:
-    build:
-      context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: jukebox_radio_production_postgres
-    volumes:
-      - production_postgres_data:/var/lib/postgresql/data:Z
-      - production_postgres_data_backups:/backups:z
-    env_file:
-      - ./.envs/.production/.postgres
-    deploy:
-      resources:
-        reservations:
-          memory: 1G
 
   traefik:
     build:
@@ -73,13 +51,3 @@ services:
     <<: *django
     image: jukebox_radio_production_flower
     command: /start-flower
-
-
-  awscli:
-    build:
-      context: .
-      dockerfile: ./compose/production/aws/Dockerfile
-    env_file:
-      - ./.envs/.production/.django
-    volumes:
-      - production_postgres_data_backups:/backups:z
