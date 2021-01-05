@@ -225,4 +225,6 @@ sentry_sdk.init(
 CORS_ORIGIN_WHITELIST = (
     "https://jukebox.radio",
     "https://jukeboxrad.io",
+    "https://react.jukeboxrad.io",
+    "https://0x213f.github.io/",
 )
