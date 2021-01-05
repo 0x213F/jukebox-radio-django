@@ -129,7 +129,7 @@ Try setting Docker up once more:
 
 In order for things to run smoothly, some manual adjustments must be made to the application.
 
-    docker-compose -f production.yml run --rm django python manage.py shell_plus
+    docker-compose -f production.yml run --rm django python manage.py shell
 
 <!-- br -->
 
