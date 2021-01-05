@@ -29,8 +29,8 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
         playing_at = timezone.now()
         with transaction.atomic():
 
-            stream.now_playing = next_head.track
-            stream.played_at = playing_at
+            stream.now_playing = next_head
+            stream.started_at = playing_at
             stream.paused_at = None
             stream.save()
 

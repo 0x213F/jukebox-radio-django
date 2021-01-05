@@ -22,7 +22,7 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
         if not stream.is_playing and not stream.is_paused:
             return self.http_response_200([])
 
-        track_uuid = stream.now_playing_id
+        track_uuid = stream.now_playing.track_id
 
         text_comment_qs = (
             TextComment.objects.select_related("user", "track")

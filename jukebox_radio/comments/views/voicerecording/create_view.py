@@ -44,16 +44,15 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
 
         now = time_util.now()
 
-        stream = Stream.objects.select_related("now_playing").get(user=request.user)
+        stream = Stream.objects.select_related("now_playing__track").get(user=request.user)
 
-        end_of_the_track = stream.played_at + timedelta(
-            milliseconds=stream.now_playing.duration_ms
+        end_of_the_track = stream.started_at + timedelta(
+            milliseconds=stream.now_playing.track.duration_ms
         )
-        track_is_over = stream.now_playing and now > end_of_the_track
-        if not stream.now_playing or track_is_over:
+        if not stream.is_playing and not stream.is_playing:
             return self.http_response_400("No track is currently playing in the stream")
 
-        timestamp_ms = time_util.ms(now - stream.played_at) - duration_ms
+        timestamp_ms = time_util.ms(now - stream.started_at) - duration_ms
 
         voice_recording = VoiceRecording.objects.create(
             user=request.user,
@@ -61,7 +60,7 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
             transcript_data=transcript_data,
             transcript_final=transcript_final,
             duration_ms=duration_ms,
-            track=stream.now_playing,
+            track=stream.now_playing.track,
             timestamp_ms=timestamp_ms,
         )
 

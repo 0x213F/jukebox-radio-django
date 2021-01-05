@@ -20,7 +20,7 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        track_uuid = stream.now_playing_id
+        track_uuid = stream.now_playing.track_id
 
         voice_recording_qs = (
             VoiceRecording.objects.select_related("user", "track")

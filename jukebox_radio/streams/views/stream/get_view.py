@@ -17,16 +17,16 @@ class StreamGetView(BaseView, LoginRequiredMixin):
 
         now_playing = (
             {
-                "uuid": stream.now_playing.uuid,
-                "provider": stream.now_playing.provider,
-                "name": stream.now_playing.name,
-                "artistName": stream.now_playing.artist_name,
-                "albumName": stream.now_playing.album_name,
-                "durationMilliseconds": stream.now_playing.duration_ms,
-                "externalId": stream.now_playing.external_id,
-                "imgUrl": stream.now_playing.img_url,
+                "uuid": stream.now_playing.track.uuid,
+                "provider": stream.now_playing.track.provider,
+                "name": stream.now_playing.track.name,
+                "artistName": stream.now_playing.track.artist_name,
+                "albumName": stream.now_playing.track.album_name,
+                "durationMilliseconds": stream.now_playing.track.duration_ms,
+                "externalId": stream.now_playing.track.external_id,
+                "imgUrl": stream.now_playing.track.img_url,
             }
-            if stream.now_playing
+            if stream.now_playing_id and stream.now_playing.track_id
             else None
         )
 
@@ -36,7 +36,7 @@ class StreamGetView(BaseView, LoginRequiredMixin):
                 "nowPlaying": now_playing,
                 "isPlaying": stream.is_playing,
                 "isPaused": stream.is_paused,
-                "playedAt": stream.played_at and int(stream.played_at.timestamp()),
+                "playedAt": stream.started_at and int(stream.started_at.timestamp()),
                 "pausedAt": stream.paused_at and int(stream.paused_at.timestamp()),
             }
         )
