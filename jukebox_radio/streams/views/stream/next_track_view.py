@@ -41,4 +41,6 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             last_head.is_head = False
             last_head.save()
 
-        return self.http_response_200({})
+        return self.http_response_200({
+            "startedAt": int(stream.started_at.timestamp()),
+        })

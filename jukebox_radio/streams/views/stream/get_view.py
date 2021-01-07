@@ -21,10 +21,10 @@ class StreamGetView(BaseView, LoginRequiredMixin):
         return self.http_response_200(
             {
                 "uuid": stream.uuid,
-                "nowPlaying": Queue.objects.serialize(stream.now_playing),
+                "nowPlaying": now_playing_serialized,
                 "isPlaying": stream.is_playing,
                 "isPaused": stream.is_paused,
-                "playedAt": stream.started_at and int(stream.started_at.timestamp()),
+                "startedAt": stream.started_at and int(stream.started_at.timestamp()),
                 "pausedAt": stream.paused_at and int(stream.paused_at.timestamp()),
             }
         )
