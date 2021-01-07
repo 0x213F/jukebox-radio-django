@@ -45,3 +45,5 @@ class Request(models.Model):
 
     code = models.PositiveIntegerField()
     response = models.JSONField()
+
+    created_at = models.DateTimeField(auto_now_add=True)

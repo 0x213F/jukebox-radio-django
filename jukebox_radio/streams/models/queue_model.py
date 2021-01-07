@@ -11,6 +11,37 @@ import pgtrigger
 
 class QueueManager(models.Manager):
 
+    def serialize(self, queue, is_child=False):
+        Collection = apps.get_model('music', 'Collection')
+        Track = apps.get_model('music', 'Track')
+
+        collection = (
+            Collection.objects.serialize(queue.collection)
+            if not is_child else
+            None
+        )
+
+        obj = {
+            "uuid": queue.uuid,
+            "index": queue.index,
+            "track": Track.objects.serialize(queue.track),
+            "collection": collection,
+            "parentUuid": queue.parent_id,
+            "isAbstract": queue.is_abstract,
+            "isArchived": bool(queue.deleted_at),
+        }
+
+        try:
+            queue_children = queue.ordered_children
+        except AttributeError:
+            queue_children = []
+        children = []
+        for child in queue_children:
+            children.append(self.serialize(child, is_child=True))
+        obj["children"] = children
+
+        return obj
+
     @pgtrigger.ignore("streams.Queue:protect_inserts")
     def create_initial_queue(self, stream):
         """
@@ -47,7 +78,11 @@ class QueueManager(models.Manager):
         offset = len(_tracks)
 
         with transaction.atomic():
-            up_next_tracks = Queue.objects.up_next_tracks(stream)
+            up_next_tracks = Queue.objects.filter(
+                index__gte=index,
+                stream=stream,
+                deleted_at__isnull=True,
+            )
             up_next_tracks.update(index=F("index") + offset)
 
             queues = []
@@ -55,7 +90,7 @@ class QueueManager(models.Manager):
             parent_queue = (
                 Queue(
                     stream=stream,
-                    index=(index + offset),
+                    index=(index + offset - 1),
                     user=user,
                     collection=collection,
                     is_abstract=True,
@@ -84,7 +119,7 @@ class QueueManager(models.Manager):
 
 class QueueQuerySet(models.QuerySet):
     def last_queue(self, stream):
-        return self.filter(stream=stream, deleted_at__isnull=True).order_by("-index")[0]
+        return self.filter(stream=stream, deleted_at__isnull=True, is_abstract=False).order_by("-index")[0]
 
     def get_head(self, stream):
         return Queue.objects.get(stream=stream, is_head=True, deleted_at__isnull=True)
@@ -155,8 +190,6 @@ class QueueQuerySet(models.QuerySet):
         queue_head = Queue.objects.get_head(stream)
         if not queue_head:
             return Queue.objects.none()
-
-        print(queue_head.index - 10, queue_head.index)
 
         return self.filter(
             index__gte=queue_head.index - 10,

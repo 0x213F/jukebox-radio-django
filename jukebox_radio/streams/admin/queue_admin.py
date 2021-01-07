@@ -59,8 +59,7 @@ class QueueAdmin(admin.ModelAdmin):
 
     list_display = (
         "list_uuid",
-        "list_prev",
-        "list_next",
+        "index",
         "list_parent",
         "list_stream",
         "user",
@@ -78,9 +77,6 @@ class QueueAdmin(admin.ModelAdmin):
         "collection__name",
         "collection__artist_name",
         "stream__uuid",
-        "next_queue_ptr__uuid",
-        "prev_queue_ptr__uuid",
-        "parent_queue_ptr__uuid",
     )
 
     fieldsets = (
@@ -98,9 +94,7 @@ class QueueAdmin(admin.ModelAdmin):
             "CONTEXT",
             {
                 "fields": (
-                    "prev_queue_ptr",
-                    "next_queue_ptr",
-                    "parent_queue_ptr",
+                    "parent",
                 ),
             },
         ),
@@ -129,6 +123,8 @@ class QueueAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
+        qs = qs.filter(deleted_at__isnull=True)
+        qs = qs.order_by('index')
         return qs
 
     def list_uuid(self, obj):
@@ -136,18 +132,8 @@ class QueueAdmin(admin.ModelAdmin):
 
     list_uuid.short_description = "UUID"
 
-    def list_prev(self, obj):
-        return mark_safe(f"<tt>{str(obj.prev_queue_ptr_id)[:8]}</tt>")
-
-    list_prev.short_description = "PREVIOUS"
-
-    def list_next(self, obj):
-        return mark_safe(f"<tt>{str(obj.next_queue_ptr_id)[:8]}</tt>")
-
-    list_next.short_description = "NEXT"
-
     def list_parent(self, obj):
-        return mark_safe(f"<tt>{str(obj.parent_queue_ptr_id)[:8]}</tt>")
+        return mark_safe(f"<tt>{str(obj.parent_id)[:8]}</tt>")
 
     list_parent.short_description = "PARENT"
 

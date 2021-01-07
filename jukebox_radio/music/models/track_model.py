@@ -11,6 +11,25 @@ from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
 from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
 
 
+class TrackManager(models.Manager):
+
+    def serialize(self, track):
+        if not track:
+            return None
+
+        return {
+            "uuid": track.uuid,
+            "format": track.format,
+            "service": track.provider,
+            "name": track.name,
+            "artistName": track.artist_name,
+            "albumName": track.album_name,
+            "durationMilliseconds": track.duration_ms,
+            "externalId": track.external_id,
+            "imageUrl": track.img_url,
+        }
+
+
 def upload_to_tracks_audios(*args, **kwargs):
     return f"django-storage/music/tracks/audios/" f"{unique_upload(*args, **kwargs)}"
 
@@ -29,6 +48,8 @@ class Track(models.Model):
     """
     A singular piece of streamable media. All queue root nodes point to tracks.
     """
+
+    objects = TrackManager()
 
     class Meta:
         unique_together = [

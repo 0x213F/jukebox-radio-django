@@ -4,4 +4,7 @@ from django.contrib import admin
 
 @admin.register(apps.get_model("networking.Request"))
 class RequestAdmin(admin.ModelAdmin):
-    pass
+
+    order_by = ("created_at",)
+
+    list_display = ("created_at",)

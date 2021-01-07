@@ -12,6 +12,23 @@ from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
 from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
 
 
+class CollectionManager(models.Manager):
+
+    def serialize(self, collection):
+        if not collection:
+            return None
+
+        return {
+            "uuid": collection.uuid,
+            "format": collection.format,
+            "service": collection.provider,
+            "name": collection.name,
+            "artistName": collection.artist_name,
+            "externalId": collection.external_id,
+            "imageUrl": collection.img_url,
+        }
+
+
 def upload_to_collections_imgs(*args, **kwargs):
     return f"django-storage/music/collections/imgs/" f"{unique_upload(*args, **kwargs)}"
 
@@ -27,6 +44,8 @@ class Collection(models.Model):
     Typically an album or a playlist, this model is a singular interface for
     all collections of tracks.
     """
+
+    objects = CollectionManager()
 
     class Meta:
         unique_together = [
@@ -53,7 +72,6 @@ class Collection(models.Model):
 
     name = models.TextField()
     artist_name = models.TextField(null=True, blank=True)
-    duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
     external_id = models.CharField(null=True, max_length=200)
 
