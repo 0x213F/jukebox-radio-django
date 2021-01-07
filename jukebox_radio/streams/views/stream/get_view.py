@@ -11,29 +11,17 @@ class StreamGetView(BaseView, LoginRequiredMixin):
         """
         When a user plays a paused stream.
         """
+        Queue = apps.get_model("streams", "Queue")
         Stream = apps.get_model("streams", "Stream")
 
         stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
-        now_playing = (
-            {
-                "uuid": stream.now_playing.track.uuid,
-                "provider": stream.now_playing.track.provider,
-                "name": stream.now_playing.track.name,
-                "artistName": stream.now_playing.track.artist_name,
-                "albumName": stream.now_playing.track.album_name,
-                "durationMilliseconds": stream.now_playing.track.duration_ms,
-                "externalId": stream.now_playing.track.external_id,
-                "imgUrl": stream.now_playing.track.img_url,
-            }
-            if stream.now_playing_id and stream.now_playing.track_id
-            else None
-        )
+        now_playing_serialized = Queue.objects.serialize(stream.now_playing)
 
         return self.http_response_200(
             {
                 "uuid": stream.uuid,
-                "nowPlaying": now_playing,
+                "nowPlaying": Queue.objects.serialize(stream.now_playing),
                 "isPlaying": stream.is_playing,
                 "isPaused": stream.is_paused,
                 "playedAt": stream.started_at and int(stream.started_at.timestamp()),
