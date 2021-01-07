@@ -15,6 +15,9 @@ class QueueManager(models.Manager):
         Collection = apps.get_model('music', 'Collection')
         Track = apps.get_model('music', 'Track')
 
+        if not queue:
+            return None
+
         collection = (
             Collection.objects.serialize(queue.collection)
             if not is_child else
