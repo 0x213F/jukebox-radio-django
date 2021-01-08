@@ -24,7 +24,7 @@ class StreamGetView(BaseView, LoginRequiredMixin):
                 "nowPlaying": now_playing_serialized,
                 "isPlaying": stream.is_playing,
                 "isPaused": stream.is_paused,
-                "startedAt": stream.started_at and int(stream.started_at.timestamp()),
-                "pausedAt": stream.paused_at and int(stream.paused_at.timestamp()),
+                "startedAt": stream.started_at and int(stream.started_at.timestamp() * 1000),
+                "pausedAt": stream.paused_at and int(stream.paused_at.timestamp() * 1000),
             }
         )

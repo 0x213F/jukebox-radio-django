@@ -20,6 +20,15 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
+        if not stream.is_playing and not stream.is_paused and stream.now_playing:
+            playing_at = timezone.now()
+            stream.started_at = playing_at
+            stream.paused_at = None
+            stream.save()
+            return self.http_response_200({
+                "startedAt": int(stream.started_at.timestamp()),
+            })
+
         last_head = Queue.objects.get_head(stream)
         next_head = Queue.objects.get_prev(stream)
 
