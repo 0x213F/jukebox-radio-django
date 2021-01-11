@@ -20,6 +20,9 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
+        if not stream.is_playing and not stream.is_paused:
+            return self.http_response_200([])
+
         track_uuid = stream.now_playing.track_id
 
         voice_recording_qs = (

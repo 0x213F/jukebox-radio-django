@@ -44,7 +44,9 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
 
         now = time_util.now()
 
-        stream = Stream.objects.select_related("now_playing__track").get(user=request.user)
+        stream = Stream.objects.select_related("now_playing__track").get(
+            user=request.user
+        )
 
         end_of_the_track = stream.started_at + timedelta(
             milliseconds=stream.now_playing.track.duration_ms

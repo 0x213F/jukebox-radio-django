@@ -25,9 +25,11 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
             stream.started_at = playing_at
             stream.paused_at = None
             stream.save()
-            return self.http_response_200({
-                "startedAt": int(stream.started_at.timestamp()),
-            })
+            return self.http_response_200(
+                {
+                    "startedAt": int(stream.started_at.timestamp()),
+                }
+            )
 
         last_head = Queue.objects.get_head(stream)
         next_head = Queue.objects.get_prev(stream)
@@ -50,6 +52,8 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
             last_head.is_head = False
             last_head.save()
 
-        return self.http_response_200({
-            "startedAt": int(stream.started_at.timestamp()),
-        })
+        return self.http_response_200(
+            {
+                "startedAt": int(stream.started_at.timestamp()),
+            }
+        )

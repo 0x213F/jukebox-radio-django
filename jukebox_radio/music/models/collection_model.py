@@ -13,7 +13,6 @@ from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
 
 
 class CollectionManager(models.Manager):
-
     def serialize(self, collection):
         if not collection:
             return None
