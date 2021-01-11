@@ -22,7 +22,11 @@ class Stream(models.Model):
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     now_playing = models.ForeignKey(
-        "streams.Queue", on_delete=models.CASCADE, null=True, blank=True, related_name="+"
+        "streams.Queue",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="+",
     )
     started_at = models.DateTimeField(null=True, blank=True)
     paused_at = models.DateTimeField(null=True, blank=True)

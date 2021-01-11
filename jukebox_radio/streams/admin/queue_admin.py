@@ -93,9 +93,7 @@ class QueueAdmin(admin.ModelAdmin):
         (
             "CONTEXT",
             {
-                "fields": (
-                    "parent",
-                ),
+                "fields": ("parent",),
             },
         ),
         (
@@ -124,7 +122,7 @@ class QueueAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.filter(deleted_at__isnull=True)
-        qs = qs.order_by('index')
+        qs = qs.order_by("index")
         return qs
 
     def list_uuid(self, obj):

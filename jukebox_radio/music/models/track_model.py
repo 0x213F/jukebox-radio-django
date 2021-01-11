@@ -12,7 +12,6 @@ from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
 
 
 class TrackManager(models.Manager):
-
     def serialize(self, track):
         if not track:
             return None

@@ -10,18 +10,15 @@ import pgtrigger
 
 
 class QueueManager(models.Manager):
-
     def serialize(self, queue, is_child=False):
-        Collection = apps.get_model('music', 'Collection')
-        Track = apps.get_model('music', 'Track')
+        Collection = apps.get_model("music", "Collection")
+        Track = apps.get_model("music", "Track")
 
         if not queue:
             return None
 
         collection = (
-            Collection.objects.serialize(queue.collection)
-            if not is_child else
-            None
+            Collection.objects.serialize(queue.collection) if not is_child else None
         )
 
         obj = {
@@ -53,7 +50,11 @@ class QueueManager(models.Manager):
         Queue = apps.get_model("streams", "Queue")
 
         return Queue.objects.create(
-            stream=stream, user=stream.user, index=Queue.INITIAL_INDEX, is_head=True, is_abstract=False
+            stream=stream,
+            user=stream.user,
+            index=Queue.INITIAL_INDEX,
+            is_head=True,
+            is_abstract=False,
         )
 
     @pgtrigger.ignore("streams.Queue:protect_inserts")
@@ -122,7 +123,9 @@ class QueueManager(models.Manager):
 
 class QueueQuerySet(models.QuerySet):
     def last_queue(self, stream):
-        return self.filter(stream=stream, deleted_at__isnull=True, is_abstract=False).order_by("-index")[0]
+        return self.filter(
+            stream=stream, deleted_at__isnull=True, is_abstract=False
+        ).order_by("-index")[0]
 
     def get_head(self, stream):
         return Queue.objects.get(stream=stream, is_head=True, deleted_at__isnull=True)
