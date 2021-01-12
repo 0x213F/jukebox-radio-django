@@ -6,6 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core import time as time_util
 
 
 class StreamNextTrackView(BaseView, LoginRequiredMixin):
@@ -26,7 +27,7 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
         if not next_head:
             raise ValueError("Nothing to play next!")
 
-        playing_at = timezone.now() + timedelta(milliseconds=125)
+        playing_at = time_util.now() + timedelta(milliseconds=100)
         with transaction.atomic():
 
             stream.now_playing = next_head

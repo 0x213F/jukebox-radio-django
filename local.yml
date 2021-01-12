@@ -34,21 +34,6 @@ services:
     env_file:
       - ./.envs/.local/.postgres
 
-  docs:
-    image: jukebox_radio_local_docs
-    container_name: docs
-    build:
-      context: .
-      dockerfile: ./compose/local/docs/Dockerfile
-    env_file:
-      - ./.envs/.local/.django
-    volumes:
-      - ./docs:/docs:z
-      - ./config:/app/config:z
-      - ./jukebox_radio:/app/jukebox_radio:z
-    ports:
-      - "7000:7000"
-
   redis:
     image: redis:5.0
     container_name: redis
@@ -82,21 +67,3 @@ services:
     ports:
       - "5555:5555"
     command: /start-flower
-
-  node:
-    build:
-      context: .
-      dockerfile: ./compose/local/node/Dockerfile
-    image: jukebox_radio_local_node
-    container_name: node
-    depends_on:
-      - django
-    volumes:
-      - .:/app:z
-      # http://jdlm.info/articles/2016/03/06/lessons-building-node-app-docker.html
-      - /app/node_modules
-    command: npm run dev
-    ports:
-      - "3000:3000"
-      # Expose browsersync UI: https://www.browsersync.io/docs/options/#option-ui
-      - "3001:3001"

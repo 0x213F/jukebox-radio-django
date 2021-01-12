@@ -16,7 +16,7 @@ from jukebox_radio.music.tasks import generate_stems_for_track
 class TrackCreateView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        Create a track from upload. Kick off async task to generate stems.
+        Create a track from upload.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
@@ -53,6 +53,7 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
             duration_ms=audio_segment.duration_seconds * 1000,
         )
 
-        generate_stems_for_track.delay(track.uuid)
+        # TODO: AWS Lambda
+        # generate_stems_for_track.delay(track.uuid)
 
         return self.http_response_200({})

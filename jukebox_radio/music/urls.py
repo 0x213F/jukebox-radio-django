@@ -9,5 +9,4 @@ app_name = "music"
 urlpatterns = [
     path("search/", view=MusicSearchView.as_view(), name="search"),
     path("track/create/", view=TrackCreateView.as_view(), name="track-create"),
-    path("track/update/", view=TrackUpdateView.as_view(), name="track-update"),
 ]

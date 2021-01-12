@@ -1,6 +1,6 @@
 from django.apps import apps
 from django.conf import settings
-from django.utils import timezone
+from jukebox_radio.core import time as time_util
 
 from jukebox_radio.networking.actions import make_request
 
@@ -160,7 +160,7 @@ def _refresh_collection_spotify_album_data(collection, user):
         track__external_id__in=track_eids
     )
     cl_by_collection_qs = CollectionListing.objects.filter(collection=collection)
-    now = timezone.now()
+    now = time_util.now()
     cl_by_tracks_qs.update(deleted_at=now)
     cl_by_collection_qs.update(deleted_at=now)
 
@@ -248,7 +248,7 @@ def _refresh_collection_spotify_playlist_data(collection, user):
         track__external_id__in=track_eids
     )
     cl_by_collection_qs = CollectionListing.objects.filter(collection=collection)
-    now = timezone.now()
+    now = time_util.now()
     cl_by_tracks_qs.update(deleted_at=now)
     cl_by_collection_qs.update(deleted_at=now)
 

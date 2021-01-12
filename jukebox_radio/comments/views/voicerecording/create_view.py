@@ -29,7 +29,7 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
         transcript_data = json.loads(request.POST["transcriptData"])
         transcript_final = request.POST["transcriptFinal"]
 
-        # Morph audio into OGG
+        # Transform audio into OGG
         f = tempfile.NamedTemporaryFile(delete=False)
         f.write(audio_file.read())
 
@@ -48,9 +48,6 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
             user=request.user
         )
 
-        end_of_the_track = stream.started_at + timedelta(
-            milliseconds=stream.now_playing.track.duration_ms
-        )
         if not stream.is_playing and not stream.is_playing:
             return self.http_response_400("No track is currently playing in the stream")
 
@@ -66,15 +63,4 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
             timestamp_ms=timestamp_ms,
         )
 
-        return self.http_response_200(
-            {
-                "class": voice_recording.__class__.__name__,
-                "uuid": voice_recording.uuid,
-                "user": voice_recording.user.username,
-                "transcriptData": voice_recording.transcript_data,
-                "transcriptFinal": voice_recording.transcript_final,
-                "durationMilliseconds": voice_recording.duration_ms,
-                "trackUuid": voice_recording.track_id,
-                "timestampMilliseconds": voice_recording.timestamp_ms,
-            }
-        )
+        return self.http_response_200(VoiceRecording.objects.serialize(voice_recording))

@@ -7,14 +7,13 @@ from django.db.models import F
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core import time as time_util
 
 
 class QueueDeleteView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        When a user "deletes" something from the queue. In this case, what is
-        actually happening is queue archival. The queue is deleted in the
-        application layer but persists in the database.
+        When a user deletes (archives) something from the queue.
         """
         Queue = apps.get_model("streams", "Queue")
         Stream = apps.get_model("streams", "Stream")
@@ -24,7 +23,7 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
         queue_uuid = request.POST["queueUuid"]
         queue = Queue.objects.get(uuid=queue_uuid, stream=stream, user=request.user)
 
-        now = timezone.now()
+        now = time_util.now()
         with transaction.atomic():
 
             # delete queue

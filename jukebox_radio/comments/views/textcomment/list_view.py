@@ -11,7 +11,8 @@ User = get_user_model()
 class TextCommentListView(BaseView, LoginRequiredMixin):
     def get(self, request, **kwargs):
         """
-        List TextComment objects that the user has created for a given track.
+        List TextComment objects that the user has created for whatever is now
+        playing.
         """
         TextComment = apps.get_model("comments", "TextComment")
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
@@ -24,45 +25,10 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
 
         track_uuid = stream.now_playing.track_id
 
-        text_comment_qs = (
-            TextComment.objects.select_related("user", "track")
-            .prefetch_related(
-                Prefetch(
-                    "modifications",
-                    queryset=TextCommentModification.objects.filter(
-                        deleted_at__isnull=True
-                    ).order_by("start_ptr"),
-                    to_attr="ordered_modifications",
-                )
-            )
-            .filter(track__uuid=track_uuid, user=request.user, deleted_at__isnull=True)
-            .order_by("timestamp_ms")
-        )
+        text_comment_qs = TextComment.objects.notepad_filter(track_uuid, request.user)
+
         text_comments = []
         for text_comment in text_comment_qs:
-
-            text_comment_modifications = []
-            for modification in text_comment.ordered_modifications:
-                text_comment_modifications.append(
-                    {
-                        "uuid": modification.uuid,
-                        "type": modification.style,
-                        "startPtr": modification.start_ptr,
-                        "endPtr": modification.end_ptr,
-                        "animate": False,
-                    }
-                )
-
-            text_comments.append(
-                {
-                    "class": text_comment.__class__.__name__,
-                    "uuid": text_comment.uuid,
-                    "userUsername": text_comment.user.username,
-                    "text": text_comment.text,
-                    "trackUuid": text_comment.track.uuid,
-                    "timestampMilliseconds": text_comment.timestamp_ms,
-                    "modifications": text_comment_modifications,
-                }
-            )
+            text_comments.append(TextComment.objects.serialize(text_comment))
 
         return self.http_response_200(text_comments)

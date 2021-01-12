@@ -24,8 +24,8 @@ def get_search_results(user, provider_slug, query, formats):
     else:
         raise ValueError(f"Unrecognized provider slug: {provider_slug}")
 
-    # - - - - - - - - - - - - - -
     # Save search results in DB
+    # - - - - - - - - - - - - - -
     tracks = []
     track_uuids = []
     track_eids = []
@@ -70,8 +70,8 @@ def get_search_results(user, provider_slug, query, formats):
     Track.objects.bulk_create(tracks, ignore_conflicts=True)
     Collection.objects.bulk_create(collections, ignore_conflicts=True)
 
-    # - - - - - - - - - - - - - -
     # Return relevant DB objects
+    # - - - - - - - - - - - - - -
     track_qs = Track.objects.filter(
         Q(uuid__in=track_uuids) | Q(external_id__in=track_eids)
     )
@@ -95,10 +95,8 @@ def get_search_results(user, provider_slug, query, formats):
     return db_objs
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Jukebox Radio
-
-
+# ------------------------------------------------------------------------------
 def _get_jukebox_radio_search_results(query, user):
     Track = apps.get_model("music", "Track")
 
@@ -133,10 +131,8 @@ def _get_jukebox_radio_search_results(query, user):
     return tracks
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Spotify
-
-
+# ------------------------------------------------------------------------------
 def _get_spotify_search_results(query, formats, user):
     Collection = apps.get_model("music", "Collection")
     Track = apps.get_model("music", "Track")
@@ -166,8 +162,8 @@ def _get_spotify_search_results(query, formats, user):
 
     data = []
 
-    # - - - - - - - - - - - - -
     # Glue everything together
+    # - - - - - - - - - - - - -
     if "albums" in response_json:
         items = response_json["albums"]["items"]
         for item in items:
@@ -212,9 +208,8 @@ def _get_spotify_search_results(query, formats, user):
     return data
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # YouTube
-
+# ------------------------------------------------------------------------------
 YOUTUBE_KIND_PLAYLIST = "youtube#playlist"
 YOUTUBE_KIND_VIDEO = "youtube#video"
 

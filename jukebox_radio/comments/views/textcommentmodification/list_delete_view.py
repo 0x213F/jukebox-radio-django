@@ -11,8 +11,9 @@ User = get_user_model()
 class TextCommentModificationListDeleteView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        Delete all TextCommentModification objects that relate to a given
-        TextComment.
+        Delete (archive) all TextCommentModification objects that related to a
+        given TextComment. In practice, this is like "wiping" the comment
+        clean.
         """
         TextComment = apps.get_model("comments", "TextComment")
         TextCommentModification = apps.get_model("comments", "TextCommentModification")

@@ -5,10 +5,11 @@ from jukebox_radio.comments.views.textcomment import (
     TextCommentDeleteView,
     TextCommentListView,
 )
-from jukebox_radio.comments.views.textcommentmodification import (
-    TextCommentModificationCreateView,
-    TextCommentModificationListDeleteView,
-)
+
+# from jukebox_radio.comments.views.textcommentmodification import (
+#     TextCommentModificationCreateView,
+#     TextCommentModificationListDeleteView,
+# )
 from jukebox_radio.comments.views.voicerecording import (
     VoiceRecordingCreateView,
     VoiceRecordingDeleteView,
@@ -20,6 +21,7 @@ from jukebox_radio.comments.views.voicerecording import (
 app_name = "comments"
 urlpatterns = [
     # TextComment
+    # --------------------------------------------------------------------------
     path(
         "text-comment/create/",
         view=TextCommentCreateView.as_view(),
@@ -36,17 +38,21 @@ urlpatterns = [
         name="text-comment-list",
     ),
     # TextCommentModification
-    path(
-        "text-comment-modification/create/",
-        view=TextCommentModificationCreateView.as_view(),
-        name="text-comment-modification-create",
-    ),
-    path(
-        "text-comment-modification/list-delete/",
-        view=TextCommentModificationListDeleteView.as_view(),
-        name="text-comment-modification-list-delete",
-    ),
+    # NOTE: This feature is currently WIP on front-end. So in the meantime,
+    #       this is disabled in back-end.
+    # --------------------------------------------------------------------------
+    # path(
+    #     "text-comment-modification/create/",
+    #     view=TextCommentModificationCreateView.as_view(),
+    #     name="text-comment-modification-create",
+    # ),
+    # path(
+    #     "text-comment-modification/list-delete/",
+    #     view=TextCommentModificationListDeleteView.as_view(),
+    #     name="text-comment-modification-list-delete",
+    # ),
     # VoiceRecording
+    # --------------------------------------------------------------------------
     path(
         "voice-recording/create/",
         view=VoiceRecordingCreateView.as_view(),

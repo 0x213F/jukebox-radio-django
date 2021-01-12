@@ -5,6 +5,8 @@ from django.db import models
 import pgtrigger
 from unique_upload import unique_upload
 
+from jukebox_radio.music.const import GLOBAL_FORMAT_TRACK
+from jukebox_radio.music.const import GLOBAL_FORMAT_VIDEO
 from jukebox_radio.music.const import GLOBAL_PROVIDER_SPOTIFY
 from jukebox_radio.music.const import GLOBAL_PROVIDER_YOUTUBE
 from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
@@ -56,8 +58,8 @@ class Track(models.Model):
             "external_id",
         ]
 
-    FORMAT_TRACK = "track"
-    FORMAT_VIDEO = "video"
+    FORMAT_TRACK = GLOBAL_FORMAT_TRACK
+    FORMAT_VIDEO = GLOBAL_FORMAT_VIDEO
     FORMAT_CHOICES = (
         (FORMAT_TRACK, "Track"),
         (FORMAT_VIDEO, "Video"),

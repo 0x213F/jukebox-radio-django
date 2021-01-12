@@ -6,12 +6,13 @@ from django.db import transaction
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core import time as time_util
 
 
 class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        When a user wants to play the "last played track" right now.
+        When a user wants to play the "last up queue item" right now.
         """
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
@@ -21,7 +22,7 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.get(user=request.user)
 
         if not stream.is_playing and not stream.is_paused and stream.now_playing:
-            playing_at = timezone.now()
+            playing_at = time_util.now()
             stream.started_at = playing_at
             stream.paused_at = None
             stream.save()
@@ -37,7 +38,7 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
         if not next_head:
             raise ValueError("Nothing to play next!")
 
-        playing_at = timezone.now()
+        playing_at = time_util.now() + timedelta(milliseconds=100)
         with transaction.atomic():
 
             stream.now_playing = next_head

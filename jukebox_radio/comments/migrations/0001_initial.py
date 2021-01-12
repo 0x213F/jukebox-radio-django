@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
                 (
                     "audio",
                     models.FileField(
-                        upload_to=jukebox_radio.comments.models.upload_to_comments_voice_recordings
+                        upload_to=jukebox_radio.comments.models.voice_recording_model.upload_to_comments_voice_recordings
                     ),
                 ),
                 ("transcript_data", models.JSONField()),

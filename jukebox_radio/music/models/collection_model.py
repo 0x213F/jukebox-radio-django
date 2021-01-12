@@ -6,6 +6,8 @@ from django.db import models
 import pgtrigger
 from unique_upload import unique_upload
 
+from jukebox_radio.music.const import GLOBAL_FORMAT_ALBUM
+from jukebox_radio.music.const import GLOBAL_FORMAT_PLAYLIST
 from jukebox_radio.music.const import GLOBAL_PROVIDER_SPOTIFY
 from jukebox_radio.music.const import GLOBAL_PROVIDER_YOUTUBE
 from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
@@ -52,8 +54,8 @@ class Collection(models.Model):
             "external_id",
         ]
 
-    FORMAT_ALBUM = "album"
-    FORMAT_PLAYLIST = "playlist"
+    FORMAT_ALBUM = GLOBAL_FORMAT_ALBUM
+    FORMAT_PLAYLIST = GLOBAL_FORMAT_PLAYLIST
     FORMAT_CHOICES = (
         (FORMAT_ALBUM, "Album"),
         (FORMAT_PLAYLIST, "Playlist"),
