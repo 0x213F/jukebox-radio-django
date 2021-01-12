@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core import time as time_util
 
 
 class StreamPlayTrackView(BaseView, LoginRequiredMixin):
@@ -24,7 +25,7 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
         if not stream.is_paused:
             raise ValueError("Cannot play a stream which is not paused")
 
-        playing_at = timezone.now()
+        playing_at = time_util.now() + timedelta(milliseconds=100)
         paused_duration = playing_at - stream.paused_at
 
         stream.started_at += paused_duration

@@ -14,13 +14,13 @@ from jukebox_radio.streams.views.queue import (
     QueueCreateView,
     QueueDeleteView,
     QueueListView,
-    QueueUpdateView,
 )
 
 
 app_name = "streams"
 urlpatterns = [
     # Stream
+    # --------------------------------------------------------------------------
     path(
         "stream/get/",
         view=StreamGetView.as_view(),
@@ -56,8 +56,8 @@ urlpatterns = [
         name="stream-scan-forward",
     ),
     # Queue
+    # --------------------------------------------------------------------------
     path("queue/create/", view=QueueCreateView.as_view(), name="queue-create"),
     path("queue/delete/", view=QueueDeleteView.as_view(), name="queue-delete"),
     path("queue/list/", view=QueueListView.as_view(), name="queue-list"),
-    path("queue/update/", view=QueueUpdateView.as_view(), name="queue-update"),
 ]

@@ -5,11 +5,6 @@ from django.db import models
 import pgtrigger
 from unique_upload import unique_upload
 
-from jukebox_radio.music.const import GLOBAL_PROVIDER_SPOTIFY
-from jukebox_radio.music.const import GLOBAL_PROVIDER_YOUTUBE
-from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
-from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
-
 
 def upload_to_stems_audios(*args, **kwargs):
     return f"django-storage/music/stems/audios/" f"{unique_upload(*args, **kwargs)}"

@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core import time as time_util
 
 
 class StreamScanBackwardView(BaseView, LoginRequiredMixin):
@@ -24,7 +25,7 @@ class StreamScanBackwardView(BaseView, LoginRequiredMixin):
             raise ValueError("Stream has to be playing")
 
         playing_at = stream.started_at + timedelta(seconds=10)
-        lower_bound = timezone.now() + timedelta(milliseconds=125)
+        lower_bound = time_util.now() + timedelta(milliseconds=125)
         if playing_at > lower_bound:
             playing_at = lower_bound
 

@@ -12,7 +12,7 @@ User = get_user_model()
 class TextCommentDeleteView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        Delete a TextComment.
+        Delete (archive) a TextComment.
         """
         TextComment = apps.get_model("comments", "TextComment")
 

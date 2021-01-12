@@ -25,24 +25,12 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
 
         track_uuid = stream.now_playing.track_id
 
-        voice_recording_qs = (
-            VoiceRecording.objects.select_related("user", "track")
-            .filter(track__uuid=track_uuid, user=request.user, deleted_at__isnull=True)
-            .order_by("timestamp_ms")
+        voice_recording_qs = VoiceRecording.objects.notepad_filter(
+            track_uuid, request.user
         )
+
         voice_recordings = []
         for voice_recording in voice_recording_qs:
-            voice_recordings.append(
-                {
-                    "class": voice_recording.__class__.__name__,
-                    "uuid": voice_recording.uuid,
-                    "user": voice_recording.user.username,
-                    "transcriptData": voice_recording.transcript_data,
-                    "transcriptFinal": voice_recording.transcript_final,
-                    "durationMilliseconds": voice_recording.duration_ms,
-                    "trackUuid": voice_recording.track.uuid,
-                    "timestampMilliseconds": voice_recording.timestamp_ms,
-                }
-            )
+            voice_recordings.append(VoiceRecording.objects.serialize(voice_recording))
 
         return self.http_response_200(voice_recordings)

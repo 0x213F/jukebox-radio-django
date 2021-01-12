@@ -21,7 +21,7 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
         Track = apps.get_model("music", "Track")
         Collection = apps.get_model("music", "Collection")
 
-        query = request.GET.get("query")
+        query = request.GET["query"]
 
         providers = []
         if request.GET["providerSpotify"] == "true":

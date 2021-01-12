@@ -24,22 +24,3 @@ def generate_spotify_authorization_uri(request):
     query_str = urlencode(params)
 
     return f"https://accounts.spotify.com/authorize?{query_str}"
-
-
-class SettingsView(BaseView, LoginRequiredMixin):
-    def get(self, request, **kwargs):
-        """
-        Load settings page for user
-        """
-        spotify_authorization_url = generate_spotify_authorization_uri(request)
-
-        return self.template_response(
-            request,
-            "pages/settings.html",
-            {
-                "spotify_is_already_authorized": bool(
-                    request.user.encrypted_spotify_access_token
-                ),
-                "spotify_authorization_url": spotify_authorization_url,
-            },
-        )

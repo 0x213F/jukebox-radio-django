@@ -263,11 +263,6 @@ class Queue(models.Model):
         null=True,
     )
 
-    start_at = models.PositiveIntegerField(null=True, blank=True)
-    end_at = models.PositiveIntegerField(null=True, blank=True)
-
-    # stem_separation = models.ArrayField(CharField)
-
     is_abstract = models.BooleanField()
     parent = models.ForeignKey(
         "streams.Queue",

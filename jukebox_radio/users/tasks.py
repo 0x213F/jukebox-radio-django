@@ -50,7 +50,6 @@ def refresh_spotify_access_tokens():
             user.save()
 
         except Exception as e:
-            print(e)
             user.encrypted_spotify_access_token = None
             user.encrypted_spotify_refresh_token = None
             user.spotify_scope = None

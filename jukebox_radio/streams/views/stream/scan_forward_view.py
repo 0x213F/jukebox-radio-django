@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core import time as time_util
 
 
 class StreamScanForwardView(BaseView, LoginRequiredMixin):
@@ -24,7 +25,7 @@ class StreamScanForwardView(BaseView, LoginRequiredMixin):
             raise ValueError("Stream has to be playing")
 
         playing_at = stream.started_at - timedelta(seconds=10)
-        now = timezone.now()
+        now = time_util.now()
         track_ends_at = playing_at + stream.now_playing_duration
         if track_ends_at <= now:
             return self.http_response_400("Cannot scan past the end of the song")
