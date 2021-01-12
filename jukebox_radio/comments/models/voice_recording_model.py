@@ -34,7 +34,7 @@ class VoiceRecordingManager(models.Manager):
 class VoiceRecordingQuerySet(models.QuerySet):
     def notepad_filter(self, track_uuid, user):
         return (
-            self.objects.select_related("user", "track")
+            self.select_related("user", "track")
             .filter(track__uuid=track_uuid, user=user, deleted_at__isnull=True)
             .order_by("timestamp_ms")
         )

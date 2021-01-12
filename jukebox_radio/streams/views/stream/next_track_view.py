@@ -25,7 +25,18 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
         next_head = Queue.objects.get_next(stream)
 
         if not next_head:
-            raise ValueError("Nothing to play next!")
+
+            if not stream.is_playing and not stream.is_paused:
+                raise ValueError("Stream needs to be playing or paused")
+
+            stream.started_at = time_util.now() - stream.now_playing_duration
+            stream.paused_at = None
+            stream.save()
+            return self.http_response_200(
+                {
+                    "startedAt": int(stream.started_at.timestamp()),
+                }
+            )
 
         playing_at = time_util.now() + timedelta(milliseconds=100)
         with transaction.atomic():

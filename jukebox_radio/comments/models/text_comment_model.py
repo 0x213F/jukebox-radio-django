@@ -3,6 +3,7 @@ import uuid
 
 from django.apps import apps
 from django.db import models
+from django.db.models import Prefetch
 
 import pghistory
 import pgtrigger
