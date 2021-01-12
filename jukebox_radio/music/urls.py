@@ -2,7 +2,6 @@ from django.urls import path
 
 from jukebox_radio.music.views import MusicSearchView
 from jukebox_radio.music.views import TrackCreateView
-from jukebox_radio.music.views import TrackUpdateView
 
 
 app_name = "music"

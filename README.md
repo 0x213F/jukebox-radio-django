@@ -55,8 +55,9 @@ Or run in a detached (background) mode.
 
     docker-compose -f local.yml up -d
 
-### EC2 & RDS
+Navigate to `localhost:8000` to verify that the server is working.
 
+### AWS
 https://medium.com/@chandupriya93/deploying-docker-containers-with-aws-ec2-instance-265038bba674
 
 Launch a standard Linux micro (free tier) instance.
