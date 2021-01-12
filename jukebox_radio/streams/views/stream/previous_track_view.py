@@ -21,6 +21,9 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
+        if not stream.now_playing.track_id:
+            raise ValueError("Nothing to play next!")
+
         if not stream.is_playing and not stream.is_paused and stream.now_playing:
             playing_at = time_util.now()
             stream.started_at = playing_at
@@ -34,9 +37,6 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
 
         last_head = Queue.objects.get_head(stream)
         next_head = Queue.objects.get_prev(stream)
-
-        if not next_head:
-            raise ValueError("Nothing to play next!")
 
         playing_at = time_util.now() + timedelta(milliseconds=100)
         with transaction.atomic():

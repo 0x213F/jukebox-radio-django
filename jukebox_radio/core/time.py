@@ -13,3 +13,10 @@ def now():
     Get now as an UTC timestamp.
     """
     return timezone.now()
+
+
+def epoch(dt):
+    """
+    Get milliseconds since epoch.
+    """
+    return int(dt.timestamp() * 1000)

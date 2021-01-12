@@ -1,7 +1,6 @@
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Prefetch
 
 from jukebox_radio.core.base_view import BaseView
 
