@@ -20,6 +20,9 @@ class User(AbstractUser):
 
     @property
     def spotify_access_token(self):
+        if not self.encrypted_spotify_refresh_token:
+            return None
+
         cipher_suite = Fernet(settings.FERNET_KEY)
         return cipher_suite.decrypt(
             self.encrypted_spotify_access_token.encode("utf-8")
