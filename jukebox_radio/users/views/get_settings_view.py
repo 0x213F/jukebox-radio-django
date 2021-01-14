@@ -9,6 +9,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core.utils import generate_spotify_authorization_uri
 from jukebox_radio.networking.actions import make_request
 
 User = get_user_model()
@@ -20,5 +21,8 @@ class UserGetSettingsView(BaseView, LoginRequiredMixin):
         Get the settings of a user.
         """
         return self.http_response_200({
-            "spotify_access_token": request.user.spotify_access_token,
+            "spotify": {
+                "authorizationUrl": generate_spotify_authorization_uri(request),
+                "accessToken": request.user.spotify_access_token,
+            }
         })
