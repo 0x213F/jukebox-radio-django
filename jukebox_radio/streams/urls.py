@@ -1,5 +1,8 @@
 from django.urls import path
 
+from jukebox_radio.streams.views.marker import (
+    MarkerCreateView,
+)
 from jukebox_radio.streams.views.stream import (
     StreamGetView,
     StreamInitializeView,
@@ -19,6 +22,13 @@ from jukebox_radio.streams.views.queue import (
 
 app_name = "streams"
 urlpatterns = [
+    # Marker
+    # --------------------------------------------------------------------------
+    path(
+        "marker/create/",
+        view=MarkerCreateView.as_view(),
+        name="marker-create",
+    ),
     # Stream
     # --------------------------------------------------------------------------
     path(
