@@ -43,7 +43,7 @@ class QueueInterval(models.Model):
     )
 
     is_muted = models.BooleanField()
-    repeat_count = models.PositiveSmallIntegerField(null=True)
+    repeat_count = models.PositiveSmallIntegerField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
