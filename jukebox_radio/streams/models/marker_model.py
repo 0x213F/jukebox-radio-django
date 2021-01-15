@@ -1,10 +1,6 @@
 import uuid
 
-from django.apps import apps
 from django.db import models
-from django.db import transaction
-from django.db.models import Prefetch
-from django.db.models import F
 
 import pgtrigger
 
