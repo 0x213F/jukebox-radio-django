@@ -7,7 +7,7 @@ from jukebox_radio.core.base_view import BaseView
 class MarkerCreateView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
-        When a user adds something to the queue.
+        Create a Marker.
         """
         Marker = apps.get_model("streams", "Marker")
 
