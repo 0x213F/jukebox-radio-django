@@ -19,7 +19,7 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         is_muted = request.POST.get("isMuted") == "true"
         repeat_count = request.POST.get("repeatCount")
 
-        QueueInterval.objects.create(
+        QueueInterval.objects.create_queue_interval(
             user=request.user,
             queue_id=queue_uuid,
             lower_bound_id=lower_bound_marker_uuid,
