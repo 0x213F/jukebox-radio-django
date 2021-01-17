@@ -13,18 +13,18 @@ class QueueManager(models.Manager):
     def serialize(self, queue, is_child=False):
         Collection = apps.get_model("music", "Collection")
         Track = apps.get_model("music", "Track")
+        QueueInterval = apps.get_model("streams", "QueueInterval")
 
         if not queue:
             return None
 
-        collection = (
-            Collection.objects.serialize(queue.collection) if not is_child else None
-        )
+        track = Track.objects.serialize(queue.track) if queue.track_id else None
+        collection = Collection.objects.serialize(queue.collection) if queue.collection_id else None
 
         obj = {
             "uuid": queue.uuid,
             "index": queue.index,
-            "track": Track.objects.serialize(queue.track),
+            "track": track,
             "collection": collection,
             "parentUuid": queue.parent_id,
             "isAbstract": queue.is_abstract,
@@ -39,6 +39,15 @@ class QueueManager(models.Manager):
         for child in queue_children:
             children.append(self.serialize(child, is_child=True))
         obj["children"] = children
+
+        try:
+            active_intervals = queue.active_intervals
+        except AttributeError:
+            active_intervals = []
+        intervals = []
+        for interval in active_intervals:
+            intervals.append(QueueInterval.objects.serialize(interval))
+        obj["intervals"] = intervals
 
         return obj
 
@@ -82,12 +91,12 @@ class QueueManager(models.Manager):
         offset = len(_tracks)
 
         with transaction.atomic():
-            up_next_tracks = Queue.objects.filter(
+            next_up_tracks_only = Queue.objects.filter(
                 index__gte=index,
                 stream=stream,
                 deleted_at__isnull=True,
             )
-            up_next_tracks.update(index=F("index") + offset)
+            next_up_tracks_only.update(index=F("index") + offset)
 
             queues = []
 
@@ -122,15 +131,59 @@ class QueueManager(models.Manager):
 
 
 class QueueQuerySet(models.QuerySet):
+    def prefetch_active_intervals(self):
+        """
+        Simple prefetch of queue intervals. This is needed because the deleted
+        (archived) intervals should not be included in the query.
+
+        We also join the bounds using select related since they are needed in
+        context of the queue intervals.
+        """
+        QueueInterval = apps.get_model("streams", "QueueInterval")
+
+        return self.prefetch_related(
+            Prefetch(
+                "intervals",
+                queryset=(
+                    QueueInterval.objects
+                    .select_related("lower_bound", "upper_bound")
+                    .filter(
+                        deleted_at__isnull=True
+                    )
+                ),
+                to_attr="active_intervals",
+            )
+        )
+
     def last_queue(self, stream):
+        """
+        This gets the very last item in a stream's queue.
+        """
         return self.filter(
             stream=stream, deleted_at__isnull=True, is_abstract=False
         ).order_by("-index")[0]
 
     def get_head(self, stream):
-        return Queue.objects.get(stream=stream, is_head=True, deleted_at__isnull=True)
+        """
+        This gets the current head of the queue, aka "now playing." Currently
+        there are 3 ways to query for this value.
+
+        - The smart way: the queue with the most recent value for "played_at"
+        - The convenient way: "stream.now_playing"
+        - The explicit way: query on "is_head"
+
+        This does not seem ideal. Perhaps "is_head" could be deprecated in the
+        future?
+        """
+        head = Queue.objects.get(stream=stream, is_head=True, deleted_at__isnull=True)
+        if stream.now_playing_id != head.uuid:
+            raise ValueError('Unexpected head')
+        return head
 
     def get_prev(self, stream):
+        """
+        Get the queue item directly BEFORE the current head.
+        """
         head = Queue.objects.get_head(stream)
         try:
             return Queue.objects.get(
@@ -143,6 +196,9 @@ class QueueQuerySet(models.QuerySet):
             return None
 
     def get_next(self, stream):
+        """
+        Get the queue item directly AFTER the current head.
+        """
         head = Queue.objects.get_head(stream)
         try:
             return Queue.objects.get(
@@ -154,7 +210,12 @@ class QueueQuerySet(models.QuerySet):
         except Queue.DoesNotExist:
             return None
 
-    def up_next_tracks(self, stream):
+    def next_up_tracks_only(self, stream):
+        """
+        Get all the TRACKS which are up next. This query does not include
+        collections. For example, if an album was queued up, this would return
+        all of the tracks queued up, but not the parent "album queue item."
+        """
         queue_head = Queue.objects.get_head(stream)
         if not queue_head:
             return Queue.objects.none()
@@ -165,7 +226,15 @@ class QueueQuerySet(models.QuerySet):
             deleted_at__isnull=True,
         ).order_by("index")
 
-    def up_next(self, stream):
+    def next_up(self, stream):
+        """
+        This gets all the required data that is needed for managing a user's
+        queue. The data is structred as follows:
+
+          - A list of "top level" queue items. Aka, head of the tree hierarchy.
+          - All children "track" queue items if the parent is a "collection."
+          - For every queue, include the intervals.
+        """
         queue_head = Queue.objects.get_head(stream)
         if not queue_head:
             return Queue.objects.none()
@@ -175,7 +244,8 @@ class QueueQuerySet(models.QuerySet):
                 Prefetch(
                     "children",
                     queryset=(
-                        Queue.objects.filter(
+                        Queue.objects.prefetch_active_intervals()
+                        .filter(
                             index__gt=queue_head.index,
                             deleted_at__isnull=True,
                         ).order_by("index")
@@ -183,6 +253,7 @@ class QueueQuerySet(models.QuerySet):
                     to_attr="ordered_children",
                 )
             )
+            .prefetch_active_intervals()
             .filter(
                 index__gt=queue_head.index,
                 stream=stream,
@@ -193,6 +264,9 @@ class QueueQuerySet(models.QuerySet):
         )
 
     def last_up(self, stream):
+        """
+
+        """
         queue_head = Queue.objects.get_head(stream)
         if not queue_head:
             return Queue.objects.none()
