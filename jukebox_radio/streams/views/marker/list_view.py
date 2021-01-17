@@ -7,7 +7,7 @@ from jukebox_radio.core.base_view import BaseView
 class MarkerListView(BaseView, LoginRequiredMixin):
     def get(self, request, **kwargs):
         """
-        Create a Marker.
+        List Markers.
         """
         Marker = apps.get_model("streams", "Marker")
 
