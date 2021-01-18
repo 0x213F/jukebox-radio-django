@@ -4,6 +4,8 @@ from django.db import models
 
 import pgtrigger
 
+from jukebox_radio.core import time as time_util
+
 
 @pgtrigger.register(
     pgtrigger.Protect(
@@ -32,3 +34,7 @@ class Marker(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def archive(self):
+        self.deleted_at = time_util.now()
+        self.save()
