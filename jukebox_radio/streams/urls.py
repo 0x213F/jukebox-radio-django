@@ -21,6 +21,7 @@ from jukebox_radio.streams.views.queue import (
 )
 from jukebox_radio.streams.views.queue_interval import (
     QueueIntervalCreateView,
+    QueueIntervalDeleteView,
 )
 
 
@@ -85,5 +86,10 @@ urlpatterns = [
         "queue-interval/create/",
         view=QueueIntervalCreateView.as_view(),
         name="queue-interval-create",
+    ),
+    path(
+        "queue-interval/delete/",
+        view=QueueIntervalDeleteView.as_view(),
+        name="queue-interval-delete",
     ),
 ]
