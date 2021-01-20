@@ -99,8 +99,8 @@ class QueueIntervalQuerySet(models.QuerySet):
                 ) |
                 Q(
                     queue_id=queue_id,
-                    lower_bound=lower_bound,
-                    upper_bound=upper_bound,
+                    lower_bound__timestamp_ms=lower_bound.timestamp_ms,
+                    upper_bound__timestamp_ms=upper_bound.timestamp_ms,
                 )
             )
         )
