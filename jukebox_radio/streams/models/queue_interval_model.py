@@ -11,7 +11,15 @@ from jukebox_radio.core import time as time_util
 
 class QueueIntervalManager(models.Manager):
     def serialize(self, queue_interval):
-        return {}
+        Marker = apps.get_model('streams', 'Marker')
+        return {
+            "uuid": queue_interval.uuid,
+            "queueUuid": queue_interval.queue_id,
+            "lowerBound": Marker.objects.serialize(queue_interval.lower_bound),
+            "upperBound": Marker.objects.serialize(queue_interval.upper_bound),
+            "isMuted": queue_interval.is_muted,
+            "repeatCount": queue_interval.repeat_count,
+        }
 
     def create_queue_interval(
         self, *, user, queue_id, lower_bound_id, upper_bound_id, is_muted,
@@ -69,9 +77,13 @@ class QueueIntervalQuerySet(models.QuerySet):
 
     def conflicting_interval(self, *, queue_id, lower_bound_id, upper_bound_id):
         Marker = apps.get_model('streams', 'Marker')
+        Queue = apps.get_model('streams', 'Queue')
 
-        lower_bound = Marker.objects.get(uuid=lower_bound_id, queue_id=queue_id)
-        upper_bound = Marker.objects.get(uuid=upper_bound_id, queue_id=queue_id)
+        queue = Queue.objects.select_related("track").get(uuid=queue_id)
+        track = queue.track
+
+        lower_bound = Marker.objects.get(uuid=lower_bound_id, track=track)
+        upper_bound = Marker.objects.get(uuid=upper_bound_id, track=track)
 
         return self.filter(
             Q(
@@ -84,6 +96,11 @@ class QueueIntervalQuerySet(models.QuerySet):
                     queue_id=queue_id,
                     upper_bound__timestamp_ms__gt=lower_bound.timestamp_ms,
                     upper_bound__timestamp_ms__lt=upper_bound.timestamp_ms,
+                ) |
+                Q(
+                    queue_id=queue_id,
+                    lower_bound=lower_bound,
+                    upper_bound=upper_bound,
                 )
             )
         )
@@ -110,7 +127,7 @@ class QueueInterval(models.Model):
 
     queue = models.ForeignKey(
         "streams.Queue",
-        related_name="+",
+        related_name="intervals",
         on_delete=models.CASCADE,
         null=True,
     )
@@ -129,7 +146,7 @@ class QueueInterval(models.Model):
     )
 
     is_muted = models.BooleanField()
-    repeat_count = models.PositiveSmallIntegerField()
+    repeat_count = models.PositiveSmallIntegerField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)

@@ -25,7 +25,7 @@ class QueueListView(BaseView, LoginRequiredMixin):
             last_up_queues.append(queue_serialized)
 
         # next up
-        queue_qs = Queue.objects.up_next(stream)
+        queue_qs = Queue.objects.next_up(stream)
         next_up_queues = []
         for queue in queue_qs:
             queue_serialized = Queue.objects.serialize(queue)

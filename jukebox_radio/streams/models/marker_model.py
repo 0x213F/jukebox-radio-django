@@ -7,6 +7,18 @@ import pgtrigger
 from jukebox_radio.core import time as time_util
 
 
+class MarkerManager(models.Manager):
+    def serialize(self, marker):
+        if not marker:
+            return None
+
+        return {
+            "uuid": marker.uuid,
+            "trackUuid": marker.track_id,
+            "timestampMilliseconds": marker.timestamp_ms,
+        }
+
+
 @pgtrigger.register(
     pgtrigger.Protect(
         name="append_only",
@@ -19,6 +31,8 @@ class Marker(models.Model):
     a track to indicate points of interest. For example, you might want to set
     a marker at the beginning of a solo.
     """
+    objects = MarkerManager()
+
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)

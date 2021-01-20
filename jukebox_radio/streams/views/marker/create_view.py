@@ -20,4 +20,6 @@ class MarkerCreateView(BaseView, LoginRequiredMixin):
             timestamp_ms=timestamp_ms,
         )
 
-        return self.http_response_200()
+        return self.http_response_200(
+            Marker.objects.serialize(marker)
+        )
