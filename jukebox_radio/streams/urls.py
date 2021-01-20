@@ -3,6 +3,7 @@ from django.urls import path
 from jukebox_radio.streams.views.marker import (
     MarkerCreateView,
     MarkerDeleteView,
+    MarkerListView,
 )
 from jukebox_radio.streams.views.stream import (
     StreamGetView,
@@ -38,6 +39,11 @@ urlpatterns = [
         "marker/delete/",
         view=MarkerDeleteView.as_view(),
         name="marker-delete",
+    ),
+    path(
+        "marker/list/",
+        view=MarkerListView.as_view(),
+        name="marker-list",
     ),
     # Stream
     # --------------------------------------------------------------------------
