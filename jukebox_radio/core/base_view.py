@@ -19,6 +19,35 @@ class BaseView(APIView):
 
     permission_classes = (IsAuthenticated,)
 
+    def param(self, request, key):
+        if request.method == 'GET':
+            obj = request.GET
+        elif request.method == 'POST':
+            obj = request.POST
+        else:
+            raise ValueError('Unsupported request method')
+
+        val = obj[key]
+        if val == 'null':
+            return None
+        return val
+
+    def http_react_response(self, _type, payload):
+        """
+        SUCCESS
+        """
+        response = {
+            "system": {
+                "status": 200,
+                "message": "Ok",
+            },
+            "redux": {
+                "type": _type,
+                "payload": payload,
+            },
+        }
+        return JsonResponse(response)
+
     def http_response_200(self, data=None):
         """
         SUCCESS

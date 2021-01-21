@@ -19,6 +19,19 @@ class MarkerManager(models.Manager):
         }
 
 
+class MarkerQuerySet(models.QuerySet):
+    def filter_by_track_and_user(self, track_uuid, user):
+        return (
+            self
+            .filter(
+                user=user,
+                track_id=track_uuid,
+                deleted_at__isnull=True,
+            )
+            .order_by("timestamp_ms")
+        )
+
+
 @pgtrigger.register(
     pgtrigger.Protect(name="protect_deletes", operation=pgtrigger.Delete)
 )
@@ -28,7 +41,7 @@ class Marker(models.Model):
     a track to indicate points of interest. For example, you might want to set
     a marker at the beginning of a solo.
     """
-    objects = MarkerManager()
+    objects = MarkerManager.from_queryset(MarkerQuerySet)()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
