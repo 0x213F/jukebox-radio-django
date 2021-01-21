@@ -20,10 +20,7 @@ class MarkerManager(models.Manager):
 
 
 @pgtrigger.register(
-    pgtrigger.Protect(
-        name="append_only",
-        operation=(pgtrigger.Update | pgtrigger.Delete),
-    )
+    pgtrigger.Protect(name="protect_deletes", operation=pgtrigger.Delete)
 )
 class Marker(models.Model):
     """

@@ -18,12 +18,10 @@ class QueueIntervalManager(models.Manager):
             "lowerBound": Marker.objects.serialize(queue_interval.lower_bound),
             "upperBound": Marker.objects.serialize(queue_interval.upper_bound),
             "isMuted": queue_interval.is_muted,
-            "repeatCount": queue_interval.repeat_count,
         }
 
     def create_queue_interval(
         self, *, user, queue_id, lower_bound_id, upper_bound_id, is_muted,
-        repeat_count,
     ):
         QueueInterval = apps.get_model('streams', 'QueueInterval')
 
@@ -57,7 +55,6 @@ class QueueIntervalManager(models.Manager):
             lower_bound_id=lower_bound_id,
             upper_bound_id=upper_bound_id,
             is_muted=is_muted,
-            repeat_count=repeat_count,
         )
 
 
@@ -67,12 +64,14 @@ class QueueIntervalQuerySet(models.QuerySet):
         return self.filter(
             queue_id=queue_id,
             lower_bound__isnull=True,
+            deleted_at__isnull=True,
         )
 
     def highest_bound(self, queue_id):
         return self.filter(
             queue_id=queue_id,
             upper_bound__isnull=True,
+            deleted_at__isnull=True,
         )
 
     def conflicting_interval(self, *, queue_id, lower_bound_id, upper_bound_id):
@@ -91,16 +90,19 @@ class QueueIntervalQuerySet(models.QuerySet):
                     queue_id=queue_id,
                     lower_bound__timestamp_ms__lt=upper_bound.timestamp_ms,
                     lower_bound__timestamp_ms__gt=lower_bound.timestamp_ms,
+                    deleted_at__isnull=True,
                 ) |
                 Q(
                     queue_id=queue_id,
                     upper_bound__timestamp_ms__gt=lower_bound.timestamp_ms,
                     upper_bound__timestamp_ms__lt=upper_bound.timestamp_ms,
+                    deleted_at__isnull=True,
                 ) |
                 Q(
                     queue_id=queue_id,
                     lower_bound__timestamp_ms=lower_bound.timestamp_ms,
                     upper_bound__timestamp_ms=upper_bound.timestamp_ms,
+                    deleted_at__isnull=True,
                 )
             )
         )
@@ -146,7 +148,6 @@ class QueueInterval(models.Model):
     )
 
     is_muted = models.BooleanField()
-    repeat_count = models.PositiveSmallIntegerField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)

@@ -11,12 +11,17 @@ class MarkerListView(BaseView, LoginRequiredMixin):
         """
         Marker = apps.get_model("streams", "Marker")
 
-        track_uuid = request.POST.get("trackUuid")
+        track_uuid = request.GET.get("trackUuid")
 
-        marker_qs = Marker.objects.filter(
-            user=request.user,
-            track_id=track_uuid,
-            deleted_at__isnull=True,
+        marker_qs = (
+            Marker
+            .objects
+            .filter(
+                user=request.user,
+                track_id=track_uuid,
+                deleted_at__isnull=True,
+            )
+            .order_by("timestamp_ms")
         )
 
         markers = []
