@@ -16,18 +16,20 @@ class MarkerListView(BaseView, LoginRequiredMixin):
         marker_qs = (
             Marker
             .objects
-            .filter(
-                user=request.user,
-                track_id=track_uuid,
-                deleted_at__isnull=True,
-            )
-            .order_by("timestamp_ms")
+            .filter_by_track_and_user(track_uuid, request.user)
         )
 
         markers = []
         for marker in marker_qs:
             markers.append(Marker.objects.serialize(marker))
 
-        return self.http_response_200({
-            "markers": markers,
-        })
+        # needed for React Redux to update the state on the FE
+        queue_uuid = request.GET.get("queueUuid")
+
+        return self.http_react_response(
+            'marker/list',
+            {
+                "markers": markers,
+                "queueUuid": queue_uuid,
+            }
+        )
