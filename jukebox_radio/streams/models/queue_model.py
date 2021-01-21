@@ -150,6 +150,7 @@ class QueueQuerySet(models.QuerySet):
                     .filter(
                         deleted_at__isnull=True
                     )
+                    .order_by("upper_bound__timestamp_ms")
                 ),
                 to_attr="active_intervals",
             )

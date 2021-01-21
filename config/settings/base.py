@@ -296,9 +296,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "jukebox_radio.users.adapters.AccountAdapter"
+# ACCOUNT_ADAPTER = "jukebox_radio.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "jukebox_radio.users.adapters.SocialAccountAdapter"
+# SOCIALACCOUNT_ADAPTER = "jukebox_radio.users.adapters.SocialAccountAdapter"
 # django-compressor
 # ------------------------------------------------------------------------------
 # https://django-compressor.readthedocs.io/en/latest/quickstart/#installation
