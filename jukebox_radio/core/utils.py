@@ -13,7 +13,7 @@ User = get_user_model()
 
 def generate_spotify_authorization_uri(request):
     domain_prefix = "https" if request.is_secure() else "http"
-    current_site = get_current_site(request)
+    current_site = request.get_host()
     endpoint = reverse("users:user-connect-spotify")
 
     params = {

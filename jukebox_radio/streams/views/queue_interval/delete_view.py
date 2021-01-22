@@ -11,9 +11,19 @@ class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
         """
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
-        queue_interval_uuid = request.POST.get("queueIntervalUuid")
-
+        queue_interval_uuid = self.param(request, "queueIntervalUuid")
         queue_interval = QueueInterval.objects.get(uuid=queue_interval_uuid)
         queue_interval.archive()
 
-        return self.http_response_200()
+        # needed for React Redux to update the state on the FE
+        queue_uuid = self.param(request, "queueUuid")
+        parent_queue_uuid = self.param(request, "parentQueueUuid")
+
+        return self.http_react_response(
+            'queueInterval/delete',
+            {
+                "queueInterval": QueueInterval.objects.serialize(queue_interval),
+                "queueUuid": queue_uuid,
+                "parentQueueUuid": parent_queue_uuid,
+            }
+        )
