@@ -11,24 +11,25 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         """
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
-        queue_uuid = request.POST.get("queueUuid")
-
-        lower_bound_marker_uuid = request.POST.get("lowerBoundMarkerUuid")
-        upper_bound_marker_uuid = request.POST.get("upperBoundMarkerUuid")
-
-        is_muted = request.POST.get("isMuted") == "true"
-        repeat_count = request.POST.get("repeatCount")
-        repeat_count = repeat_count if repeat_count else None
-
+        queue_uuid = self.param(request, "queueUuid")
+        lower_bound_marker_uuid = self.param(request, "lowerBoundMarkerUuid")
+        upper_bound_marker_uuid = self.param(request, "upperBoundMarkerUuid")
         queue_interval = QueueInterval.objects.create_queue_interval(
             user=request.user,
             queue_id=queue_uuid,
             lower_bound_id=lower_bound_marker_uuid,
             upper_bound_id=upper_bound_marker_uuid,
-            is_muted=is_muted,
-            repeat_count=repeat_count,
+            is_muted=True,
         )
 
-        return self.http_response_200(
-            QueueInterval.objects.serialize(queue_interval)
+        # needed for React Redux to update the state on the FE
+        parent_queue_uuid = self.param(request, "parentQueueUuid")
+
+        return self.http_react_response(
+            'queueInterval/create',
+            {
+                "queueInterval": QueueInterval.objects.serialize(queue_interval),
+                "queueUuid": queue_uuid,
+                "parentQueueUuid": parent_queue_uuid,
+            }
         )

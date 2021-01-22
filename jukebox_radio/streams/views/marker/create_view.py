@@ -13,13 +13,19 @@ class MarkerCreateView(BaseView, LoginRequiredMixin):
 
         track_uuid = request.POST.get("trackUuid")
         timestamp_ms = request.POST.get("timestampMilliseconds")
-
         marker = Marker.objects.create(
             user=request.user,
             track_id=track_uuid,
             timestamp_ms=timestamp_ms,
         )
 
-        return self.http_response_200(
-            Marker.objects.serialize(marker)
+        # needed for React Redux to update the state on the FE
+        queue_uuid = request.POST.get("queueUuid")
+
+        return self.http_react_response(
+            'marker/create',
+            {
+                "marker": Marker.objects.serialize(marker),
+                "queueUuid": queue_uuid,
+            }
         )
