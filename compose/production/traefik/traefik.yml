@@ -26,7 +26,7 @@ certificatesResolvers:
 http:
   routers:
     web-router:
-      rule: "Host(`jukeboxrad.io`) || Host(`www.jukeboxrad.io`)"
+      rule: "Host(`prod.jukeboxrad.io`)"
 
       entryPoints:
         - web
@@ -36,7 +36,7 @@ http:
       service: django
 
     web-secure-router:
-      rule: "Host(`jukeboxrad.io`) || Host(`www.jukeboxrad.io`)"
+      rule: "Host(`prod.jukeboxrad.io`)"
 
       entryPoints:
         - web-secure
@@ -48,7 +48,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: "Host(`jukeboxrad.io`)"
+      rule: "Host(`prod.jukeboxrad.io`)"
       entryPoints:
         - flower
       service: flower
