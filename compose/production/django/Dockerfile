@@ -1,6 +1,7 @@
 FROM node:10-stretch-slim as client-builder
 
 WORKDIR /app
+COPY . /app
 
 # Python build stage
 FROM python:3.8-slim-buster
@@ -55,7 +56,5 @@ COPY --from=client-builder --chown=django:django /app /app
 
 
 USER django
-
-WORKDIR /app
 
 ENTRYPOINT ["/entrypoint"]
