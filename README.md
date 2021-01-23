@@ -134,10 +134,6 @@ In order for things to run smoothly, some manual adjustments must be made to the
 
 <!-- br -->
 
-    # Update the Site object
-    from django.contrib.sites.models import Site
-    Site.objects.update(domain="jukeboxrad.io")
-
     # Create cron schedule
     from django.utils import timezone
     tz = timezone.get_current_timezone()

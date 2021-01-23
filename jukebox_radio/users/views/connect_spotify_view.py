@@ -2,7 +2,6 @@ from cryptography.fernet import Fernet
 
 from django.apps import apps
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.shortcuts import get_current_site
@@ -22,7 +21,6 @@ class UserConnectSpotifyView(BaseView, LoginRequiredMixin):
         """
         Request = apps.get_model("networking", "Request")
 
-        settings_url = reverse("settings")
         user = request.user
 
         error = request.GET.get("error", None)
@@ -30,12 +28,12 @@ class UserConnectSpotifyView(BaseView, LoginRequiredMixin):
             messages.add_message(
                 request, messages.ERROR, "Spotify authentication failed"
             )
-            return self.redirect_response(settings_url)
+            return self.http_response_400()
 
         code = request.GET.get("code", None)
 
         domain_prefix = "https" if request.is_secure() else "http"
-        current_site = get_current_site(request)
+        current_site = request.get_host()
         data = {
             "grant_type": "authorization_code",
             "code": code,
@@ -69,7 +67,4 @@ class UserConnectSpotifyView(BaseView, LoginRequiredMixin):
         user.spotify_scope = settings.SPOTIFY_USER_DATA_SCOPES
         user.save()
 
-        messages.add_message(
-            request, messages.SUCCESS, "Spotify authentication succeeded"
-        )
-        return self.redirect_response(settings_url)
+        return self.http_response_200()
