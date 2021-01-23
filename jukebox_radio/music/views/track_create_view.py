@@ -10,7 +10,7 @@ from django.core.files import File
 from pydub import AudioSegment
 
 from jukebox_radio.core.base_view import BaseView
-from jukebox_radio.music.tasks import generate_stems_for_track
+# from jukebox_radio.music.tasks import generate_stems_for_track
 
 
 class TrackCreateView(BaseView, LoginRequiredMixin):
