@@ -19,6 +19,8 @@ class StreamInitializeView(BaseView, LoginRequiredMixin):
         if Queue.objects.filter(stream=stream, deleted_at__isnull=True).exists():
             return self.http_response_200()
 
-        Queue.objects.create_initial_queue(stream)
+        queue = Queue.objects.create_initial_queue(stream)
+        stream.now_playing = queue
+        stream.save()
 
         return self.http_response_200()
