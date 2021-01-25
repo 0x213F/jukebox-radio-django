@@ -10,7 +10,7 @@ import pgtrigger
 
 
 class QueueManager(models.Manager):
-    def serialize(self, queue, is_child=False):
+    def serialize(self, queue):
         Collection = apps.get_model("music", "Collection")
         Track = apps.get_model("music", "Track")
         QueueInterval = apps.get_model("streams", "QueueInterval")
@@ -34,16 +34,27 @@ class QueueManager(models.Manager):
         try:
             queue_children = queue.ordered_children
         except AttributeError:
+            # TODO: we should fetch children here, but as of now, no case
+            #       justifies writing this code.
             queue_children = []
         children = []
         for child in queue_children:
-            children.append(self.serialize(child, is_child=True))
+            children.append(self.serialize(child))
         obj["children"] = children
 
         try:
             active_intervals = queue.active_intervals
         except AttributeError:
-            active_intervals = []
+            active_intervals = (
+                QueueInterval
+                .objects
+                .select_related("lower_bound", "upper_bound")
+                .filter(
+                    queue_id=queue.uuid,
+                    deleted_at__isnull=True
+                )
+                .order_by("upper_bound__timestamp_ms")
+            )
         intervals = []
         for interval in active_intervals:
             intervals.append(QueueInterval.objects.serialize(interval))

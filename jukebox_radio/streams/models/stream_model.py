@@ -1,11 +1,27 @@
 import uuid
 from datetime import timedelta
 
+from django.apps import apps
 from django.db import models
 from django.utils import timezone
 
 import pghistory
 import pgtrigger
+
+from jukebox_radio.core import time as time_util
+
+
+class StreamManager(models.Manager):
+    def serialize(self, stream):
+        Queue = apps.get_model('streams', 'Queue')
+        return {
+            "uuid": stream.uuid,
+            "nowPlaying": Queue.objects.serialize(stream.now_playing),
+            "isPlaying": stream.is_playing,
+            "isPaused": stream.is_paused,
+            "startedAt": time_util.epoch(stream.started_at),
+            "pausedAt": time_util.epoch(stream.paused_at),
+        }
 
 
 @pgtrigger.register(
@@ -16,6 +32,7 @@ class Stream(models.Model):
     """
     Keeps track of playback. You could also think of this as a radio station.
     """
+    objects = StreamManager()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 

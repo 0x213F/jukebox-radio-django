@@ -16,17 +16,9 @@ class StreamGetView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.select_related("now_playing").get(user=request.user)
 
-        now_playing_serialized = Queue.objects.serialize(stream.now_playing)
-
-        return self.http_response_200(
+        return self.http_react_response(
+            'stream/set',
             {
-                "uuid": stream.uuid,
-                "nowPlaying": now_playing_serialized,
-                "isPlaying": stream.is_playing,
-                "isPaused": stream.is_paused,
-                "startedAt": stream.started_at
-                and int(stream.started_at.timestamp() * 1000),
-                "pausedAt": stream.paused_at
-                and int(stream.paused_at.timestamp() * 1000),
+                "stream": Stream.objects.serialize(stream),
             }
         )
