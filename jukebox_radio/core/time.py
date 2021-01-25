@@ -19,4 +19,6 @@ def epoch(dt):
     """
     Get milliseconds since epoch.
     """
+    if not dt:
+        return None
     return int(dt.timestamp() * 1000)
