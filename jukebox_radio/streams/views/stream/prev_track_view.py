@@ -9,7 +9,7 @@ from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core import time as time_util
 
 
-class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
+class StreamPrevTrackView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
         """
         When a user wants to play the "last up queue item" right now.
@@ -53,8 +53,9 @@ class StreamPreviousTrackView(BaseView, LoginRequiredMixin):
             last_head.is_head = False
             last_head.save()
 
-        return self.http_response_200(
+        return self.http_react_response(
+            'stream/prevTrack',
             {
-                "startedAt": int(stream.started_at.timestamp()),
+                "startedAt": time_util.epoch(stream.started_at),
             }
         )
