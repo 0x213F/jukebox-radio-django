@@ -31,7 +31,8 @@ class QueueListView(BaseView, LoginRequiredMixin):
             queue_serialized = Queue.objects.serialize(queue)
             next_up_queues.append(queue_serialized)
 
-        return self.http_response_200(
+        return self.http_react_response(
+            'queue/listSet',
             {
                 "lastUpQueues": last_up_queues,
                 "nextUpQueues": next_up_queues,

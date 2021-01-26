@@ -53,8 +53,9 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             last_head.is_head = False
             last_head.save()
 
-        return self.http_response_200(
+        return self.http_react_response(
+            'stream/nextTrack',
             {
-                "startedAt": int(stream.started_at.timestamp()),
+                "startedAt": time_util.epoch(stream.started_at),
             }
         )
