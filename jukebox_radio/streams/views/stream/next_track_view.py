@@ -32,9 +32,10 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             stream.started_at = time_util.now() - stream.now_playing_duration
             stream.paused_at = None
             stream.save()
-            return self.http_response_200(
+            return self.http_react_response(
+                'stream/nextTrack',
                 {
-                    "startedAt": int(stream.started_at.timestamp()),
+                    "startedAt": time_util.epoch(stream.started_at),
                 }
             )
 

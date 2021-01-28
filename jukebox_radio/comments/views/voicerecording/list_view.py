@@ -21,7 +21,12 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.get(user=request.user)
 
         if not stream.is_playing and not stream.is_paused:
-            return self.http_response_200([])
+            return self.http_react_response(
+                "voiceRecording/listSet",
+                {
+                    "voiceRecordings": [],
+                },
+            )
 
         track_uuid = stream.now_playing.track_id
 
@@ -33,4 +38,9 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
         for voice_recording in voice_recording_qs:
             voice_recordings.append(VoiceRecording.objects.serialize(voice_recording))
 
-        return self.http_response_200(voice_recordings)
+        return self.http_react_response(
+            "voiceRecording/listSet",
+            {
+                "voiceRecordings": voice_recordings,
+            },
+        )

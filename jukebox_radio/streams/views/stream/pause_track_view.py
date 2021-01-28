@@ -34,8 +34,9 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
         stream.paused_at = pausing_at
         stream.save()
 
-        return self.http_response_200(
+        return self.http_react_response(
+            'stream/pause',
             {
-                "pausedAt": int(stream.paused_at.timestamp()),
+                "pausedAt": time_util.epoch(stream.paused_at),
             }
         )

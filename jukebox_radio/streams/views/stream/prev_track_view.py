@@ -29,9 +29,10 @@ class StreamPrevTrackView(BaseView, LoginRequiredMixin):
             stream.started_at = playing_at
             stream.paused_at = None
             stream.save()
-            return self.http_response_200(
+            return self.http_react_response(
+                'stream/prevTrack',
                 {
-                    "startedAt": int(stream.started_at.timestamp()),
+                    "startedAt": time_util.epoch(stream.started_at),
                 }
             )
 
