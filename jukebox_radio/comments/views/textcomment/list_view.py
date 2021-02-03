@@ -20,7 +20,12 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
         stream = Stream.objects.get(user=request.user)
 
         if not stream.is_playing and not stream.is_paused:
-            return self.http_response_200([])
+            return self.http_react_response(
+                "textComment/listSet",
+                {
+                    "textComments": [],
+                },
+            )
 
         track_uuid = stream.now_playing.track_id
 
@@ -30,4 +35,9 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
         for text_comment in text_comment_qs:
             text_comments.append(TextComment.objects.serialize(text_comment))
 
-        return self.http_response_200(text_comments)
+        return self.http_react_response(
+            "textComment/listSet",
+            {
+                "textComments": text_comments,
+            },
+        )

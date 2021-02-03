@@ -32,8 +32,9 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
         stream.paused_at = None
         stream.save()
 
-        return self.http_response_200(
+        return self.http_react_response(
+            'stream/play',
             {
-                "playedAt": int(stream.started_at.timestamp()),
+                "startedAt": time_util.epoch(stream.started_at),
             }
         )
