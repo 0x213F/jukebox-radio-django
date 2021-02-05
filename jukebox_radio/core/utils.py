@@ -20,6 +20,7 @@ def generate_spotify_authorization_uri(request):
         "client_id": settings.SPOTIFY_CLIENT_ID,
         "response_type": "code",
         "redirect_uri": f"{domain_prefix}://{current_site}{endpoint}",
+        "scope": ",".join(settings.SPOTIFY_USER_DATA_SCOPES),
     }
     query_str = urlencode(params)
 

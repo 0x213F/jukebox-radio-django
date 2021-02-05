@@ -25,9 +25,6 @@ class UserConnectSpotifyView(BaseView, LoginRequiredMixin):
 
         error = request.GET.get("error", None)
         if error:
-            messages.add_message(
-                request, messages.ERROR, "Spotify authentication failed"
-            )
             return self.http_response_400()
 
         code = request.GET.get("code", None)
@@ -64,7 +61,7 @@ class UserConnectSpotifyView(BaseView, LoginRequiredMixin):
         encrypted_token = encrypted_token_utf8.decode("utf-8")
         user.encrypted_spotify_refresh_token = encrypted_token
 
-        user.spotify_scope = settings.SPOTIFY_USER_DATA_SCOPES
+        user.spotify_scope = ",".join(settings.SPOTIFY_USER_DATA_SCOPES)
         user.save()
 
         return self.http_response_200()
