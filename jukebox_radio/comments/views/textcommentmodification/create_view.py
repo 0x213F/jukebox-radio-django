@@ -14,9 +14,9 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
         """
         Create a TextCommentModification. Typical styles include:
 
-            - Highlight
+            - Bold
+            - Italicize
             - Strikethrough
-            - Underline
         """
         TextComment = apps.get_model("comments", "TextComment")
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
@@ -39,8 +39,12 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
             style=style,
         )
 
-        return self.http_response_200(
-            TextCommentModification.objects.serialize(
-                text_comment_modification, animate=True
-            )
+        return self.http_react_response(
+            "textCommentModification/create",
+            {
+                "textCommentModification": TextCommentModification.objects.serialize(
+                    text_comment_modification, animate=True
+                ),
+                "textCommentUuid": text_comment_uuid,
+            },
         )
