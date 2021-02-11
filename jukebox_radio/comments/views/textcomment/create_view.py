@@ -29,6 +29,7 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
 
         now = time_util.now()
         text = request.POST["text"]
+        format = request.POST["format"]
         now_playing_track = stream.now_playing.track
         timestamp_ms = (
             time_util.ms(now - stream.started_at)
@@ -38,6 +39,7 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
 
         text_comment = TextComment.objects.create(
             user=request.user,
+            format=format,
             text=text,
             track=now_playing_track,
             timestamp_ms=timestamp_ms,
