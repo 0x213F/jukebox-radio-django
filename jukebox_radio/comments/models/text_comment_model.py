@@ -28,6 +28,7 @@ class TextCommentManager(models.Manager):
             "class": text_comment.__class__.__name__,
             "uuid": text_comment.uuid,
             "userUsername": text_comment.user.username,
+            "format": text_comment.format,
             "text": text_comment.text,
             "trackUuid": text_comment.track.uuid,
             "timestampMilliseconds": text_comment.timestamp_ms,
@@ -60,11 +61,21 @@ class TextCommentQuerySet(models.QuerySet):
 @pghistory.track(pghistory.Snapshot("text_comment.snapshot"))
 class TextComment(models.Model):
 
+    FORMAT_TEXT = "text"
+    FORMAT_ABC_NOTATION = "abc_notation"
+
+    FORMAT_CHOICES = (
+        (FORMAT_TEXT, "Text"),
+        (FORMAT_ABC_NOTATION, "ABC Notation"),
+    )
+
     objects = TextCommentManager.from_queryset(TextCommentQuerySet)()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
+    format = models.CharField(max_length=32, choices=FORMAT_CHOICES)
 
     text = models.TextField()
     track = models.ForeignKey("music.Track", on_delete=models.CASCADE)
