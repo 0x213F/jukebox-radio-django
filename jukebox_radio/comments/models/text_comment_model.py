@@ -13,16 +13,17 @@ from jukebox_radio.core import time as time_util
 
 
 class TextCommentManager(models.Manager):
-    def serialize(self, text_comment):
+    def serialize(self, text_comment, empty_modifications=False):
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
         text_comment_modifications = []
-        # NOTE: "ordered_modifications" is a property defined by
-        #       "prefetch_related" in "notepad_filter"
-        for modification in text_comment.ordered_modifications:
-            text_comment_modifications.append(
-                TextCommentModification.objects.serialize(modification)
-            )
+        if empty_modifications:
+            # NOTE: "ordered_modifications" is a property defined by
+            #       "prefetch_related" in "notepad_filter"
+            for modification in text_comment.ordered_modifications:
+                text_comment_modifications.append(
+                    TextCommentModification.objects.serialize(modification)
+                )
 
         return {
             "class": text_comment.__class__.__name__,

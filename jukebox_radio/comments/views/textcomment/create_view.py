@@ -45,14 +45,4 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
             timestamp_ms=timestamp_ms,
         )
 
-        return self.http_response_200(
-            {
-                "class": text_comment.__class__.__name__,
-                "uuid": text_comment.uuid,
-                "userUsername": text_comment.user.username,
-                "text": text_comment.text,
-                "trackUuid": text_comment.track_id,
-                "timestampMilliseconds": text_comment.timestamp_ms,
-                "modifications": [],
-            }
-        )
+        return self.http_response_200(TextComment.objects.serialize(text_comment))
