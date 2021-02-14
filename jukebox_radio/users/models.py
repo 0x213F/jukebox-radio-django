@@ -17,6 +17,9 @@ class User(AbstractUser):
         max_length=500, null=True, blank=True
     )
     spotify_scope = models.CharField(max_length=500, null=True, blank=True)
+    idle_after_now_playing = models.BooleanField
+    mute_voice_recordings = models.BooleanField
+    focus_mode = models.BooleanField
 
     @property
     def spotify_access_token(self):
