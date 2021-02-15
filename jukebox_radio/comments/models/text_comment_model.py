@@ -17,7 +17,7 @@ class TextCommentManager(models.Manager):
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
         text_comment_modifications = []
-        if empty_modifications:
+        if not empty_modifications:
             # NOTE: "ordered_modifications" is a property defined by
             #       "prefetch_related" in "notepad_filter"
             for modification in text_comment.ordered_modifications:
