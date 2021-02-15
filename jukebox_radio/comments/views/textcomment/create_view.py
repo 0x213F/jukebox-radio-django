@@ -20,7 +20,7 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
         TextComment = apps.get_model("comments", "TextComment")
         Stream = apps.get_model("streams", "Stream")
 
-        stream = Stream.objects.select_related("now_playing__track").get(
+        stream = Stream.objects.get(
             user=request.user
         )
 
@@ -30,18 +30,14 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
         now = time_util.now()
         text = request.POST["text"]
         format = request.POST["format"]
-        now_playing_track = stream.now_playing.track
-        timestamp_ms = (
-            time_util.ms(now - stream.started_at)
-            if stream.is_playing
-            else time_util.ms(stream.started_at - stream.paused_at)
-        )
+        track_uuid = request.POST["textCommentUuid"]
+        timestamp_ms = request.POST["textCommentTimestamp"]
 
         text_comment = TextComment.objects.create(
             user=request.user,
             format=format,
             text=text,
-            track=now_playing_track,
+            track_id=track_uuid,
             timestamp_ms=timestamp_ms,
         )
 
