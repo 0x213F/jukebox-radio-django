@@ -22,7 +22,8 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
         total_duration_ms = self.param(
             request, "nowPlayingTotalDurationMilliseconds",
         )
-        total_duration = timedelta(milliseconds=int(total_duration_ms))
+        if total_duration_ms:
+            total_duration = timedelta(milliseconds=int(total_duration_ms))
         is_planned = self.param(request, "isPlanned")
 
         stream = Stream.objects.get(user=request.user)
