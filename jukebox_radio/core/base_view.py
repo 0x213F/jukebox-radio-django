@@ -30,6 +30,10 @@ class BaseView(APIView):
         val = obj[key]
         if val == 'null':
             return None
+        if val == 'true':
+            return True
+        if val == 'false':
+            return False
         return val
 
     def http_react_response(self, _type, payload):
