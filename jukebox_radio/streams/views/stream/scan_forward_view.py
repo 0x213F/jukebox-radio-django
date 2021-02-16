@@ -19,6 +19,11 @@ class StreamScanForwardView(BaseView, LoginRequiredMixin):
         Queue = apps.get_model("streams", "Queue")
         Stream = apps.get_model("streams", "Stream")
 
+        total_duration_ms = self.param(
+            request, "nowPlayingTotalDurationMilliseconds",
+        )
+        total_duration = timedelta(milliseconds=int(total_duration_ms))
+
         stream = Stream.objects.get(user=request.user)
 
         if not stream.is_playing:
@@ -26,8 +31,8 @@ class StreamScanForwardView(BaseView, LoginRequiredMixin):
 
         playing_at = stream.started_at - timedelta(seconds=10)
         now = time_util.now()
-        track_ends_at = playing_at + stream.now_playing_duration
-        if track_ends_at <= now:
+        track_ends_at = playing_at + total_duration
+        if track_ends_at <= now + timedelta(seconds=5):
             return self.http_response_400("Cannot scan past the end of the song")
 
         stream.started_at = playing_at

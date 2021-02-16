@@ -19,6 +19,12 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
         Queue = apps.get_model("streams", "Queue")
         Stream = apps.get_model("streams", "Stream")
 
+        total_duration_ms = self.param(
+            request, "nowPlayingTotalDurationMilliseconds",
+        )
+        total_duration = timedelta(milliseconds=int(total_duration_ms))
+        is_planned = self.param(request, "isPlanned")
+
         stream = Stream.objects.get(user=request.user)
 
         last_head = Queue.objects.get_head(stream)
@@ -29,7 +35,7 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             if not stream.is_playing and not stream.is_paused:
                 raise ValueError("Stream needs to be playing or paused")
 
-            stream.started_at = time_util.now() - stream.now_playing_duration
+            stream.started_at = time_util.now() - total_duration
             stream.paused_at = None
             stream.save()
             return self.http_react_response(
@@ -39,7 +45,11 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
                 }
             )
 
-        playing_at = time_util.now() + timedelta(milliseconds=100)
+        if is_planned:
+            playing_at = stream.started_at + total_duration
+        else:
+            playing_at = time_util.now() + timedelta(milliseconds=100)
+
         with transaction.atomic():
 
             stream.now_playing = next_head
