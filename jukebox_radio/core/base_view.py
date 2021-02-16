@@ -30,6 +30,8 @@ class BaseView(APIView):
         val = obj[key]
         if val == 'null':
             return None
+        if val == 'undefined':
+            return None
         if val == 'true':
             return True
         if val == 'false':
