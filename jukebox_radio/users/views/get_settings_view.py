@@ -17,4 +17,9 @@ class UserGetSettingsView(BaseView, LoginRequiredMixin):
                 "authorizationUrl": generate_spotify_authorization_uri(request),
                 "accessToken": request.user.spotify_access_token,
             }
+            "userDefaultSettings" : {
+                "idleQueue": ,
+                "speakVoiceRecordings": ,
+                "focusMode":
+            }
         })
