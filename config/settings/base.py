@@ -344,3 +344,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=14),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
 }
+
+APP_ENV_LOCAL = 'local'
+APP_ENV_PROD = 'prod'
+APP_ENV_TEST = 'test'
