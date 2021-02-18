@@ -11,15 +11,19 @@ from jukebox_radio.core.base_view import BaseView
 User = get_user_model()
 
 
-def generate_spotify_authorization_uri(request):
-    domain_prefix = "https" if request.is_secure() else "http"
-    current_site = request.get_host()
-    endpoint = reverse("users:user-connect-spotify")
 
+def generate_redirect_uri(request):
+    domain_prefix = "https" if request.is_secure() else "http"
+    current_site = get_current_site(request)
+    endpoint = '/spotify'
+    return f"{domain_prefix}://{current_site}{endpoint}"
+
+
+def generate_spotify_authorization_uri(request):
     params = {
         "client_id": settings.SPOTIFY_CLIENT_ID,
         "response_type": "code",
-        "redirect_uri": f"{domain_prefix}://{current_site}{endpoint}",
+        "redirect_uri": generate_redirect_uri(request),
         "scope": ",".join(settings.SPOTIFY_USER_DATA_SCOPES),
     }
     query_str = urlencode(params)
