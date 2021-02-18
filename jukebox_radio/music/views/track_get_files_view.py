@@ -34,8 +34,8 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             audio_url = f'{scheme}://{host}{track.audio.url}'
             img_url = f'{scheme}://{host}{track.img.url}'
         elif settings.APP_ENV == settings.APP_ENV_PROD:
-            audio_url = f'{track.audio.url}, {track.audio.path}'
-            img_url = f'{track.img.url}, {track.img.path}'
+            audio_url = f'{track.audio.url}, {track.audio.filename}'
+            img_url = f'{track.img.url}, {track.img.filename}'
 
         return self.http_response_200({
             'audioUrl': audio_url,
