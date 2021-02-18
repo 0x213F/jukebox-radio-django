@@ -39,7 +39,7 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             img_url = f'{scheme}://{host}{track.img.url}'
         elif settings.APP_ENV == settings.APP_ENV_PROD:
             s3_client = boto3.client('s3')
-            audio_response = s3_client.generate_presigned_url(
+            audio_url = s3_client.generate_presigned_url(
                 'get_object',
                 Params={
                     'Bucket': 'django-storage',
@@ -47,7 +47,7 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
                 },
                 ExpiresIn=FIVE_MINUTES,
             )
-            img_response = s3_client.generate_presigned_url(
+            img_url = s3_client.generate_presigned_url(
                 'get_object',
                 Params={
                     'Bucket': 'django-storage',
@@ -55,8 +55,6 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
                 },
                 ExpiresIn=FIVE_MINUTES,
             )
-            audio_url = audio_response['url']
-            img_url = img_response['url']
 
         return self.http_response_200({
             'audioUrl': audio_url,
