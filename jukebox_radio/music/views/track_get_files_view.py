@@ -42,10 +42,8 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
         elif settings.APP_ENV == settings.APP_ENV_PROD:
             s3_client = boto3.client(
                 's3',
-                config=Config(
-                    signature_version='s3v4',
-                    region_name='us-west-1',
-                ),
+                config=Config(signature_version='s3v4'),
+                region_name='us-west-1'
             )
             audio_url = s3_client.generate_presigned_url(
                 'get_object',
@@ -65,6 +63,6 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             )
 
         return self.http_response_200({
-            'audioUrl': audio_url,
+            'audioUrl': track.audio.name,
             'imageUrl': img_url,
         })
