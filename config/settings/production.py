@@ -223,3 +223,5 @@ CORS_ORIGIN_WHITELIST = (
     "https://jukeboxrad.io",
     "https://0x213f.github.io",
 )
+
+APP_ENV = 'prod'
