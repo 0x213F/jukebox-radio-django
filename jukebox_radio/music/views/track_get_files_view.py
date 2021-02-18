@@ -43,7 +43,7 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             s3_client = boto3.client(
                 's3',
                 config=Config(signature_version='s3v4'),
-                region_name='us-west-1'
+                region_name='eu-central-1',
             )
             audio_url = s3_client.generate_presigned_url(
                 'get_object',
