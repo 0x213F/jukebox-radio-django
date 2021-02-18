@@ -1,3 +1,4 @@
+import boto3
 import os
 import pathlib
 import tempfile
@@ -34,8 +35,17 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             audio_url = f'{scheme}://{host}{track.audio.url}'
             img_url = f'{scheme}://{host}{track.img.url}'
         elif settings.APP_ENV == settings.APP_ENV_PROD:
-            audio_url = f'{track.audio.url}, {track.audio.filename}'
-            img_url = f'{track.img.url}, {track.img.filename}'
+            s3_client = boto3.client('s3')
+            response = s3_client.generate_presigned_url(
+                'get_object',
+                Params={
+                    'Bucket': bucket_name,
+                    'Key': object_name,
+                },
+                ExpiresIn=expiration,
+            )
+            audio_url = f'{track.audio.url}, {track.audio.name}'
+            img_url = f'{track.img.url}, {track.img.name}'
 
         return self.http_response_200({
             'audioUrl': audio_url,
