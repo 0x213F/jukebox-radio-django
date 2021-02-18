@@ -12,10 +12,9 @@ User = get_user_model()
 
 
 def generate_redirect_uri(request):
-    scheme = request.scheme
     current_site = request.META['HTTP_REFERER']
-    endpoint = '/spotify'
-    return f"{scheme}://{current_site}{endpoint}"
+    endpoint = 'spotify'
+    return f"{current_site}{endpoint}"
 
 
 def generate_spotify_authorization_uri(request):
