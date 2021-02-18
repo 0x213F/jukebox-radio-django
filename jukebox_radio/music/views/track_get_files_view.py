@@ -48,16 +48,16 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             audio_url = s3_client.generate_presigned_url(
                 'get_object',
                 Params={
-                    'Bucket': 'django-storage',
-                    'Key': track.audio.name,
+                    'Bucket': 'jukebox-radio-prod',
+                    'Key': f'media/{track.audio.name}',
                 },
                 ExpiresIn=FIVE_MINUTES,
             )
             img_url = s3_client.generate_presigned_url(
                 'get_object',
                 Params={
-                    'Bucket': 'django-storage',
-                    'Key': track.img.name,
+                    'Bucket': 'jukebox-radio-prod',
+                    'Key': f'media/{track.img.name}',
                 },
                 ExpiresIn=FIVE_MINUTES,
             )
