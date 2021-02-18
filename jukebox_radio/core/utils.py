@@ -11,10 +11,9 @@ from jukebox_radio.core.base_view import BaseView
 User = get_user_model()
 
 
-
 def generate_redirect_uri(request):
     domain_prefix = "https" if request.is_secure() else "http"
-    current_site = get_current_site(request)
+    current_site = request.get_host()
     endpoint = '/spotify'
     return f"{domain_prefix}://{current_site}{endpoint}"
 
