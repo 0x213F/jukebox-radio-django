@@ -12,10 +12,10 @@ User = get_user_model()
 
 
 def generate_redirect_uri(request):
-    domain_prefix = "https" if request.is_secure() else "http"
-    current_site = request.get_host()
+    scheme = request.scheme
+    current_site = request.META['HTTP_HOST']
     endpoint = '/spotify'
-    return f"{domain_prefix}://{current_site}{endpoint}"
+    return f"{scheme}://{current_site}{endpoint}"
 
 
 def generate_spotify_authorization_uri(request):
