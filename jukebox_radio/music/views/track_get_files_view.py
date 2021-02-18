@@ -3,9 +3,6 @@ import pathlib
 import tempfile
 import uuid
 
-import boto3
-from botocore.client import Config
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -40,6 +37,9 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             audio_url = f'{scheme}://{host}{track.audio.url}'
             img_url = f'{scheme}://{host}{track.img.url}'
         elif settings.APP_ENV == settings.APP_ENV_PROD:
+            import boto3
+            from botocore.client import Config
+
             s3_client = boto3.client(
                 's3',
                 config=Config(signature_version='s3v4'),
@@ -62,7 +62,13 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
                 ExpiresIn=FIVE_MINUTES,
             )
 
-        return self.http_response_200({
-            'audioUrl': track.audio.name,
-            'imageUrl': img_url,
-        })
+        return self.http_react_response(
+            "playback/loadFiles",
+            {
+                "track": {
+                    "uuid": track_uuid,
+                    'audioUrl': audio_url,
+                    'imageUrl': img_url,
+                }
+            },
+        )
