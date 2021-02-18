@@ -15,6 +15,9 @@ from jukebox_radio.core.base_view import BaseView
 # from jukebox_radio.music.tasks import generate_stems_for_track
 
 
+FIVE_MINUTES = 60 * 5
+
+
 class TrackGetFilesView(BaseView, LoginRequiredMixin):
     def get(self, request, **kwargs):
         """
@@ -36,16 +39,24 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             img_url = f'{scheme}://{host}{track.img.url}'
         elif settings.APP_ENV == settings.APP_ENV_PROD:
             s3_client = boto3.client('s3')
-            response = s3_client.generate_presigned_url(
+            audio_response = s3_client.generate_presigned_url(
                 'get_object',
                 Params={
-                    'Bucket': bucket_name,
-                    'Key': object_name,
+                    'Bucket': 'django-storage',
+                    'Key': track.audio.name,
                 },
-                ExpiresIn=expiration,
+                ExpiresIn=FIVE_MINUTES,
             )
-            audio_url = f'{track.audio.url}, {track.audio.name}'
-            img_url = f'{track.img.url}, {track.img.name}'
+            img_response = s3_client.generate_presigned_url(
+                'get_object',
+                Params={
+                    'Bucket': 'django-storage',
+                    'Key': track.img.name,
+                },
+                ExpiresIn=FIVE_MINUTES,
+            )
+            audio_url = audio_response['url']
+            img_url = img_response['url']
 
         return self.http_response_200({
             'audioUrl': audio_url,
