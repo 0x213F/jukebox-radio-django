@@ -1,8 +1,10 @@
-import boto3
 import os
 import pathlib
 import tempfile
 import uuid
+
+import boto3
+from botocore.client import Config
 
 from django.apps import apps
 from django.conf import settings
@@ -38,7 +40,10 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             audio_url = f'{scheme}://{host}{track.audio.url}'
             img_url = f'{scheme}://{host}{track.img.url}'
         elif settings.APP_ENV == settings.APP_ENV_PROD:
-            s3_client = boto3.client('s3')
+            s3_client = boto3.client(
+                's3',
+                config=Config(signature_version='s3v4'),
+            )
             audio_url = s3_client.generate_presigned_url(
                 'get_object',
                 Params={
