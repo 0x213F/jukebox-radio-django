@@ -63,6 +63,6 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             )
 
         return self.http_response_200({
-            'audioUrl': track.audio.name,
+            'audioUrl': audio_url,
             'imageUrl': img_url,
         })
