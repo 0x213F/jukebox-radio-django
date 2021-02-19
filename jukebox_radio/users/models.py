@@ -16,12 +16,12 @@ class User(AbstractUser):
     encrypted_spotify_refresh_token = models.CharField(
         max_length=500, null=True, blank=True
     )
-    spotify_scope = models.CharFiel(
+    spotify_scope = models.CharField(
         max_length=500, null=True, blank=True
     )
-    idle_after_now_playing = models.BooleanField
-    mute_voice_recordings = models.BooleanField
-    focus_mode = models.BooleanField
+    idle_after_now_playing = models.BooleanField(default=False)
+    mute_voice_recordings = models.BooleanField(default=True)
+    focus_mode = models.BooleanField(default=False)
 
     @property
     def spotify_access_token(self):
