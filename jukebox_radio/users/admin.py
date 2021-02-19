@@ -7,4 +7,10 @@ User = get_user_model()
 
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
-    list_display = ["username", "is_superuser"]
+    list_display = [
+        "username",
+        "is_superuser",
+        "idle_after_now_playing",
+        "mute_voice_recordings",
+        "focus_mode",
+    ]
