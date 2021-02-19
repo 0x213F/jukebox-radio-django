@@ -17,4 +17,9 @@ urlpatterns = [
         view=UserGetSettingsView.as_view(),
         name="user-get-settings",
     ),
+    path(
+        "user/get-profile/",
+        view=UserGetProfileView.as_view(),
+        name="user-get-profile",
+    )
 ]
