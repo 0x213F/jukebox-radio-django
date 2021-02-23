@@ -22,6 +22,8 @@ ALLOWED_HOSTS = [
     "143.110.229.8",
 ]
 
+SITE_URL = 'https://jukeboxrad.io/'
+
 # DATABASES
 # ------------------------------------------------------------------------------
 DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405

@@ -19,6 +19,8 @@ ALLOWED_HOSTS = [
     "143.110.229.8",
 ]
 
+SITE_URL = 'http://localhost:3000/'
+
 # CACHES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches
