@@ -12,7 +12,7 @@ from jukebox_radio.comments.views.textcommentmodification import (
 from jukebox_radio.comments.views.voicerecording import (
     VoiceRecordingCreateView,
     VoiceRecordingDeleteView,
-    VoiceRecordingGetView,
+    VoiceRecordingGetFileView,
     VoiceRecordingListView,
 )
 
@@ -61,9 +61,9 @@ urlpatterns = [
         name="voice-recording-delete",
     ),
     path(
-        "voice-recording/get/",
-        view=VoiceRecordingGetView.as_view(),
-        name="voice-recording-get",
+        "voice-recording/get-file/",
+        view=VoiceRecordingGetFileView.as_view(),
+        name="voice-recording-get-file",
     ),
     path(
         "voice-recording/list/",
