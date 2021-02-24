@@ -4,6 +4,8 @@ from django.db import models
 
 from cryptography.fernet import Fernet
 
+class UserProfile(models.Model):
+
 
 class User(AbstractUser):
     """
