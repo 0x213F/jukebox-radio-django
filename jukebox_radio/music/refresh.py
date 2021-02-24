@@ -79,7 +79,7 @@ def _refresh_track_youtube_data(track):
             elif char == "M":
                 duration_ms += int(val) * 60 * 1000
             elif char == "S":
-                duration_ms += int(val) * 60 * 1000
+                duration_ms += int(val) * 1000
             else:
                 raise ValueError(f"Unexpected playtime character: {mode}")
 
