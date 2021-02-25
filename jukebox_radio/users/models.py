@@ -1,11 +1,23 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import User
 
 from cryptography.fernet import Fernet
 
 class UserProfile(models.Model):
-
+    """
+    User Profile
+    """
+    user = models.OnetoontField(User, on_delete=models.CASCADE)
+    username = models.username()
+    profile_image = models.ImageField(
+        null=True, blank=True, upload_to=upload_to_profile_imgs
+    )
+    description = models.TextField(
+        max_length=500, null=True, blank=True
+    )
+    website = models.URLField()
 
 class User(AbstractUser):
     """
