@@ -46,3 +46,6 @@ class User(AbstractUser):
         return cipher_suite.decrypt(
             self.encrypted_spotify_access_token.encode("utf-8")
         ).decode("utf-8")
+
+def upload_to_profile_imgs(*args, **kwargs):
+    return f"django-storage/user/imgs" f"{unique_upload(*args, **kwargs)}"
