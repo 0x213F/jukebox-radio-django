@@ -8,6 +8,7 @@ from django.utils import timezone
 import pghistory
 import pgtrigger
 
+from jukebox_radio.music.refresh import refresh_track_external_data
 from jukebox_radio.core import time as time_util
 
 
@@ -65,6 +66,12 @@ class Stream(models.Model):
             return False
 
         now = timezone.now()
+        duration = self.now_playing.track.duration_ms
+        if not duration:
+            track = duration = self.now_playing.track
+            user = self.user
+            refresh_track_external_data(track, user)
+
         within_bounds = now < self.started_at + timedelta(
             milliseconds=self.now_playing.track.duration_ms
         )
@@ -93,7 +100,7 @@ class Stream(models.Model):
         '''
         WARNING - this is not accurate. The duration for now playing is more
         complicated than this. It must take into consideration the intervals.
-        
+
         NOTE - for now, the calculation for the duration of now playing (or any
         queue item) is done on the front-end. Yes, that is not ideal, but it
         seemingly works for the time being.
