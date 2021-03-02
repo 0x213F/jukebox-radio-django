@@ -9,8 +9,7 @@ class UserProfile(models.Model):
     """
     User Profile
     """
-    user = models.OnetoontField(User, on_delete=models.CASCADE)
-    username = models.username()
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(
         null=True, blank=True, upload_to=upload_to_profile_imgs
     )
@@ -48,4 +47,4 @@ class User(AbstractUser):
         ).decode("utf-8")
 
 def upload_to_profile_imgs(*args, **kwargs):
-    return f"django-storage/user/imgs" f"{unique_upload(*args, **kwargs)}"
+    return f"django-storage//users/user-profile/profile-imgs" f"{unique_upload(*args, **kwargs)}"
