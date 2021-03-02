@@ -5,18 +5,18 @@ from jukebox_radio.core.base_view import BaseView
 
 
 class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
+
     def post(self, request, **kwargs):
         """
-        Delete (archive) a QueueInterval.
+        When a user wants to play the "up next queue item" right now.
         """
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
-        queue_interval_uuid = self.param(request, "queueIntervalUuid")
-        queue_interval = QueueInterval.objects.get(uuid=queue_interval_uuid)
-        queue_interval.archive()
+        queue_uuid = self.param(request, "queueUuid")
+        with self.acquire_manage_queue_intervals_lock(queue_uuid):
+            queue_interval = self._delete_queue_interval(request)
 
         # needed for React Redux to update the state on the FE
-        queue_uuid = self.param(request, "queueUuid")
         parent_queue_uuid = self.param(request, "parentQueueUuid")
 
         return self.http_react_response(
@@ -27,3 +27,16 @@ class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
                 "parentQueueUuid": parent_queue_uuid,
             }
         )
+
+
+    def _delete_queue_interval(self, request):
+        """
+        Delete (archive) a QueueInterval.
+        """
+        QueueInterval = apps.get_model("streams", "QueueInterval")
+
+        queue_interval_uuid = self.param(request, "queueIntervalUuid")
+        queue_interval = QueueInterval.objects.get(uuid=queue_interval_uuid)
+        queue_interval.archive()
+
+        return queue_interval

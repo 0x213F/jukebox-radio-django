@@ -79,16 +79,15 @@ class QueueManager(models.Manager):
 
     @pgtrigger.ignore("streams.Queue:protect_inserts")
     def create_queue(
-        self, index=None, stream=None, track=None, collection=None, user=None, **kwargs
+        self, stream=None, track=None, collection=None, user=None, **kwargs
     ):
         """
         Custom create method
         """
         Queue = apps.get_model("streams", "Queue")
 
-        if not index:
-            last_queue = Queue.objects.last_queue(stream)
-            index = last_queue.index + 1
+        last_queue = Queue.objects.last_queue(stream)
+        index = last_queue.index + 1
 
         queue_head = Queue.objects.get_head(stream)
         if queue_head.index >= index:

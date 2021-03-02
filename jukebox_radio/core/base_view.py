@@ -8,6 +8,8 @@ from django.http import (
 )
 from django.template.response import TemplateResponse
 
+import contextlib
+from django_pglocks import advisory_lock
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -37,6 +39,30 @@ class BaseView(APIView):
         if val == 'false':
             return False
         return val
+
+    @contextlib.contextmanager
+    def acquire_playback_control_lock(self, stream):
+        lock_id = f'stream-{stream.uuid}'
+        with advisory_lock(lock_id) as acquired:
+            if not acquired:
+                raise Exception('Lock not acquired')
+            yield
+
+    @contextlib.contextmanager
+    def acquire_modify_queue_lock(self, stream):
+        lock_id = f'queue-{stream.uuid}'
+        with advisory_lock(lock_id) as acquired:
+            if not acquired:
+                raise Exception('Lock not acquired')
+            yield
+
+    @contextlib.contextmanager
+    def acquire_manage_queue_intervals_lock(self, queue_uuid):
+        lock_id = f'queue-interval-{queue_uuid}'
+        with advisory_lock(lock_id) as acquired:
+            if not acquired:
+                raise Exception('Lock not acquired')
+            yield
 
     def http_react_response(self, _type, payload):
         """

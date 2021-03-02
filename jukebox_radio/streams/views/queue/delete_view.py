@@ -11,16 +11,26 @@ from jukebox_radio.core import time as time_util
 
 
 class QueueDeleteView(BaseView, LoginRequiredMixin):
+
     def post(self, request, **kwargs):
+        """
+        When a user wants to play the "up next queue item" right now.
+        """
+        Stream = apps.get_model("streams", "Stream")
+
+        stream = Stream.objects.get(user=request.user)
+        with self.acquire_modify_queue_lock(stream):
+            stream = self._delete_queue(request, stream)
+
+        return self.http_response_200()
+
+    def _delete_queue(self, request, stream):
         """
         When a user deletes (archives) something from the queue.
         """
         Queue = apps.get_model("streams", "Queue")
-        Stream = apps.get_model("streams", "Stream")
 
-        stream = Stream.objects.get(user=request.user)
-
-        queue_uuid = request.POST["queueUuid"]
+        queue_uuid = self.param(request, "queueUuid")
         queue = Queue.objects.get(uuid=queue_uuid, stream=stream, user=request.user)
 
         now = time_util.now()
@@ -40,5 +50,3 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
 
             # also delete children
             queue.children.all().update(deleted_at=now)
-
-        return self.http_response_200()

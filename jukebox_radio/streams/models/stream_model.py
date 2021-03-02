@@ -95,6 +95,16 @@ class Stream(models.Model):
 
         return within_bounds
 
+    def controls_enabled(self, end_buffer, total_duration):
+        """
+        A stream's playback controls are disabled towards the end of the now
+        playing track. This determines if the stream is able to have the
+        controls enabled or not.
+        """
+        track_ends_at = self.started_at + total_duration
+        now = time_util.now()
+        return now + end_buffer < track_ends_at
+
     @property
     def now_playing_duration(self):
         '''
