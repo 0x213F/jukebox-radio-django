@@ -36,26 +36,20 @@ jobs:
   #       run: flake8
 
   # With no caching at all the entire ci process takes 4m 30s to complete!
-  # pytest:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #
-  #     - name: Checkout Code Repository
-  #       uses: actions/checkout@v2
-  #     - name: Build the Stack
-  #       run:  docker-compose -f local.yml build
-  #
-  #     - name: Make DB Migrations
-  #       run:  docker-compose -f local.yml run --rm django python manage.py migrate
-  #
-  #     - name: Run the Stack
-  #       run:  docker-compose -f local.yml up -d
-  #
-  #     - name: Run Django Tests
-  #       run:  docker-compose -f local.yml exec -T django pytest
-  #
-  #     - name: Tear down the Stack
-  #       run:  docker-compose down
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code Repository
+        uses: actions/checkout@v2
+      - name: Build the Stack
+        run:  docker-compose -f local.yml build
+
+      - name: Run Django Tests
+        run:  docker-compose -f local.yml run --rm django pytest
+
+      - name: Tear down the Stack
+        run:  docker-compose down
 
   deploy:
     runs-on: ubuntu-latest
