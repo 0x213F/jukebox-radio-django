@@ -1,7 +1,7 @@
 version: '3'
 
 volumes:
-  local_postgres_data: {}
+  test_postgres_data: {}
 
 services:
   django: &django
@@ -24,10 +24,10 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: ./compose/local/postgres/Dockerfile
+      dockerfile: ./compose/test/postgres/Dockerfile
     image: jukebox_radio_test_postgres
     container_name: postgres
     volumes:
-      - local_postgres_data:/var/lib/postgresql/data:Z
+      - test_postgres_data:/var/lib/postgresql/data:Z
     env_file:
-      - ./.envs/.local/.postgres
+      - ./.envs/.test/.postgres
