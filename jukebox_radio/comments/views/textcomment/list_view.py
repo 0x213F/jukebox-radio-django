@@ -14,21 +14,8 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
         playing.
         """
         TextComment = apps.get_model("comments", "TextComment")
-        TextCommentModification = apps.get_model("comments", "TextCommentModification")
-        Stream = apps.get_model("streams", "Stream")
 
-        stream = Stream.objects.get(user=request.user)
-
-        if not stream.is_playing and not stream.is_paused:
-            return self.http_react_response(
-                "textComment/listSet",
-                {
-                    "textComments": [],
-                },
-            )
-
-        track_uuid = stream.now_playing.track_id
-
+        track_uuid = self.param(request, 'trackUuid')
         text_comment_qs = TextComment.objects.notepad_filter(track_uuid, request.user)
 
         text_comments = []

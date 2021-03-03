@@ -65,13 +65,13 @@ class Stream(models.Model):
         if is_paused and self.paused_at > self.started_at:
             return False
 
-        now = timezone.now()
         duration = self.now_playing.track.duration_ms
         if not duration:
             track = duration = self.now_playing.track
             user = self.user
             refresh_track_external_data(track, user)
 
+        now = timezone.now()
         within_bounds = now < self.started_at + timedelta(
             milliseconds=self.now_playing.track.duration_ms
         )

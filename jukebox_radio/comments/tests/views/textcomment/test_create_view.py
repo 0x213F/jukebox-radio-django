@@ -10,7 +10,7 @@ from jukebox_radio.music.tests.factory import create_test_track
 
 
 @pytest.mark.django_db
-def test_text_comment_create_view_assert_request_type(
+def test_text_comment_create_view_happy_path(
     client, django_user_model, mocker,
 ):
     """
@@ -36,25 +36,6 @@ def test_text_comment_create_view_assert_request_type(
     # Create a track object
     track = create_test_track()
 
-    # Mock out a function that calls external APIs
-    mocker.patch(
-        (
-            'jukebox_radio.streams.views.queue.create_view.'
-            'refresh_track_external_data'
-        ),
-        return_value=True
-    )
-
-    # Add that track to the queue
-    url = reverse('streams:queue-create')
-    data = {'className': 'Track', 'genericUuid': track.uuid}
-    response = client.post(url, data)
-
-    # Start playback
-    url = reverse('streams:stream-next-track')
-    data = {'nowPlayingTotalDurationMilliseconds': 'null', 'isPlanned': 'false'}
-    response = client.post(url, data)
-
     # Create comment
     url = reverse('comments:text-comment-create')
     data = {
@@ -76,3 +57,4 @@ def test_text_comment_create_view_assert_request_type(
     assert text_comment.format == data['format']
     assert text_comment.track_id == data['textCommentUuid']
     assert text_comment.timestamp_ms == data['textCommentTimestamp']
+    assert not text_comment.deleted_at
