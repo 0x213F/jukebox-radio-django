@@ -43,13 +43,10 @@ jobs:
       - name: Checkout Code Repository
         uses: actions/checkout@v2
       - name: Build the Stack
-        run:  docker-compose -f local.yml build
+        run:  docker-compose -f test.yml build
 
       - name: Run Django Tests
-        run:  docker-compose -f local.yml run --rm django pytest
-
-      - name: Tear down the Stack
-        run:  docker-compose down
+        run:  docker-compose -f test.yml run --rm django pytest
 
   deploy:
     runs-on: ubuntu-latest

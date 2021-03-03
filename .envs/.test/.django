@@ -1,0 +1,24 @@
+# General
+# ------------------------------------------------------------------------------
+USE_DOCKER=yes
+IPYTHONDIR=/app/.ipython
+# Redis
+# ------------------------------------------------------------------------------
+REDIS_URL=redis://redis:6379/0
+
+# Celery
+# ------------------------------------------------------------------------------
+CELERY_BROKER_URL=redis://redis:6379/0
+
+# Flower
+CELERY_FLOWER_USER=9zA2dbFV4hmq5jAH
+CELERY_FLOWER_PASSWORD=Nj8MTNrcQLLuBPeG7NKGgBLD76FxKRsfQeRs
+
+# Spotify
+SPOTIFY_CLIENT_ID=SPOTIFY_CLIENT_ID
+SPOITFY_CLIENT_SECRET=SPOITFY_CLIENT_SECRET
+FERNET_KEY=81HqDtbqAywKSOumSha3BhWNOdQ26slT6K0YaZeZyPs=
+
+GOOGLE_API_KEY=GOOGLE_API_KEY
+
+AUDIO_SEGMENT_PROCESSING_LENGTH=30000

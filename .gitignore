@@ -276,6 +276,7 @@ jukebox_radio/media/
 .env
 .envs/*
 !.envs/.template/
+!.envs/.test/
 
 # Spleeter
 pretrained_models/
