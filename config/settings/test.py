@@ -49,4 +49,4 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-APP_ENV = 'test'
+APP_ENV = "test"

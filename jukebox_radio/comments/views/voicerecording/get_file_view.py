@@ -11,6 +11,7 @@ from django.core.files import File
 from pydub import AudioSegment
 
 from jukebox_radio.core.base_view import BaseView
+
 # from jukebox_radio.music.tasks import generate_stems_for_track
 
 
@@ -34,21 +35,19 @@ class VoiceRecordingGetFileView(BaseView, LoginRequiredMixin):
         if settings.APP_ENV == settings.APP_ENV_LOCAL:
             scheme = request.scheme
             host = request.get_host()
-            audio_url = f'{scheme}://{host}{voice_recording.audio.url}'
+            audio_url = f"{scheme}://{host}{voice_recording.audio.url}"
         elif settings.APP_ENV == settings.APP_ENV_PROD:
             import boto3
             from botocore.client import Config
 
             s3_client = boto3.client(
-                's3',
-                config=Config(signature_version='s3v4'),
-                region_name='us-west-1'
+                "s3", config=Config(signature_version="s3v4"), region_name="us-west-1"
             )
             audio_url = s3_client.generate_presigned_url(
-                'get_object',
+                "get_object",
                 Params={
-                    'Bucket': 'jukebox-radio-prod',
-                    'Key': f'media/{voice_recording.audio.name}',
+                    "Bucket": "jukebox-radio-prod",
+                    "Key": f"media/{voice_recording.audio.name}",
                 },
                 ExpiresIn=FIVE_MINUTES,
             )
@@ -58,7 +57,7 @@ class VoiceRecordingGetFileView(BaseView, LoginRequiredMixin):
             {
                 "voiceRecording": {
                     "uuid": voice_recording_uuid,
-                    'audioUrl': audio_url,
+                    "audioUrl": audio_url,
                 }
             },
         )

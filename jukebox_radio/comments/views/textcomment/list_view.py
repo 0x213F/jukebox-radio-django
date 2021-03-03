@@ -15,7 +15,7 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
         """
         TextComment = apps.get_model("comments", "TextComment")
 
-        track_uuid = self.param(request, 'trackUuid')
+        track_uuid = self.param(request, "trackUuid")
         text_comment_qs = TextComment.objects.notepad_filter(track_uuid, request.user)
 
         text_comments = []

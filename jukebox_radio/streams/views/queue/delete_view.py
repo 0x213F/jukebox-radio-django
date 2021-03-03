@@ -11,7 +11,6 @@ from jukebox_radio.core import time as time_util
 
 
 class QueueDeleteView(BaseView, LoginRequiredMixin):
-
     def post(self, request, **kwargs):
         """
         When a user wants to play the "up next queue item" right now.

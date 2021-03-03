@@ -5,7 +5,6 @@ from jukebox_radio.core.base_view import BaseView
 
 
 class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
-
     def post(self, request, **kwargs):
         """
         When a user wants to play the "up next queue item" right now.
@@ -20,14 +19,13 @@ class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
         parent_queue_uuid = self.param(request, "parentQueueUuid")
 
         return self.http_react_response(
-            'queueInterval/delete',
+            "queueInterval/delete",
             {
                 "queueInterval": QueueInterval.objects.serialize(queue_interval),
                 "queueUuid": queue_uuid,
                 "parentQueueUuid": parent_queue_uuid,
-            }
+            },
         )
-
 
     def _delete_queue_interval(self, request):
         """

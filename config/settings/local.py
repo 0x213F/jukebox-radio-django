@@ -19,7 +19,7 @@ ALLOWED_HOSTS = [
     "143.110.229.8",
 ]
 
-SITE_URL = 'http://localhost:3000/'
+SITE_URL = "http://localhost:3000/"
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -73,4 +73,4 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3002",
 ]
 
-APP_ENV = 'local'
+APP_ENV = "local"

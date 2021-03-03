@@ -36,4 +36,6 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
             timestamp_ms=timestamp_ms,
         )
 
-        return self.http_response_200(TextComment.objects.serialize(text_comment, empty_modifications=True))
+        return self.http_response_200(
+            TextComment.objects.serialize(text_comment, empty_modifications=True)
+        )

@@ -19,12 +19,12 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         parent_queue_uuid = self.param(request, "parentQueueUuid")
 
         return self.http_react_response(
-            'queueInterval/create',
+            "queueInterval/create",
             {
                 "queueInterval": QueueInterval.objects.serialize(queue_interval),
                 "queueUuid": queue_uuid,
                 "parentQueueUuid": parent_queue_uuid,
-            }
+            },
         )
 
     def _create_queue_interval(self, request):

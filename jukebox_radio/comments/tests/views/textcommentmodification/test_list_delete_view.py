@@ -12,14 +12,17 @@ from jukebox_radio.music.tests.factory import create_test_track
 @pytest.mark.django_db
 @pytest.mark.parametrize("text_comment_modification_count", [0, 1, 3])
 def test_text_comment_modification_list_delete_view_happy_path(
-    client, django_user_model, mocker, text_comment_modification_count,
+    client,
+    django_user_model,
+    mocker,
+    text_comment_modification_count,
 ):
     """
     Assert that /comments/text-comment/create/ only allows requests of type
     PUT.
     """
-    TextComment = apps.get_model('comments', 'TextComment')
-    TextCommentModification = apps.get_model('comments', 'TextCommentModification')
+    TextComment = apps.get_model("comments", "TextComment")
+    TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
     # Initialize user
     credentials = {
@@ -32,7 +35,7 @@ def test_text_comment_modification_list_delete_view_happy_path(
     response = client.login(**credentials)
 
     # Initialize stream
-    url = reverse('streams:stream-initialize')
+    url = reverse("streams:stream-initialize")
     response = client.post(url)
 
     # Create a track object
@@ -42,7 +45,7 @@ def test_text_comment_modification_list_delete_view_happy_path(
     text_comment = TextComment.objects.create(
         user=user,
         format=TextComment.FORMAT_TEXT,
-        text='Hello, world!',
+        text="Hello, world!",
         track_id=track.uuid,
         timestamp_ms=4200,
     )
@@ -62,15 +65,15 @@ def test_text_comment_modification_list_delete_view_happy_path(
         text_comment_modifications.append(text_comment_modification)
 
     # Create text comment modification
-    url = reverse('comments:text-comment-modification-list-delete')
+    url = reverse("comments:text-comment-modification-list-delete")
     data = {
-        'textCommentUuid': text_comment.uuid,
+        "textCommentUuid": text_comment.uuid,
     }
     response = client.post(url, data)
 
     # Verify response
     response_json = response.json()
-    assert response_json['system']['status'] == 200
+    assert response_json["system"]["status"] == 200
 
     for text_comment_modification in text_comment_modifications:
         text_comment_modification.refresh_from_db()

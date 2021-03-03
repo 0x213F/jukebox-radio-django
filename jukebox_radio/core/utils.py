@@ -13,7 +13,7 @@ User = get_user_model()
 
 def generate_redirect_uri(request):
     current_site = settings.SITE_URL
-    endpoint = 'spotify'
+    endpoint = "spotify"
     return f"{current_site}{endpoint}"
 
 

@@ -23,10 +23,10 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
             stream = self._pause_track(request, stream)
 
         return self.http_react_response(
-            'stream/pause',
+            "stream/pause",
             {
                 "pausedAt": time_util.epoch(stream.paused_at),
-            }
+            },
         )
 
     def _pause_track(self, request, stream):

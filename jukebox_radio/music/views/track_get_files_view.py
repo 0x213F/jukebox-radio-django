@@ -11,6 +11,7 @@ from django.core.files import File
 from pydub import AudioSegment
 
 from jukebox_radio.core.base_view import BaseView
+
 # from jukebox_radio.music.tasks import generate_stems_for_track
 
 
@@ -34,30 +35,28 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
         if settings.APP_ENV == settings.APP_ENV_LOCAL:
             scheme = request.scheme
             host = request.get_host()
-            audio_url = f'{scheme}://{host}{track.audio.url}'
-            img_url = f'{scheme}://{host}{track.img.url}'
+            audio_url = f"{scheme}://{host}{track.audio.url}"
+            img_url = f"{scheme}://{host}{track.img.url}"
         elif settings.APP_ENV == settings.APP_ENV_PROD:
             import boto3
             from botocore.client import Config
 
             s3_client = boto3.client(
-                's3',
-                config=Config(signature_version='s3v4'),
-                region_name='us-west-1'
+                "s3", config=Config(signature_version="s3v4"), region_name="us-west-1"
             )
             audio_url = s3_client.generate_presigned_url(
-                'get_object',
+                "get_object",
                 Params={
-                    'Bucket': 'jukebox-radio-prod',
-                    'Key': f'media/{track.audio.name}',
+                    "Bucket": "jukebox-radio-prod",
+                    "Key": f"media/{track.audio.name}",
                 },
                 ExpiresIn=FIVE_MINUTES,
             )
             img_url = s3_client.generate_presigned_url(
-                'get_object',
+                "get_object",
                 Params={
-                    'Bucket': 'jukebox-radio-prod',
-                    'Key': f'media/{track.img.name}',
+                    "Bucket": "jukebox-radio-prod",
+                    "Key": f"media/{track.img.name}",
                 },
                 ExpiresIn=FIVE_MINUTES,
             )
@@ -67,8 +66,8 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             {
                 "track": {
                     "uuid": track_uuid,
-                    'audioUrl': audio_url,
-                    'imageUrl': img_url,
+                    "audioUrl": audio_url,
+                    "imageUrl": img_url,
                 }
             },
         )

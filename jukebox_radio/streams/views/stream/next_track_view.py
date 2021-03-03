@@ -24,12 +24,11 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             stream = self._next_track(request, stream)
 
         return self.http_react_response(
-            'stream/nextTrack',
+            "stream/nextTrack",
             {
                 "startedAt": time_util.epoch(stream.started_at),
-            }
+            },
         )
-
 
     def _next_track(self, request, stream):
         Track = apps.get_model("music", "Track")

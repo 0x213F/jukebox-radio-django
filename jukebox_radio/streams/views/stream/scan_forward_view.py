@@ -43,9 +43,7 @@ class StreamScanForwardView(BaseView, LoginRequiredMixin):
         total_duration = timedelta(milliseconds=int(total_duration_ms))
         end_buffer = timedelta(seconds=15)
         if not stream.controls_enabled(end_buffer, total_duration):
-            raise Exception(
-                "Cannot scan backwards at the very end of the song"
-            )
+            raise Exception("Cannot scan backwards at the very end of the song")
 
         playing_at = stream.started_at - timedelta(seconds=10)
         stream.started_at = playing_at

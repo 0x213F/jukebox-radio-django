@@ -23,10 +23,10 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
             stream = self._play_track(request, stream)
 
         return self.http_react_response(
-            'stream/play',
+            "stream/play",
             {
                 "startedAt": time_util.epoch(stream.started_at),
-            }
+            },
         )
 
     def _play_track(self, request, stream):

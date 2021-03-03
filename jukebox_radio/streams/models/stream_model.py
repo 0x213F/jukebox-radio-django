@@ -14,7 +14,7 @@ from jukebox_radio.core import time as time_util
 
 class StreamManager(models.Manager):
     def serialize(self, stream):
-        Queue = apps.get_model('streams', 'Queue')
+        Queue = apps.get_model("streams", "Queue")
         return {
             "uuid": stream.uuid,
             "nowPlaying": Queue.objects.serialize(stream.now_playing),
@@ -33,6 +33,7 @@ class Stream(models.Model):
     """
     Keeps track of playback. You could also think of this as a radio station.
     """
+
     objects = StreamManager()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -107,14 +108,14 @@ class Stream(models.Model):
 
     @property
     def now_playing_duration(self):
-        '''
+        """
         WARNING - this is not accurate. The duration for now playing is more
         complicated than this. It must take into consideration the intervals.
 
         NOTE - for now, the calculation for the duration of now playing (or any
         queue item) is done on the front-end. Yes, that is not ideal, but it
         seemingly works for the time being.
-        '''
+        """
         if not self.now_playing_id or not self.now_playing.track_id:
             return None
         return timedelta(milliseconds=self.now_playing.track.duration_ms)

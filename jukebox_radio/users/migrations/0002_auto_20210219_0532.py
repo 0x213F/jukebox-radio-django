@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0001_initial'),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='focus_mode',
+            model_name="user",
+            name="focus_mode",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='user',
-            name='idle_after_now_playing',
+            model_name="user",
+            name="idle_after_now_playing",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='user',
-            name='mute_voice_recordings',
+            model_name="user",
+            name="mute_voice_recordings",
             field=models.BooleanField(default=True),
         ),
     ]

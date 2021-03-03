@@ -19,7 +19,11 @@ class QueueManager(models.Manager):
             return None
 
         track = Track.objects.serialize(queue.track) if queue.track_id else None
-        collection = Collection.objects.serialize(queue.collection) if queue.collection_id else None
+        collection = (
+            Collection.objects.serialize(queue.collection)
+            if queue.collection_id
+            else None
+        )
 
         obj = {
             "uuid": queue.uuid,
@@ -46,13 +50,8 @@ class QueueManager(models.Manager):
             active_intervals = queue.active_intervals
         except AttributeError:
             active_intervals = (
-                QueueInterval
-                .objects
-                .select_related("lower_bound", "upper_bound")
-                .filter(
-                    queue_id=queue.uuid,
-                    deleted_at__isnull=True
-                )
+                QueueInterval.objects.select_related("lower_bound", "upper_bound")
+                .filter(queue_id=queue.uuid, deleted_at__isnull=True)
                 .order_by("upper_bound__timestamp_ms")
             )
         intervals = []
@@ -155,11 +154,8 @@ class QueueQuerySet(models.QuerySet):
             Prefetch(
                 "intervals",
                 queryset=(
-                    QueueInterval.objects
-                    .select_related("lower_bound", "upper_bound")
-                    .filter(
-                        deleted_at__isnull=True
-                    )
+                    QueueInterval.objects.select_related("lower_bound", "upper_bound")
+                    .filter(deleted_at__isnull=True)
                     .order_by("upper_bound__timestamp_ms")
                 ),
                 to_attr="active_intervals",
@@ -188,7 +184,7 @@ class QueueQuerySet(models.QuerySet):
         """
         head = Queue.objects.get(stream=stream, is_head=True, deleted_at__isnull=True)
         if stream.now_playing_id != head.uuid:
-            raise ValueError('Unexpected head')
+            raise ValueError("Unexpected head")
         return head
 
     def get_prev(self, stream):
@@ -259,7 +255,8 @@ class QueueQuerySet(models.QuerySet):
                         .filter(
                             index__gt=queue_head.index,
                             deleted_at__isnull=True,
-                        ).order_by("index")
+                        )
+                        .order_by("index")
                     ),
                     to_attr="ordered_children",
                 )
@@ -275,9 +272,7 @@ class QueueQuerySet(models.QuerySet):
         )
 
     def last_up(self, stream):
-        """
-
-        """
+        """"""
         queue_head = Queue.objects.get_head(stream)
         if not queue_head:
             return Queue.objects.none()

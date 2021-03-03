@@ -21,10 +21,10 @@ class StreamPrevTrackView(BaseView, LoginRequiredMixin):
             stream = self._prev_track(request, stream)
 
         return self.http_react_response(
-            'stream/prevTrack',
+            "stream/prevTrack",
             {
                 "startedAt": time_util.epoch(stream.started_at),
-            }
+            },
         )
 
     def _prev_track(self, request, stream):

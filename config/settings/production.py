@@ -22,7 +22,7 @@ ALLOWED_HOSTS = [
     "143.110.229.8",
 ]
 
-SITE_URL = 'https://jukeboxrad.io/'
+SITE_URL = "https://jukeboxrad.io/"
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -226,4 +226,4 @@ CORS_ORIGIN_WHITELIST = (
     "https://0x213f.github.io",
 )
 
-APP_ENV = 'prod'
+APP_ENV = "prod"

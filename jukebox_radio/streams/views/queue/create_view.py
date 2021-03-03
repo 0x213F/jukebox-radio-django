@@ -7,7 +7,6 @@ from jukebox_radio.music.refresh import refresh_track_external_data
 
 
 class QueueCreateView(BaseView, LoginRequiredMixin):
-
     def post(self, request, **kwargs):
         """
         When a user wants to play the "up next queue item" right now.

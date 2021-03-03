@@ -326,9 +326,14 @@ CORS_URLS_REGEX = r"^.*$"
 SPOTIFY_CLIENT_ID = env("SPOTIFY_CLIENT_ID")
 SPOITFY_CLIENT_SECRET = env("SPOITFY_CLIENT_SECRET")
 SPOTIFY_USER_DATA_SCOPES = [
-    "streaming", "app-remote-control", "user-modify-playback-state",
-    "user-read-email", "user-read-private", "user-library-read",
-    "user-library-modify", "user-read-currently-playing",
+    "streaming",
+    "app-remote-control",
+    "user-modify-playback-state",
+    "user-read-email",
+    "user-read-private",
+    "user-library-read",
+    "user-library-modify",
+    "user-read-currently-playing",
     "user-read-playback-state",
 ]
 
@@ -347,6 +352,6 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
 }
 
-APP_ENV_LOCAL = 'local'
-APP_ENV_PROD = 'prod'
-APP_ENV_TEST = 'test'
+APP_ENV_LOCAL = "local"
+APP_ENV_PROD = "prod"
+APP_ENV_TEST = "test"

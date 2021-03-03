@@ -22,46 +22,46 @@ class BaseView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def param(self, request, key):
-        if request.method == 'GET':
+        if request.method == "GET":
             obj = request.GET
-        elif request.method == 'POST':
+        elif request.method == "POST":
             obj = request.POST
         else:
-            raise ValueError('Unsupported request method')
+            raise ValueError("Unsupported request method")
 
         val = obj[key]
-        if val == 'null':
+        if val == "null":
             return None
-        if val == 'undefined':
+        if val == "undefined":
             return None
-        if val == 'true':
+        if val == "true":
             return True
-        if val == 'false':
+        if val == "false":
             return False
         return val
 
     @contextlib.contextmanager
     def acquire_playback_control_lock(self, stream):
-        lock_id = f'stream-{stream.uuid}'
+        lock_id = f"stream-{stream.uuid}"
         with advisory_lock(lock_id) as acquired:
             if not acquired:
-                raise Exception('Lock not acquired')
+                raise Exception("Lock not acquired")
             yield
 
     @contextlib.contextmanager
     def acquire_modify_queue_lock(self, stream):
-        lock_id = f'queue-{stream.uuid}'
+        lock_id = f"queue-{stream.uuid}"
         with advisory_lock(lock_id) as acquired:
             if not acquired:
-                raise Exception('Lock not acquired')
+                raise Exception("Lock not acquired")
             yield
 
     @contextlib.contextmanager
     def acquire_manage_queue_intervals_lock(self, queue_uuid):
-        lock_id = f'queue-interval-{queue_uuid}'
+        lock_id = f"queue-interval-{queue_uuid}"
         with advisory_lock(lock_id) as acquired:
             if not acquired:
-                raise Exception('Lock not acquired')
+                raise Exception("Lock not acquired")
             yield
 
     def http_react_response(self, _type, payload):
@@ -119,9 +119,9 @@ class BaseView(APIView):
         return HttpResponseForbidden(message)
 
     def http_response_422(self, message):
-        '''
+        """
         INVALID FORMAT
-        '''
+        """
         return HttpResponse(status_code=422, message=message)
 
     def template_response(self, request, template, context={}):

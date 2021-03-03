@@ -27,7 +27,10 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
         )
 
         style = self.param(request, "style")
-        ptrs = [int(self.param(request, "anchorOffset")), int(self.param(request, "focusOffset"))]
+        ptrs = [
+            int(self.param(request, "anchorOffset")),
+            int(self.param(request, "focusOffset")),
+        ]
         start_ptr = min(ptrs)
         end_ptr = max(ptrs)
 
