@@ -48,9 +48,6 @@ jobs:
       - name: Run Django Tests
         run:  docker-compose -f test.yml run --rm django pytest
 
-      - name: Tear down the Stack
-        run:  docker-compose down
-
   deploy:
     runs-on: ubuntu-latest
     steps:
