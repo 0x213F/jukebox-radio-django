@@ -18,7 +18,7 @@ class TextCommentModificationListDeleteView(BaseView, LoginRequiredMixin):
         TextComment = apps.get_model("comments", "TextComment")
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
-        text_comment_uuid = request.POST["textCommentUuid"]
+        text_comment_uuid = self.param(request, "textCommentUuid")
 
         text_comment_modification_qs = TextCommentModification.objects.filter(
             user=request.user, text_comment_id=text_comment_uuid

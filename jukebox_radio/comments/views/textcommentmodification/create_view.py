@@ -21,13 +21,13 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
         TextComment = apps.get_model("comments", "TextComment")
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
-        text_comment_uuid = request.POST["textCommentUuid"]
+        text_comment_uuid = self.param(request, "textCommentUuid")
         text_comment = TextComment.objects.get(
             uuid=text_comment_uuid, user=request.user
         )
 
-        style = request.POST["style"]
-        ptrs = [int(request.POST["anchorOffset"]), int(request.POST["focusOffset"])]
+        style = self.param(request, "style")
+        ptrs = [int(self.param(request, "anchorOffset")), int(self.param(request, "focusOffset"))]
         start_ptr = min(ptrs)
         end_ptr = max(ptrs)
 

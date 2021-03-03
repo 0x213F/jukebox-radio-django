@@ -47,7 +47,6 @@ def test_text_comment_delete_view_happy_path(
     assert not text_comment.deleted_at
 
     # Delete comment
-    response_json = response.json()
     url = reverse('comments:text-comment-delete')
     data = {
         'textCommentUuid': text_comment.uuid,

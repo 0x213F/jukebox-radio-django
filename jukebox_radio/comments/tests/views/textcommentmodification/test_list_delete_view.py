@@ -2,34 +2,76 @@ import ddf
 import pytest
 
 from django.apps import apps
+from django.urls import reverse
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from jukebox_radio.music.tests.factory import create_test_track
 
 
 @pytest.mark.django_db
-def test_text_comment_modification_list_delete_view_assert_request_type(client):
-    """
-    Assert that /comments/text-comment-modification/list-delete/ only allows
-    requests of type DELETE.
-    """
-    pass
-
-
-@pytest.mark.django_db
-def test_text_comment_modification_list_delete_view_request_authentication_required(
-    client,
+@pytest.mark.parametrize("text_comment_modification_count", [0, 1, 3])
+def test_text_comment_modification_list_delete_view_happy_path(
+    client, django_user_model, mocker, text_comment_modification_count,
 ):
     """
-    If any of the following attempts to access this endpoint, then they should
-    be denied access:
-
-        - an unauthenticated user.
-        - a user different than the one who wrote the comment.
+    Assert that /comments/text-comment/create/ only allows requests of type
+    PUT.
     """
-    pass
+    TextComment = apps.get_model('comments', 'TextComment')
+    TextCommentModification = apps.get_model('comments', 'TextCommentModification')
 
+    # Initialize user
+    credentials = {
+        "username": "username",
+        "password": "password",
+    }
+    user = django_user_model.objects.create_user(**credentials)
 
-@pytest.mark.django_db
-def test_text_comment_modification_list_delete_view_happy_path(client):
-    """
-    Delete all TextCommentModification objects relating to a given TextComment.
-    """
-    pass
+    # Login
+    response = client.login(**credentials)
+
+    # Initialize stream
+    url = reverse('streams:stream-initialize')
+    response = client.post(url)
+
+    # Create a track object
+    track = create_test_track()
+
+    # Create comment
+    text_comment = TextComment.objects.create(
+        user=user,
+        format=TextComment.FORMAT_TEXT,
+        text='Hello, world!',
+        track_id=track.uuid,
+        timestamp_ms=4200,
+    )
+    assert not text_comment.deleted_at
+
+    # Create text comment modification
+    text_comment_modifications = []
+    for idx in range(text_comment_modification_count):
+        text_comment_modification = TextCommentModification.objects.create(
+            user=user,
+            text_comment=text_comment,
+            start_ptr=(idx * 2),
+            end_ptr=(idx * 2 + 2),
+            style=TextCommentModification.STYLE_BOLD,
+        )
+        assert not text_comment_modification.deleted_at
+        text_comment_modifications.append(text_comment_modification)
+
+    # Create text comment modification
+    url = reverse('comments:text-comment-modification-list-delete')
+    data = {
+        'textCommentUuid': text_comment.uuid,
+    }
+    response = client.post(url, data)
+
+    # Verify response
+    response_json = response.json()
+    assert response_json['system']['status'] == 200
+
+    for text_comment_modification in text_comment_modifications:
+        text_comment_modification.refresh_from_db()
+        assert text_comment_modification.deleted_at
