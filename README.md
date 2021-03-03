@@ -191,7 +191,7 @@ The main components of the application are a Django server, Postgres database, a
 To check your test coverage and generate an HTML coverage report, run the following.
 
     docker-compose -f local.yml run --rm django coverage run -m pytest
-    docker-compose -f local.yml run --rm django html
+    docker-compose -f local.yml run --rm django coverage html
     open htmlcov/index.html
 
 ### Type checks
