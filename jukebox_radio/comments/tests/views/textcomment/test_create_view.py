@@ -7,11 +7,6 @@ from jukebox_radio.music.tests.factory import create_test_track
 
 
 @pytest.mark.django_db
-def test_fail():
-    assert False
-
-
-@pytest.mark.django_db
 def test_text_comment_create_view_happy_path(
     client,
     django_user_model,
