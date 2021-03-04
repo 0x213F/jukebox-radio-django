@@ -64,13 +64,13 @@ class TextCommentModificationManager(models.Manager):
 
             # No overlap
             if not lower_overlap and not upper_overlap:
-                    return TextCommentModification.objects.create(
-                        user=user,
-                        text_comment_id=text_comment_id,
-                        start_ptr=start_ptr,
-                        end_ptr=end_ptr,
-                        style=style,
-                    )
+                return TextCommentModification.objects.create(
+                    user=user,
+                    text_comment_id=text_comment_id,
+                    start_ptr=start_ptr,
+                    end_ptr=end_ptr,
+                    style=style,
+                )
 
             # There is a lower overlap
             if lower_overlap and not upper_overlap:
