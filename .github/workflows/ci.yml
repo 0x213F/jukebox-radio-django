@@ -64,5 +64,6 @@ jobs:
             cd jukebox-radio-django
             git pull --rebase
             docker-compose -f production.yml build
+            docker-compose -f production.yml run --rm django python app/manage.py migrate
             docker-compose -f production.yml down
             docker-compose -f production.yml up -d
