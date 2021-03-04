@@ -1,10 +1,7 @@
-import ddf
 import pytest
 
 from django.apps import apps
 from django.urls import reverse
-
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from jukebox_radio.music.tests.factory import create_test_track
 
@@ -16,8 +13,7 @@ def test_text_comment_create_view_happy_path(
     mocker,
 ):
     """
-    Assert that /comments/text-comment/create/ only allows requests of type
-    PUT.
+    Simple case for creating a text comment through the API.
     """
     TextComment = apps.get_model("comments", "TextComment")
 

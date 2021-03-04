@@ -1,11 +1,8 @@
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core import time as time_util
-
-User = get_user_model()
 
 
 class TextCommentModificationListDeleteView(BaseView, LoginRequiredMixin):

@@ -2,10 +2,8 @@ import json
 import os
 import tempfile
 import uuid
-from datetime import timedelta
 
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
 
@@ -13,8 +11,6 @@ from pydub import AudioSegment
 
 from jukebox_radio.core import time as time_util
 from jukebox_radio.core.base_view import BaseView
-
-User = get_user_model()
 
 
 class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):

@@ -1,18 +1,8 @@
-import os
-import pathlib
-import tempfile
-import uuid
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files import File
-
-from pydub import AudioSegment
 
 from jukebox_radio.core.base_view import BaseView
-
-# from jukebox_radio.music.tasks import generate_stems_for_track
 
 
 FIVE_MINUTES = 60 * 5

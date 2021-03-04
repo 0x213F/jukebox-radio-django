@@ -19,6 +19,9 @@ def upload_to_comments_voice_recordings(*args, **kwargs):
 
 class VoiceRecordingManager(models.Manager):
     def serialize(self, voice_recording):
+        """
+        JSON serialize a VoiceRecording.
+        """
         return {
             "class": voice_recording.__class__.__name__,
             "uuid": voice_recording.uuid,
@@ -32,7 +35,10 @@ class VoiceRecordingManager(models.Manager):
 
 
 class VoiceRecordingQuerySet(models.QuerySet):
-    def notepad_filter(self, track_uuid, user):
+    def context_filter(self, track_uuid, user):
+        """
+        Get all relevant voice recording given a track and a user.
+        """
         return (
             self.select_related("user", "track")
             .filter(track__uuid=track_uuid, user=user, deleted_at__isnull=True)
@@ -53,6 +59,9 @@ class VoiceRecordingQuerySet(models.QuerySet):
     )
 )
 class VoiceRecording(models.Model):
+    """
+    Voice recordings that are pinned to a specific time on a track.
+    """
 
     objects = VoiceRecordingManager.from_queryset(VoiceRecordingQuerySet)()
 

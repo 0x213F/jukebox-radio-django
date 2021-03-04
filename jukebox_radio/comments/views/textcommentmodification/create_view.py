@@ -1,12 +1,7 @@
-import json
-
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
-
-User = get_user_model()
 
 
 class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
@@ -22,9 +17,10 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
         text_comment_uuid = self.param(request, "textCommentUuid")
-        text_comment = TextComment.objects.get(
-            uuid=text_comment_uuid, user=request.user
-        )
+
+        # NOTE: This is here to validate that the authenticated user owns the
+        #       comment.
+        TextComment.objects.get(uuid=text_comment_uuid, user=request.user)
 
         style = self.param(request, "style")
         ptrs = [
@@ -34,9 +30,9 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
         start_ptr = min(ptrs)
         end_ptr = max(ptrs)
 
-        text_comment_modification = TextCommentModification.objects.create(
+        text_comment_modification = TextCommentModification.objects.create_modification(
             user=request.user,
-            text_comment=text_comment,
+            text_comment_id=text_comment_uuid,
             start_ptr=start_ptr,
             end_ptr=end_ptr,
             style=style,
@@ -46,7 +42,7 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
             "textCommentModification/create",
             {
                 "textCommentModification": TextCommentModification.objects.serialize(
-                    text_comment_modification, animate=True
+                    text_comment_modification
                 ),
                 "textCommentUuid": text_comment_uuid,
             },

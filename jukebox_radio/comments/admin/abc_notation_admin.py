@@ -4,8 +4,8 @@ from django.contrib import admin
 import pghistory
 
 
-@admin.register(apps.get_model("comments.TextComment"))
-class TextCommentAdmin(admin.ModelAdmin):
+@admin.register(apps.get_model("comments.ABCNotation"))
+class ABCNotationAdmin(admin.ModelAdmin):
 
     order_by = ("created_at",)
 
@@ -19,7 +19,7 @@ class TextCommentAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         ABCNotation = apps.get_model("comments", "ABCNotation")
         qs = super().get_queryset(request)
-        qs = qs.filter(format=ABCNotation.FORMAT_TEXT)
+        qs = qs.filter(format=ABCNotation.FORMAT_ABC_NOTATION)
         qs = qs.order_by("created_at")
         return qs
 

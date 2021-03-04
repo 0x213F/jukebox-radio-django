@@ -1,15 +1,7 @@
-import json
-from datetime import timedelta
-
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import QueryDict
 
 from jukebox_radio.core.base_view import BaseView
-from jukebox_radio.core import time as time_util
-
-User = get_user_model()
 
 
 class TextCommentCreateView(BaseView, LoginRequiredMixin):
@@ -22,11 +14,10 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        now = time_util.now()
-        text = request.POST["text"]
-        format = request.POST["format"]
-        track_uuid = request.POST["textCommentUuid"]
-        timestamp_ms = request.POST["textCommentTimestamp"]
+        text = self.param(request, "text")
+        format = self.param(request, "format")
+        track_uuid = self.param(request, "textCommentUuid")
+        timestamp_ms = self.param(request, "textCommentTimestamp")
 
         text_comment = TextComment.objects.create(
             user=request.user,
