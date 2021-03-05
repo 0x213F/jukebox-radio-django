@@ -29,5 +29,9 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
 
         return self.http_react_response(
             "textComment/create",
-            {"textComment": TextComment.objects.serialize(text_comment, empty_modifications=True)},
+            {
+                "textComment": TextComment.objects.serialize(
+                    text_comment, empty_modifications=True
+                )
+            },
         )

@@ -6,24 +6,31 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('comments', '0004_textcommentmodification_updated_at'),
+        ("comments", "0004_textcommentmodification_updated_at"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ABCNotation',
-            fields=[
-            ],
+            name="ABCNotation",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('comments.textcomment',),
+            bases=("comments.textcomment",),
         ),
         migrations.AlterField(
-            model_name='textcommentmodification',
-            name='style',
-            field=models.CharField(choices=[('bold', 'Bold'), ('italicize', 'Italicize'), ('strikethrough', 'Strikethrough'), ('highlight', 'Highlight')], max_length=32),
+            model_name="textcommentmodification",
+            name="style",
+            field=models.CharField(
+                choices=[
+                    ("bold", "Bold"),
+                    ("italicize", "Italicize"),
+                    ("strikethrough", "Strikethrough"),
+                    ("highlight", "Highlight"),
+                ],
+                max_length=32,
+            ),
         ),
     ]
