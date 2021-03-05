@@ -17,4 +17,7 @@ class TextCommentDeleteView(BaseView, LoginRequiredMixin):
         )
         text_comment.archive()
 
-        return self.http_response_200()
+        return self.http_react_response(
+            "textComment/delete",
+            {"textCommentUuid": text_comment_uuid},
+        )

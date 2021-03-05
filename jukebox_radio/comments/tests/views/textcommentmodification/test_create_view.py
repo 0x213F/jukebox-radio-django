@@ -64,8 +64,11 @@ def test_text_comment_modification_create_view_happy_path(
 
     assert payload["textCommentUuid"] == str(text_comment.uuid)
 
+    # Meaning, no modifications were deleted
+    assert not payload["textCommentModifications"]["deleted"]
+
     TextCommentModification.objects.get(
-        uuid=payload["textCommentModification"]["uuid"],
+        uuid=payload["textCommentModifications"]["modified"]["uuid"],
         user=user,
         text_comment=text_comment,
         start_ptr=data["anchorOffset"],

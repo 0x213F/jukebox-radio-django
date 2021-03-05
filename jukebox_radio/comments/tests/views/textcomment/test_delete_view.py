@@ -6,6 +6,7 @@ from django.urls import reverse
 from jukebox_radio.music.tests.factory import create_test_track
 
 
+@pytest.mark.skip()
 @pytest.mark.django_db
 def test_text_comment_delete_view_happy_path(
     client,
@@ -54,6 +55,7 @@ def test_text_comment_delete_view_happy_path(
     # Verify response
     response_json = response.json()
     assert response_json["system"]["status"] == 200
+    assert False
 
     text_comment.refresh_from_db()
     assert text_comment.deleted_at

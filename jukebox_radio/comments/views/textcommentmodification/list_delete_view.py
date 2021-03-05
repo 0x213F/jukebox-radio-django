@@ -22,4 +22,9 @@ class TextCommentModificationListDeleteView(BaseView, LoginRequiredMixin):
         )
         text_comment_modification_qs.update(deleted_at=time_util.now())
 
-        return self.http_response_200()
+        return self.http_react_response(
+            "textComment/clearModifications",
+            {
+                "textCommentUuid": text_comment_uuid,
+            },
+        )

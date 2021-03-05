@@ -17,9 +17,11 @@ class TextCommentModificationManager(models.Manager):
         """
         JSON serialize a TextCommentModification.
         """
+        if not text_comment_modification:
+            return None
         return {
             "uuid": text_comment_modification.uuid,
-            "type": text_comment_modification.style,
+            "style": text_comment_modification.style,
             "startPtr": text_comment_modification.start_ptr,
             "endPtr": text_comment_modification.end_ptr,
         }
@@ -52,9 +54,10 @@ class TextCommentModificationManager(models.Manager):
 
         container = TextCommentModification.objects.get_container(**fields)
         if container:
-            return container
+            return container, None
 
         contained = TextCommentModification.objects.filter_contained(**fields)
+        archived_list = list(contained)
 
         lower_overlap = TextCommentModification.objects.get_lower_overlap(**fields)
         upper_overlap = TextCommentModification.objects.get_upper_overlap(**fields)
@@ -64,7 +67,7 @@ class TextCommentModificationManager(models.Manager):
 
             # No overlap
             if not lower_overlap and not upper_overlap:
-                return TextCommentModification.objects.create(
+                modification = TextCommentModification.objects.create(
                     user=user,
                     text_comment_id=text_comment_id,
                     start_ptr=start_ptr,
@@ -73,25 +76,27 @@ class TextCommentModificationManager(models.Manager):
                 )
 
             # There is a lower overlap
-            if lower_overlap and not upper_overlap:
+            elif lower_overlap and not upper_overlap:
                 lower_overlap.end_ptr = end_ptr
                 lower_overlap.save()
-                return lower_overlap
+                modification = lower_overlap
 
             # There is an upper overlap
-            if not lower_overlap and upper_overlap:
+            elif not lower_overlap and upper_overlap:
                 upper_overlap.start_ptr = start_ptr
                 upper_overlap.save()
-                return upper_overlap
+                modification = upper_overlap
 
             # We need to delete one at random - let's delete the higher one.
-            lower_overlap.end_ptr = end_ptr
-            lower_overlap.save()
+            else:
+                lower_overlap.end_ptr = upper_overlap.end_ptr
+                lower_overlap.save()
+                upper_overlap.deleted_at = time_util.now()
+                upper_overlap.save()
+                modification = lower_overlap
+                archived_list.append(upper_overlap)
 
-            upper_overlap.deleted_at = time_util.now()
-            upper_overlap.save()
-
-            return lower_overlap
+        return modification, archived_list
 
 
 class TextCommentModificationQuerySet(models.QuerySet):
@@ -198,11 +203,13 @@ class TextCommentModification(models.Model):
     STYLE_BOLD = "bold"
     STYLE_ITALICIZE = "italicize"
     STYLE_STRIKETHROUGH = "strikethrough"
+    STYLE_HIGHLIGHT = "highlight"
 
     STYLE_CHOICES = (
         (STYLE_BOLD, "Bold"),
         (STYLE_ITALICIZE, "Italicize"),
         (STYLE_STRIKETHROUGH, "Strikethrough"),
+        (STYLE_HIGHLIGHT, "Highlight"),
     )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

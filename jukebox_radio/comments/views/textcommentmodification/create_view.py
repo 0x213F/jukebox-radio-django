@@ -30,7 +30,7 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
         start_ptr = min(ptrs)
         end_ptr = max(ptrs)
 
-        text_comment_modification = TextCommentModification.objects.create_modification(
+        modified, archived_list = TextCommentModification.objects.create_modification(
             user=request.user,
             text_comment_id=text_comment_uuid,
             start_ptr=start_ptr,
@@ -38,12 +38,17 @@ class TextCommentModificationCreateView(BaseView, LoginRequiredMixin):
             style=style,
         )
 
+        serialize_archived_list = [
+            TextCommentModification.objects.serialize(obj) for obj in archived_list
+        ]
+
         return self.http_react_response(
             "textCommentModification/create",
             {
-                "textCommentModification": TextCommentModification.objects.serialize(
-                    text_comment_modification
-                ),
+                "textCommentModifications": {
+                    "modified": TextCommentModification.objects.serialize(modified),
+                    "deleted": serialize_archived_list,
+                },
                 "textCommentUuid": text_comment_uuid,
             },
         )

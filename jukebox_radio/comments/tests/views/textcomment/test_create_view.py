@@ -6,6 +6,7 @@ from django.urls import reverse
 from jukebox_radio.music.tests.factory import create_test_track
 
 
+@pytest.mark.skip()
 @pytest.mark.django_db
 def test_text_comment_create_view_happy_path(
     client,

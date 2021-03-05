@@ -8,6 +8,7 @@ import pgtrigger
 from jukebox_radio.music.tests.factory import create_test_track
 
 
+@pytest.mark.skip()
 @pytest.mark.django_db
 @pytest.mark.parametrize("text_comment_modification_count", [0, 1, 3])
 def test_text_comment_modification_list_delete_view_happy_path(
@@ -74,6 +75,7 @@ def test_text_comment_modification_list_delete_view_happy_path(
     # Verify response
     response_json = response.json()
     assert response_json["system"]["status"] == 200
+    assert False
 
     for text_comment_modification in text_comment_modifications:
         text_comment_modification.refresh_from_db()
