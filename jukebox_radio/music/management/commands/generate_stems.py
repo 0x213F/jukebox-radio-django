@@ -11,18 +11,11 @@ class Command(BaseCommand):
     help = "Generate stems"
 
     def handle(self, *args, **options):
-        Stem = apps.get_model('music', 'Stem')
-        Track = apps.get_model('music', 'Track')
+        Stem = apps.get_model("music", "Stem")
+        Track = apps.get_model("music", "Track")
 
-        tracks = (
-            Track
-            .objects
-            .filter(provider=Track.PROVIDER_JUKEBOX_RADIO)
-            .exclude(
-                Exists(
-                    Stem.objects.filter(track_id=OuterRef("uuid"))
-                )
-            )
+        tracks = Track.objects.filter(provider=Track.PROVIDER_JUKEBOX_RADIO).exclude(
+            Exists(Stem.objects.filter(track_id=OuterRef("uuid")))
         )
 
         for track in tracks:
