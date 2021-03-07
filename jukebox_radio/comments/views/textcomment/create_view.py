@@ -16,7 +16,7 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
 
         text = self.param(request, "text")
         format = self.param(request, "format")
-        track_uuid = self.param(request, "textCommentUuid")
+        track_uuid = self.param(request, "trackUuid")
         timestamp_ms = self.param(request, "textCommentTimestamp")
 
         text_comment = TextComment.objects.create(

@@ -1,0 +1,53 @@
+version: '3'
+
+volumes:
+  production_traefik: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: jukebox_radio_production_django
+    depends_on:
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start
+
+  traefik:
+    build:
+      context: .
+      dockerfile: ./compose/production/traefik/Dockerfile
+    image: jukebox_radio_production_traefik
+    depends_on:
+      - django
+    volumes:
+      - production_traefik:/etc/traefik/acme:z
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+      - "0.0.0.0:5555:5555"
+
+  redis:
+    image: redis:5.0
+
+  celeryworker:
+    <<: *django
+    image: jukebox_radio_production_celeryworker
+    command: /start-celeryworker
+    deploy:
+      resources:
+        reservations:
+          memory: 1G
+
+  celerybeat:
+    <<: *django
+    image: jukebox_radio_production_celerybeat
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: jukebox_radio_production_flower
+    command: /start-flower

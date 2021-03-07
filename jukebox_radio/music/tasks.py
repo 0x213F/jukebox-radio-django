@@ -1,3 +1,11 @@
+from config import celery_app
+
+
+@celery_app.task()
+def generate_stems_for_track(track_uuid):
+    _generate_stems_for_track(track_uuid)
+
+
 # import os
 # import shutil
 # import tempfile
@@ -11,15 +19,12 @@
 # from pydub.utils import make_chunks
 # from spleeter.separator import Separator
 #
-# from config import celery_app
-#
 #
 # def get_chunk_temporary_filename(track_uuid, idx):
 #     return f"./garbage/segment-{idx}-{track_uuid}"
 #
 #
-# @celery_app.task()
-# def generate_stems_for_track(track_uuid):
+# def _generate_stems_for_track(track_uuid)
 #     Track = apps.get_model("music", "Track")
 #     Stem = apps.get_model("music", "Stem")
 #
