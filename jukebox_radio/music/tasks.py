@@ -1,30 +1,25 @@
 from config import celery_app
 
 
-@celery_app.task()
-def generate_stems_for_track(track_uuid):
-    _generate_stems_for_track(track_uuid)
-
-
-import os
-import shutil
-import tempfile
-import uuid
-
-from django.apps import apps
-from django.conf import settings
-from django.core.files import File
-
-from pydub import AudioSegment
-from pydub.utils import make_chunks
-from spleeter.separator import Separator
-
-
 def get_chunk_temporary_filename(track_uuid, idx):
     return f"./garbage/segment-{idx}-{track_uuid}"
 
 
-def _generate_stems_for_track(track_uuid):
+@celery_app.task()
+def generate_stems_for_track(track_uuid):
+    import os
+    import shutil
+    import tempfile
+    import uuid
+
+    from django.apps import apps
+    from django.conf import settings
+    from django.core.files import File
+
+    from pydub import AudioSegment
+    from pydub.utils import make_chunks
+    from spleeter.separator import Separator
+
     Track = apps.get_model("music", "Track")
     Stem = apps.get_model("music", "Stem")
 
