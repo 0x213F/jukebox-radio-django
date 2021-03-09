@@ -38,6 +38,7 @@ class Stem(models.Model):
     track = models.ForeignKey(
         "music.Track",
         on_delete=models.CASCADE,
+        related_name="stems",
     )
 
     instrument = models.CharField(max_length=32, choices=INSTRUMENT_CHOICES)

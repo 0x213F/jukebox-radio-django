@@ -27,3 +27,32 @@ def generate_spotify_authorization_uri(request):
     query_str = urlencode(params)
 
     return f"https://accounts.spotify.com/authorize?{query_str}"
+
+
+def generate_presigned_url(file):
+    '''
+    Gets a file from an
+    '''
+    if settings.APP_ENV == settings.APP_ENV_LOCAL:
+        return 'http://localhost:8000' + file.url
+
+    if settings.APP_ENV != settings.APP_ENV_PROD:
+        raise Exception("Unexpected enviornment")
+
+    import boto3
+    from botocore.client import Config
+
+    FIVE_MINUTES = 60 * 5
+
+    s3_client = boto3.client(
+        "s3", config=Config(signature_version="s3v4"), region_name="us-west-1"
+    )
+
+    return s3_client.generate_presigned_url(
+        "get_object",
+        Params={
+            "Bucket": "jukebox-radio-prod",
+            "Key": f"media/{getattr(file).name}",
+        },
+        ExpiresIn=FIVE_MINUTES,
+    )
