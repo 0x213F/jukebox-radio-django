@@ -36,12 +36,13 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         queue_uuid = self.param(request, "queueUuid")
         lower_bound_marker_uuid = self.param(request, "lowerBoundMarkerUuid")
         upper_bound_marker_uuid = self.param(request, "upperBoundMarkerUuid")
+        purpose = self.param(request, "purpose")
         queue_interval = QueueInterval.objects.create_queue_interval(
             user=request.user,
             queue_id=queue_uuid,
             lower_bound_id=lower_bound_marker_uuid,
             upper_bound_id=upper_bound_marker_uuid,
-            is_muted=True,
+            purpose=purpose,
         )
 
         # needed for React Redux to update the state on the FE

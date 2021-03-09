@@ -17,7 +17,7 @@ class QueueIntervalManager(models.Manager):
             "queueUuid": queue_interval.queue_id,
             "lowerBound": Marker.objects.serialize(queue_interval.lower_bound),
             "upperBound": Marker.objects.serialize(queue_interval.upper_bound),
-            "isMuted": queue_interval.is_muted,
+            "purpose": queue_interval.purpose,
         }
 
     def create_queue_interval(
@@ -27,7 +27,7 @@ class QueueIntervalManager(models.Manager):
         queue_id,
         lower_bound_id,
         upper_bound_id,
-        is_muted,
+        purpose,
     ):
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
@@ -62,7 +62,7 @@ class QueueIntervalManager(models.Manager):
             queue_id=queue_id,
             lower_bound_id=lower_bound_id,
             upper_bound_id=upper_bound_id,
-            is_muted=is_muted,
+            purpose=purpose,
         )
 
 
@@ -203,6 +203,20 @@ class QueueInterval(models.Model):
     is None, it represents the end of the track.
     """
 
+    PURPOSE_MUTED = 'muted'
+    PURPOSE_SOLO_DRUMS = 'solo_drums'
+    PURPOSE_SOLO_VOCALS = 'solo_vocals'
+    PURPOSE_SOLO_BASS = 'solo_bass'
+    PURPOSE_SOLO_OTHER = 'solo_other'
+
+    PURPOSE_CHOICES = [
+        (PURPOSE_MUTED, "Muted"),
+        (PURPOSE_SOLO_DRUMS, "Solo drums"),
+        (PURPOSE_SOLO_VOCALS, "Solo vocals"),
+        (PURPOSE_SOLO_BASS, "Solo bass"),
+        (PURPOSE_SOLO_OTHER, "Solo other"),
+    ]
+
     objects = QueueIntervalManager.from_queryset(QueueIntervalQuerySet)()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -229,7 +243,7 @@ class QueueInterval(models.Model):
         null=True,
     )
 
-    is_muted = models.BooleanField()
+    purpose = models.CharField(max_length=32, choices=PURPOSE_CHOICES)
 
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
