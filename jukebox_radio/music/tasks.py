@@ -111,3 +111,5 @@ def generate_stems_for_track(track_uuid):
         shutil.rmtree(chunk_filename)
         chunk_filename_with_ext = f"{chunk_filename}.{wav_codec}"
         os.remove(chunk_filename_with_ext)
+
+    print("DONE!")

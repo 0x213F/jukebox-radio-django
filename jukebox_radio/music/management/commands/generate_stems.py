@@ -18,5 +18,6 @@ class Command(BaseCommand):
             Exists(Stem.objects.filter(track_id=OuterRef("uuid")))
         )
 
-        for track in tracks:
-            generate_stems_for_track.delay(str(track.uuid))
+        print(tracks.latest('created_at'))
+
+        generate_stems_for_track.delay(str(tracks.latest('created_at').uuid))

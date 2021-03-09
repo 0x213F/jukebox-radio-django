@@ -52,7 +52,7 @@ def generate_presigned_url(file):
         "get_object",
         Params={
             "Bucket": "jukebox-radio-prod",
-            "Key": f"media/{getattr(file).name}",
+            "Key": f"media/{file.name}",
         },
         ExpiresIn=FIVE_MINUTES,
     )

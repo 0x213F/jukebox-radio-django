@@ -7,7 +7,7 @@ services:
   django: &django
     build:
       context: .
-      dockerfile: ./compose/production/django/Dockerfile
+      dockerfile: ./compose/production_worker/django/Dockerfile
     image: jukebox_radio_production_django
     depends_on:
       - redis
@@ -15,20 +15,6 @@ services:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     command: /start
-
-  traefik:
-    build:
-      context: .
-      dockerfile: ./compose/production/traefik/Dockerfile
-    image: jukebox_radio_production_traefik
-    depends_on:
-      - django
-    volumes:
-      - production_traefik:/etc/traefik/acme:z
-    ports:
-      - "0.0.0.0:80:80"
-      - "0.0.0.0:443:443"
-      - "0.0.0.0:5555:5555"
 
   redis:
     image: redis:5.0
@@ -40,7 +26,7 @@ services:
     deploy:
       resources:
         reservations:
-          memory: 1G
+          memory: 4G
 
   celerybeat:
     <<: *django
