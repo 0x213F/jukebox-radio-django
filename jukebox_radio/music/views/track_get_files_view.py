@@ -41,11 +41,13 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
 
             for stem in stems:
                 stem_url = f"{scheme}://{host}{stem.audio.url}"
-                stems_list.append({
-                    "uuid": stem.uuid,
-                    "instrument": stem.instrument,
-                    "audioUrl": stem_url,
-                })
+                stems_list.append(
+                    {
+                        "uuid": stem.uuid,
+                        "instrument": stem.instrument,
+                        "audioUrl": stem_url,
+                    }
+                )
 
         elif settings.APP_ENV == settings.APP_ENV_PROD:
             audio_url = generate_presigned_url(track.audio)
@@ -53,12 +55,13 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
 
             for stem in stems:
                 stem_url = generate_presigned_url(stem.audio)
-                stems_list.append({
-                    "uuid": stem.uuid,
-                    "instrument": stem.instrument,
-                    "audioUrl": stem_url,
-                })
-
+                stems_list.append(
+                    {
+                        "uuid": stem.uuid,
+                        "instrument": stem.instrument,
+                        "audioUrl": stem_url,
+                    }
+                )
 
         return self.http_react_response(
             "playback/loadFiles",

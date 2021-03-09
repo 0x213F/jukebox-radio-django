@@ -30,11 +30,11 @@ def generate_spotify_authorization_uri(request):
 
 
 def generate_presigned_url(file):
-    '''
+    """
     Gets a file from an
-    '''
+    """
     if settings.APP_ENV == settings.APP_ENV_LOCAL:
-        return 'http://localhost:8000' + file.url
+        return "http://localhost:8000" + file.url
 
     if settings.APP_ENV != settings.APP_ENV_PROD:
         raise Exception("Unexpected enviornment")

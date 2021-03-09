@@ -203,11 +203,11 @@ class QueueInterval(models.Model):
     is None, it represents the end of the track.
     """
 
-    PURPOSE_MUTED = 'muted'
-    PURPOSE_SOLO_DRUMS = 'solo_drums'
-    PURPOSE_SOLO_VOCALS = 'solo_vocals'
-    PURPOSE_SOLO_BASS = 'solo_bass'
-    PURPOSE_SOLO_OTHER = 'solo_other'
+    PURPOSE_MUTED = "muted"
+    PURPOSE_SOLO_DRUMS = "solo_drums"
+    PURPOSE_SOLO_VOCALS = "solo_vocals"
+    PURPOSE_SOLO_BASS = "solo_bass"
+    PURPOSE_SOLO_OTHER = "solo_other"
 
     PURPOSE_CHOICES = [
         (PURPOSE_MUTED, "Muted"),

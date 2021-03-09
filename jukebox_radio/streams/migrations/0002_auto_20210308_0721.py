@@ -6,18 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('streams', '0001_initial'),
+        ("streams", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='queueinterval',
-            name='is_muted',
+            model_name="queueinterval",
+            name="is_muted",
         ),
         migrations.AddField(
-            model_name='queueinterval',
-            name='purpose',
-            field=models.CharField(choices=[('muted', 'Muted'), ('solo_drums', 'Solo drums'), ('solo_vocals', 'Solo vocals'), ('solo_bass', 'Solo bass'), ('solo_other', 'Solo other')], default='muted', max_length=32),
+            model_name="queueinterval",
+            name="purpose",
+            field=models.CharField(
+                choices=[
+                    ("muted", "Muted"),
+                    ("solo_drums", "Solo drums"),
+                    ("solo_vocals", "Solo vocals"),
+                    ("solo_bass", "Solo bass"),
+                    ("solo_other", "Solo other"),
+                ],
+                default="muted",
+                max_length=32,
+            ),
             preserve_default=False,
         ),
     ]
