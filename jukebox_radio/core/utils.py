@@ -1,14 +1,6 @@
 from urllib.parse import urlencode
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
-
-from jukebox_radio.core.base_view import BaseView
-
-User = get_user_model()
 
 
 def generate_redirect_uri(request):

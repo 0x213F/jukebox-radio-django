@@ -1,7 +1,6 @@
 import pghistory
 from django.apps import apps
 from django.contrib import admin
-from django.contrib.auth import admin as auth_admin
 from django.utils.html import mark_safe
 
 

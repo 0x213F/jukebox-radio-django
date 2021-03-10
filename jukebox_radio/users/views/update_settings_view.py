@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.decorators.csrf import csrf_protect
 
 from jukebox_radio.core.base_view import BaseView
 

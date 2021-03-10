@@ -2,9 +2,7 @@ from datetime import timedelta
 
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils import timezone
 
-from jukebox_radio.core import time as time_util
 from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core.database import acquire_playback_control_lock
 
@@ -20,7 +18,7 @@ class StreamScanForwardView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model("streams", "Stream")
 
         stream = Stream.objects.get(user=request.user)
-        with self.acquire_playback_control_lock(stream):
+        with acquire_playback_control_lock(stream):
             stream = self._scan_forward(request, stream)
 
         return self.http_response_200({})
@@ -30,10 +28,6 @@ class StreamScanForwardView(BaseView, LoginRequiredMixin):
         Scan the stream forwards 10 seconds e.g. double tapping left or right
         in a video streaming app.
         """
-        Track = apps.get_model("music", "Track")
-        Collection = apps.get_model("music", "Collection")
-        Queue = apps.get_model("streams", "Queue")
-
         total_duration_ms = self.param(request, self.PARAM_TOTAL_DURATION)
         total_duration = timedelta(milliseconds=int(total_duration_ms))
 

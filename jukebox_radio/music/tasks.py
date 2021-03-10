@@ -10,7 +10,6 @@ def generate_stems_for_track(track_uuid):
     import os
     import shutil
     import tempfile
-    import uuid
 
     from django.apps import apps
     from django.conf import settings

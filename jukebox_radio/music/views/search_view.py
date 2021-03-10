@@ -1,4 +1,3 @@
-from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
@@ -20,9 +19,6 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
         """
         Given a query, get relevant tracks and collections.
         """
-        Track = apps.get_model("music", "Track")
-        Collection = apps.get_model("music", "Collection")
-
         query = request.GET["query"]
 
         providers = []

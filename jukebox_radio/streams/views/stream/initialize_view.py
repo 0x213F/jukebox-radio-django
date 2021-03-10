@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 

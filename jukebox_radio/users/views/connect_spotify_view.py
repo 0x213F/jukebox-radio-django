@@ -3,7 +3,6 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
 
 from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core.utils import generate_redirect_uri

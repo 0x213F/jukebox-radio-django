@@ -25,7 +25,9 @@ def refresh_collection_external_data(collection, user):
         elif collection.format == Collection.FORMAT_PLAYLIST:
             return _refresh_collection_spotify_playlist_data(collection, user)
     else:
-        raise ValueError(f"Track has bad provider: {track.uuid}, {track.provider}")
+        raise ValueError(
+            f"Collection has bad provider: {collection.uuid}, {collection.provider}"
+        )
 
 
 def _refresh_track_spotify_data(track, user):

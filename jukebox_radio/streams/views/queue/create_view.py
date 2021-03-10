@@ -17,7 +17,7 @@ class QueueCreateView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model("streams", "Stream")
 
         stream = Stream.objects.get(user=request.user)
-        with self.acquire_modify_queue_lock(stream):
+        with acquire_modify_queue_lock(stream):
             self._create_queue(request, stream)
 
         return self.http_response_200()

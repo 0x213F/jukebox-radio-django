@@ -13,7 +13,7 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
         queue_uuid = self.param(request, "queueUuid")
-        with self.acquire_manage_queue_intervals_lock(queue_uuid):
+        with acquire_manage_queue_intervals_lock(queue_uuid):
             queue_interval = self._create_queue_interval(request)
 
         # needed for React Redux to update the state on the FE
@@ -45,8 +45,5 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
             upper_bound_id=upper_bound_marker_uuid,
             purpose=purpose,
         )
-
-        # needed for React Redux to update the state on the FE
-        parent_queue_uuid = self.param(request, "parentQueueUuid")
 
         return queue_interval

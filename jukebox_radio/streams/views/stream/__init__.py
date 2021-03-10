@@ -1,3 +1,4 @@
+# flake8: noqa
 from .get_view import StreamGetView
 from .initialize_view import StreamInitializeView
 from .next_track_view import StreamNextTrackView

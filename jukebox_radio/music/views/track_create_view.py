@@ -10,8 +10,6 @@ from pydub import AudioSegment
 
 from jukebox_radio.core.base_view import BaseView
 
-# from jukebox_radio.music.tasks import generate_stems_for_track
-
 
 class TrackCreateView(BaseView, LoginRequiredMixin):
     def post(self, request, **kwargs):
@@ -19,7 +17,6 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
         Create a track from upload.
         """
         Track = apps.get_model("music", "Track")
-        Collection = apps.get_model("music", "Collection")
 
         track_name = request.POST.get("trackName")
         artist_name = request.POST.get("artistName")
@@ -41,7 +38,7 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
         f.close()
         os.remove(temp_filename)
 
-        track = Track.objects.create(
+        Track.objects.create(
             user=request.user,
             format=Track.FORMAT_TRACK,
             provider=Track.PROVIDER_JUKEBOX_RADIO,
@@ -52,8 +49,5 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
             img=image_file,
             duration_ms=audio_segment.duration_seconds * 1000,
         )
-
-        # TODO: AWS Lambda
-        # generate_stems_for_track.delay(track.uuid)
 
         return self.http_response_200({})

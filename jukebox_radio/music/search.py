@@ -1,5 +1,3 @@
-import requests
-from cryptography.fernet import Fernet
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Q

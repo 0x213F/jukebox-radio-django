@@ -1,8 +1,6 @@
-from datetime import datetime, timedelta
-
 from django.apps import apps
 from django.core.management.base import BaseCommand
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef
 
 from jukebox_radio.music.tasks import generate_stems_for_track
 

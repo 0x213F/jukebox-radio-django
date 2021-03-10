@@ -1,3 +1,4 @@
+# flake8: noqa
 from .marker_admin import MarkerAdmin
 from .queue_admin import QueueAdmin
 from .queue_interval_admin import QueueIntervalAdmin

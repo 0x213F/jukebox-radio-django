@@ -1,13 +1,6 @@
-import os
-import pathlib
-import tempfile
-import uuid
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files import File
-from pydub import AudioSegment
 
 from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core.utils import generate_presigned_url

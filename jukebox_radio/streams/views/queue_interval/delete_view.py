@@ -13,7 +13,7 @@ class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
         queue_uuid = self.param(request, "queueUuid")
-        with self.acquire_manage_queue_intervals_lock(queue_uuid):
+        with acquire_manage_queue_intervals_lock(queue_uuid):
             queue_interval = self._delete_queue_interval(request)
 
         # needed for React Redux to update the state on the FE

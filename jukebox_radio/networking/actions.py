@@ -1,7 +1,6 @@
 import pgtrigger
 import requests
 from django.apps import apps
-from django.conf import settings
 
 
 @pgtrigger.ignore("networking.Request:protect_inserts")

@@ -88,7 +88,6 @@ class Stream(models.Model):
         if is_playing and self.started_at > self.paused_at:
             return False
 
-        now = timezone.now()
         within_bounds = self.paused_at - self.started_at < timedelta(
             milliseconds=self.now_playing.track.duration_ms
         )

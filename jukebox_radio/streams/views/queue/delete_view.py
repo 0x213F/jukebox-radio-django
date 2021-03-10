@@ -1,10 +1,7 @@
-import json
-
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.db.models import F
-from django.utils import timezone
 
 from jukebox_radio.core import time as time_util
 from jukebox_radio.core.base_view import BaseView
@@ -19,7 +16,7 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model("streams", "Stream")
 
         stream = Stream.objects.get(user=request.user)
-        with self.acquire_modify_queue_lock(stream):
+        with acquire_modify_queue_lock(stream):
             stream = self._delete_queue(request, stream)
 
         return self.http_response_200()

@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils import timezone
 
 from jukebox_radio.core import time as time_util
 from jukebox_radio.core.base_view import BaseView
@@ -20,7 +19,7 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model("streams", "Stream")
 
         stream = Stream.objects.get(user=request.user)
-        with self.acquire_playback_control_lock(stream):
+        with acquire_playback_control_lock(stream):
             stream = self._pause_track(request, stream)
 
         return self.http_react_response(
