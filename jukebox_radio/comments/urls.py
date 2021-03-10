@@ -16,7 +16,6 @@ from jukebox_radio.comments.views.voicerecording import (
     VoiceRecordingListView,
 )
 
-
 app_name = "comments"
 urlpatterns = [
     # TextComment

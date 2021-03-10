@@ -1,7 +1,6 @@
+import pghistory
 from django.apps import apps
 from django.contrib import admin
-
-import pghistory
 
 
 @admin.register(apps.get_model("comments.TextComment"))

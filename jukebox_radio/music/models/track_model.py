@@ -1,17 +1,18 @@
 import uuid
 
-from django.db import models
-
 import pgtrigger
+from django.db import models
 from unique_upload import unique_upload
 
 from jukebox_radio.core.utils import generate_presigned_url
-from jukebox_radio.music.const import GLOBAL_FORMAT_TRACK
-from jukebox_radio.music.const import GLOBAL_FORMAT_VIDEO
-from jukebox_radio.music.const import GLOBAL_PROVIDER_SPOTIFY
-from jukebox_radio.music.const import GLOBAL_PROVIDER_YOUTUBE
-from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
-from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
+from jukebox_radio.music.const import (
+    GLOBAL_FORMAT_TRACK,
+    GLOBAL_FORMAT_VIDEO,
+    GLOBAL_PROVIDER_CHOICES,
+    GLOBAL_PROVIDER_JUKEBOX_RADIO,
+    GLOBAL_PROVIDER_SPOTIFY,
+    GLOBAL_PROVIDER_YOUTUBE,
+)
 
 
 class TrackManager(models.Manager):

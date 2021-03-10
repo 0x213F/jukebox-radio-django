@@ -2,6 +2,7 @@ from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core.database import acquire_manage_queue_intervals_lock
 
 
 class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):

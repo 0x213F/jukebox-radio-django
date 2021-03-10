@@ -10,9 +10,6 @@ class TextCommentCreateView(BaseView, LoginRequiredMixin):
         Create a TextComment.
         """
         TextComment = apps.get_model("comments", "TextComment")
-        Stream = apps.get_model("streams", "Stream")
-
-        stream = Stream.objects.get(user=request.user)
 
         text = self.param(request, "text")
         format = self.param(request, "format")

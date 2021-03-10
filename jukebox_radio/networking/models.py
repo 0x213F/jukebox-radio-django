@@ -1,9 +1,7 @@
-import pgtrigger
 import uuid
 
-from django.db import models
-
 import pgtrigger
+from django.db import models
 
 
 @pgtrigger.register(

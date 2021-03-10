@@ -5,8 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.utils import timezone
 
-from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core import time as time_util
+from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core.database import acquire_playback_control_lock
 
 
 class StreamPrevTrackView(BaseView, LoginRequiredMixin):

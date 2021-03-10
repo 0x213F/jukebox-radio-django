@@ -1,8 +1,7 @@
 import uuid
 
-from django.db import models
-
 import pgtrigger
+from django.db import models
 from unique_upload import unique_upload
 
 

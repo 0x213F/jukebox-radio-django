@@ -1,8 +1,7 @@
 import uuid
 
-from django.db import models
-
 import pgtrigger
+from django.db import models
 
 from jukebox_radio.core import time as time_util
 

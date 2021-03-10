@@ -1,27 +1,31 @@
 from django.core.serializers import serialize
 from django.http import (
     HttpResponse,
-    HttpResponseBadRequest,
     HttpResponseForbidden,
     HttpResponseRedirect,
     JsonResponse,
 )
 from django.template.response import TemplateResponse
-
-import contextlib
-from django_pglocks import advisory_lock
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 
 class BaseView(APIView):
     """
     Inherits from Django View.
+
+    Note: This may not be a great pattern, but it was the quickest path forward
+          during this project's genesis. PRs are accepted if you have a better
+          way to handle this.
     """
 
     permission_classes = (IsAuthenticated,)
 
     def param(self, request, key):
+        """
+        Trying to get the parameters from a Django HTTP request can be a
+        headache. This makes things a little easier.
+        """
         if request.method == "GET":
             obj = request.GET
         elif request.method == "POST":
@@ -40,33 +44,10 @@ class BaseView(APIView):
             return False
         return val
 
-    @contextlib.contextmanager
-    def acquire_playback_control_lock(self, stream):
-        lock_id = f"stream-{stream.uuid}"
-        with advisory_lock(lock_id) as acquired:
-            if not acquired:
-                raise Exception("Lock not acquired")
-            yield
-
-    @contextlib.contextmanager
-    def acquire_modify_queue_lock(self, stream):
-        lock_id = f"queue-{stream.uuid}"
-        with advisory_lock(lock_id) as acquired:
-            if not acquired:
-                raise Exception("Lock not acquired")
-            yield
-
-    @contextlib.contextmanager
-    def acquire_manage_queue_intervals_lock(self, queue_uuid):
-        lock_id = f"queue-interval-{queue_uuid}"
-        with advisory_lock(lock_id) as acquired:
-            if not acquired:
-                raise Exception("Lock not acquired")
-            yield
-
     def http_react_response(self, _type, payload):
         """
-        SUCCESS
+        This is a simple interface that allows data to be piped directly into
+        React Redux's dispatcher.
         """
         response = {
             "system": {
@@ -82,7 +63,8 @@ class BaseView(APIView):
 
     def http_response_200(self, data=None):
         """
-        SUCCESS
+        The main interface that returns a 200 server response with some extra
+        goodies baked in.
         """
         response = {
             "system": {

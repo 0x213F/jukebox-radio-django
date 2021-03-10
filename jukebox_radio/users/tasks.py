@@ -1,11 +1,9 @@
 from cryptography.fernet import Fernet
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from config import celery_app
-
 from jukebox_radio.networking.actions import make_request
 
 User = get_user_model()

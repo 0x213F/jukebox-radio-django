@@ -1,8 +1,8 @@
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core import time as time_util
+from jukebox_radio.core.base_view import BaseView
 
 
 class TextCommentModificationListDeleteView(BaseView, LoginRequiredMixin):
@@ -12,7 +12,6 @@ class TextCommentModificationListDeleteView(BaseView, LoginRequiredMixin):
         given TextComment. In practice, this is like "wiping" the comment
         clean.
         """
-        TextComment = apps.get_model("comments", "TextComment")
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
         text_comment_uuid = self.param(request, "textCommentUuid")

@@ -1,5 +1,4 @@
 import pytest
-
 from django.apps import apps
 from django.urls import reverse
 
@@ -20,7 +19,7 @@ def test_text_comment_create_view_happy_path(
 
     # Initialize user
     credentials = {"username": "username", "password": "password"}
-    user = django_user_model.objects.create_user(**credentials)
+    django_user_model.objects.create_user(**credentials)
 
     # Login
     response = client.login(**credentials)

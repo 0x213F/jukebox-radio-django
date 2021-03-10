@@ -6,7 +6,6 @@ import uuid
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
-
 from pydub import AudioSegment
 
 from jukebox_radio.core import time as time_util

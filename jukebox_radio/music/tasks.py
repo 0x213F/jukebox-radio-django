@@ -15,7 +15,6 @@ def generate_stems_for_track(track_uuid):
     from django.apps import apps
     from django.conf import settings
     from django.core.files import File
-
     from pydub import AudioSegment
     from pydub.utils import make_chunks
     from spleeter.separator import Separator

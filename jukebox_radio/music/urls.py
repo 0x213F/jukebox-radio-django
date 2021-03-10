@@ -1,9 +1,10 @@
 from django.urls import path
 
-from jukebox_radio.music.views import MusicSearchView
-from jukebox_radio.music.views import TrackCreateView
-from jukebox_radio.music.views import TrackGetFilesView
-
+from jukebox_radio.music.views import (
+    MusicSearchView,
+    TrackCreateView,
+    TrackGetFilesView,
+)
 
 app_name = "music"
 urlpatterns = [

@@ -14,13 +14,8 @@ class Command(BaseCommand):
         Stem = apps.get_model("music", "Stem")
         Track = apps.get_model("music", "Track")
 
-        tracks = (
-            Track
-            .objects
-            .filter(provider=Track.PROVIDER_JUKEBOX_RADIO)
-            .exclude(
-                Exists(Stem.objects.filter(track_id=OuterRef("uuid")))
-            )
+        tracks = Track.objects.filter(provider=Track.PROVIDER_JUKEBOX_RADIO).exclude(
+            Exists(Stem.objects.filter(track_id=OuterRef("uuid")))
         )
 
-        generate_stems_for_track.delay(str(tracks.latest('created_at').uuid))
+        generate_stems_for_track.delay(str(tracks.latest("created_at").uuid))

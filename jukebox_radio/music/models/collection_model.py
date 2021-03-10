@@ -1,17 +1,18 @@
 import uuid
 
+import pgtrigger
 from django.apps import apps
 from django.db import models
-
-import pgtrigger
 from unique_upload import unique_upload
 
-from jukebox_radio.music.const import GLOBAL_FORMAT_ALBUM
-from jukebox_radio.music.const import GLOBAL_FORMAT_PLAYLIST
-from jukebox_radio.music.const import GLOBAL_PROVIDER_SPOTIFY
-from jukebox_radio.music.const import GLOBAL_PROVIDER_YOUTUBE
-from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
-from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
+from jukebox_radio.music.const import (
+    GLOBAL_FORMAT_ALBUM,
+    GLOBAL_FORMAT_PLAYLIST,
+    GLOBAL_PROVIDER_CHOICES,
+    GLOBAL_PROVIDER_JUKEBOX_RADIO,
+    GLOBAL_PROVIDER_SPOTIFY,
+    GLOBAL_PROVIDER_YOUTUBE,
+)
 
 
 class CollectionManager(models.Manager):

@@ -1,13 +1,8 @@
-import pgtrigger
 import uuid
 
-from django.apps import apps
-from django.db import models
-from django.db import transaction
-
-import pghistory
 import pgtrigger
-from unique_upload import unique_upload
+from django.apps import apps
+from django.db import models, transaction
 
 from jukebox_radio.core import time as time_util
 

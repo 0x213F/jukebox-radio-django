@@ -6,7 +6,6 @@ from jukebox_radio.users.views import (
     UserUpdateSettingsView,
 )
 
-
 app_name = "users"
 urlpatterns = [
     path(

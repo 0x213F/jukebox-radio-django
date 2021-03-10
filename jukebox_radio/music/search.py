@@ -1,13 +1,14 @@
 import requests
 from cryptography.fernet import Fernet
-
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Q
 
-from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
-from jukebox_radio.music.const import GLOBAL_PROVIDER_SPOTIFY
-from jukebox_radio.music.const import GLOBAL_PROVIDER_YOUTUBE
+from jukebox_radio.music.const import (
+    GLOBAL_PROVIDER_JUKEBOX_RADIO,
+    GLOBAL_PROVIDER_SPOTIFY,
+    GLOBAL_PROVIDER_YOUTUBE,
+)
 from jukebox_radio.networking.actions import make_request
 
 

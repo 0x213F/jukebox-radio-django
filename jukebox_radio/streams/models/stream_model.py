@@ -1,15 +1,14 @@
 import uuid
 from datetime import timedelta
 
+import pghistory
+import pgtrigger
 from django.apps import apps
 from django.db import models
 from django.utils import timezone
 
-import pghistory
-import pgtrigger
-
-from jukebox_radio.music.refresh import refresh_track_external_data
 from jukebox_radio.core import time as time_util
+from jukebox_radio.music.refresh import refresh_track_external_data
 
 
 class StreamManager(models.Manager):

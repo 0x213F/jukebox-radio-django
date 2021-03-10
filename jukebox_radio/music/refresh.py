@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.conf import settings
-from jukebox_radio.core import time as time_util
 
+from jukebox_radio.core import time as time_util
 from jukebox_radio.networking.actions import make_request
 
 

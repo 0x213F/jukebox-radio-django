@@ -1,9 +1,7 @@
+import pgtrigger
 import pytest
-
 from django.apps import apps
 from django.urls import reverse
-
-import pgtrigger
 
 from jukebox_radio.music.tests.factory import create_test_track
 

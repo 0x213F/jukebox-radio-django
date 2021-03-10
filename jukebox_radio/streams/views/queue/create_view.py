@@ -2,8 +2,11 @@ from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
-from jukebox_radio.music.refresh import refresh_collection_external_data
-from jukebox_radio.music.refresh import refresh_track_external_data
+from jukebox_radio.core.database import acquire_modify_queue_lock
+from jukebox_radio.music.refresh import (
+    refresh_collection_external_data,
+    refresh_track_external_data,
+)
 
 
 class QueueCreateView(BaseView, LoginRequiredMixin):

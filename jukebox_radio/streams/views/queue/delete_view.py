@@ -6,8 +6,9 @@ from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
 
-from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core import time as time_util
+from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core.database import acquire_modify_queue_lock
 
 
 class QueueDeleteView(BaseView, LoginRequiredMixin):

@@ -1,8 +1,6 @@
-import pytest
-
-from django.apps import apps
-
 import pgtrigger
+import pytest
+from django.apps import apps
 
 from jukebox_radio.music.tests.factory import create_test_track
 
@@ -274,7 +272,7 @@ def test_text_comment_modification_create_modification(
                 style=style,
             )
 
-    modification = TextCommentModification.objects.create_modification(
+    TextCommentModification.objects.create_modification(
         user=user,
         text_comment_id=text_comment.uuid,
         start_ptr=3,

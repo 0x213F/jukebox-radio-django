@@ -4,8 +4,9 @@ from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
-from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core import time as time_util
+from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core.database import acquire_playback_control_lock
 
 
 class StreamPauseTrackView(BaseView, LoginRequiredMixin):

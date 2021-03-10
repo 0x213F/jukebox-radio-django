@@ -1,11 +1,10 @@
 import uuid
 
+import pghistory
+import pgtrigger
 from django.apps import apps
 from django.db import models
 from django.db.models import Prefetch
-
-import pghistory
-import pgtrigger
 
 from jukebox_radio.core import time as time_util
 
