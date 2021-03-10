@@ -54,4 +54,6 @@ COPY --from=client-builder --chown=django:django /app /app
 
 USER django
 
+WORKDIR /app
+
 ENTRYPOINT ["/entrypoint"]
