@@ -16,7 +16,7 @@ class UserProfile(models.Model):
     description = models.TextField(
         max_length=500, null=True, blank=True
     )
-    website = models.URLField()
+    website = models.URLField(null=True, blank=True)
 
 class User(AbstractUser):
     """
@@ -47,4 +47,4 @@ class User(AbstractUser):
         ).decode("utf-8")
 
 def upload_to_profile_imgs(*args, **kwargs):
-    return f"django-storage//users/user-profile/profile-imgs" f"{unique_upload(*args, **kwargs)}"
+    return f"django-storage/users/user-profile/profile-imgs/{unique_upload(*args, **kwargs)}"

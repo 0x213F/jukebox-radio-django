@@ -14,7 +14,7 @@ class UserGetProfileView(BaseView, LoginRequiredMixin):
     return self.http_response_200({
       "user": {
         "profile_image": request.user.userprofile.profile_image,
-        "description": request.user.userprofiledescription,
+        "description": request.user.userprofile.description,
         "website": request.user.userprofile.website
       }
     })
