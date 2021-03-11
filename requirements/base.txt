@@ -34,6 +34,8 @@ django-pgconnection==1.0.1
 django-pgtrigger==2.1.0
 django-pghistory==1.2.0
 
+django-pglocks==1.0.4
+
 ddf==0.0.0
 
 python-args==1.0.2

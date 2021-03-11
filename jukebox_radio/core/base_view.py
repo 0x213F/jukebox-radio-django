@@ -1,46 +1,53 @@
 from django.core.serializers import serialize
 from django.http import (
     HttpResponse,
-    HttpResponseBadRequest,
     HttpResponseForbidden,
     HttpResponseRedirect,
     JsonResponse,
 )
 from django.template.response import TemplateResponse
-
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 
 class BaseView(APIView):
     """
     Inherits from Django View.
+
+    Note: This may not be a great pattern, but it was the quickest path forward
+          during this project's genesis. PRs are accepted if you have a better
+          way to handle this.
     """
 
     permission_classes = (IsAuthenticated,)
 
     def param(self, request, key):
-        if request.method == 'GET':
+        """
+        Trying to get the parameters from a Django HTTP request can be a
+        headache. This makes things a little easier.
+        """
+        if request.method == "GET":
             obj = request.GET
-        elif request.method == 'POST':
+        elif request.method == "POST":
             obj = request.POST
         else:
-            raise ValueError('Unsupported request method')
+            raise ValueError("Unsupported request method")
 
         val = obj[key]
-        if val == 'null':
+        if val == "null":
             return None
-        if val == 'undefined':
+        if val == "undefined":
             return None
-        if val == 'true':
+        if val == "true":
             return True
-        if val == 'false':
+        if val == "false":
             return False
         return val
 
     def http_react_response(self, _type, payload):
         """
-        SUCCESS
+        This is a simple interface that allows data to be piped directly into
+        React Redux's dispatcher.
         """
         response = {
             "system": {
@@ -56,7 +63,8 @@ class BaseView(APIView):
 
     def http_response_200(self, data=None):
         """
-        SUCCESS
+        The main interface that returns a 200 server response with some extra
+        goodies baked in.
         """
         response = {
             "system": {
@@ -92,11 +100,11 @@ class BaseView(APIView):
         """
         return HttpResponseForbidden(message)
 
-    # def http_response_422(self, message):
-    #     '''
-    #     INVALID FORMAT
-    #     '''
-    #     return HttpResponse(status_code=422, message=message)
+    def http_response_422(self, message):
+        """
+        INVALID FORMAT
+        """
+        return HttpResponse(status_code=422, message=message)
 
     def template_response(self, request, template, context={}):
         return TemplateResponse(request, template, context)

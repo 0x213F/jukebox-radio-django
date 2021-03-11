@@ -1,0 +1,33 @@
+version: '3'
+
+volumes:
+  test_postgres_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/test/django/Dockerfile
+    image: jukebox_radio_test_django
+    container_name: django
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.test/.django
+      - ./.envs/.test/.postgres
+    ports:
+      - "8000:8000"
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/test/postgres/Dockerfile
+    image: jukebox_radio_test_postgres
+    container_name: postgres
+    volumes:
+      - test_postgres_data:/var/lib/postgresql/data:Z
+    env_file:
+      - ./.envs/.test/.postgres

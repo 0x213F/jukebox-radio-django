@@ -2,24 +2,37 @@ from datetime import timedelta
 
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils import timezone
 
-from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core import time as time_util
+from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core.database import acquire_playback_control_lock
 
 
 class StreamPauseTrackView(BaseView, LoginRequiredMixin):
+
+    PARAM_TOTAL_DURATION = "nowPlayingTotalDurationMilliseconds"
+
     def post(self, request, **kwargs):
         """
-        When a user pauses a playing stream.
+        When a user wants to play the "up next queue item" right now.
         """
-        Track = apps.get_model("music", "Track")
-        Collection = apps.get_model("music", "Collection")
-        Queue = apps.get_model("streams", "Queue")
         Stream = apps.get_model("streams", "Stream")
 
         stream = Stream.objects.get(user=request.user)
+        with acquire_playback_control_lock(stream):
+            stream = self._pause_track(request, stream)
 
+        return self.http_react_response(
+            "stream/pause",
+            {
+                "pausedAt": time_util.epoch(stream.paused_at),
+            },
+        )
+
+    def _pause_track(self, request, stream):
+        """
+        When a user pauses a playing stream.
+        """
         if not stream.is_playing:
             raise ValueError("Cannot pause a stream that is not already playing")
         if stream.is_paused:
@@ -34,9 +47,4 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
         stream.paused_at = pausing_at
         stream.save()
 
-        return self.http_react_response(
-            'stream/pause',
-            {
-                "pausedAt": time_util.epoch(stream.paused_at),
-            }
-        )
+        return stream

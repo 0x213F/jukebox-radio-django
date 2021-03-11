@@ -1,19 +1,19 @@
 import uuid
 from datetime import timedelta
 
+import pghistory
+import pgtrigger
 from django.apps import apps
 from django.db import models
 from django.utils import timezone
 
-import pghistory
-import pgtrigger
-
 from jukebox_radio.core import time as time_util
+from jukebox_radio.music.refresh import refresh_track_external_data
 
 
 class StreamManager(models.Manager):
     def serialize(self, stream):
-        Queue = apps.get_model('streams', 'Queue')
+        Queue = apps.get_model("streams", "Queue")
         return {
             "uuid": stream.uuid,
             "nowPlaying": Queue.objects.serialize(stream.now_playing),
@@ -32,6 +32,7 @@ class Stream(models.Model):
     """
     Keeps track of playback. You could also think of this as a radio station.
     """
+
     objects = StreamManager()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -64,6 +65,12 @@ class Stream(models.Model):
         if is_paused and self.paused_at > self.started_at:
             return False
 
+        duration = self.now_playing.track.duration_ms
+        if not duration:
+            track = duration = self.now_playing.track
+            user = self.user
+            refresh_track_external_data(track, user)
+
         now = timezone.now()
         within_bounds = now < self.started_at + timedelta(
             milliseconds=self.now_playing.track.duration_ms
@@ -81,23 +88,32 @@ class Stream(models.Model):
         if is_playing and self.started_at > self.paused_at:
             return False
 
-        now = timezone.now()
         within_bounds = self.paused_at - self.started_at < timedelta(
             milliseconds=self.now_playing.track.duration_ms
         )
 
         return within_bounds
 
+    def controls_enabled(self, end_buffer, total_duration):
+        """
+        A stream's playback controls are disabled towards the end of the now
+        playing track. This determines if the stream is able to have the
+        controls enabled or not.
+        """
+        track_ends_at = self.started_at + total_duration
+        now = time_util.now()
+        return now + end_buffer < track_ends_at
+
     @property
     def now_playing_duration(self):
-        '''
+        """
         WARNING - this is not accurate. The duration for now playing is more
         complicated than this. It must take into consideration the intervals.
-        
+
         NOTE - for now, the calculation for the duration of now playing (or any
         queue item) is done on the front-end. Yes, that is not ideal, but it
         seemingly works for the time being.
-        '''
+        """
         if not self.now_playing_id or not self.now_playing.track_id:
             return None
         return timedelta(milliseconds=self.now_playing.track.duration_ms)

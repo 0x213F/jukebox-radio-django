@@ -1,20 +1,11 @@
-import os
-import pathlib
-import tempfile
-import uuid
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files import File
-
-from pydub import AudioSegment
 
 from jukebox_radio.core.base_view import BaseView
+from jukebox_radio.core.utils import generate_presigned_url
+
 # from jukebox_radio.music.tasks import generate_stems_for_track
-
-
-FIVE_MINUTES = 60 * 5
 
 
 class TrackGetFilesView(BaseView, LoginRequiredMixin):
@@ -23,6 +14,7 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
         Create a track from upload.
         """
         Track = apps.get_model("music", "Track")
+        Stem = apps.get_model("music", "Stem")
 
         track_uuid = request.GET.get("trackUuid")
 
@@ -30,45 +22,47 @@ class TrackGetFilesView(BaseView, LoginRequiredMixin):
             uuid=track_uuid,
             user=request.user,
         )
+        stems = Stem.objects.filter(track_id=track.uuid)
 
+        stems_list = []
         if settings.APP_ENV == settings.APP_ENV_LOCAL:
             scheme = request.scheme
             host = request.get_host()
-            audio_url = f'{scheme}://{host}{track.audio.url}'
-            img_url = f'{scheme}://{host}{track.img.url}'
-        elif settings.APP_ENV == settings.APP_ENV_PROD:
-            import boto3
-            from botocore.client import Config
+            audio_url = f"{scheme}://{host}{track.audio.url}"
+            img_url = f"{scheme}://{host}{track.img.url}"
 
-            s3_client = boto3.client(
-                's3',
-                config=Config(signature_version='s3v4'),
-                region_name='us-west-1'
-            )
-            audio_url = s3_client.generate_presigned_url(
-                'get_object',
-                Params={
-                    'Bucket': 'jukebox-radio-prod',
-                    'Key': f'media/{track.audio.name}',
-                },
-                ExpiresIn=FIVE_MINUTES,
-            )
-            img_url = s3_client.generate_presigned_url(
-                'get_object',
-                Params={
-                    'Bucket': 'jukebox-radio-prod',
-                    'Key': f'media/{track.img.name}',
-                },
-                ExpiresIn=FIVE_MINUTES,
-            )
+            for stem in stems:
+                stem_url = f"{scheme}://{host}{stem.audio.url}"
+                stems_list.append(
+                    {
+                        "uuid": stem.uuid,
+                        "instrument": stem.instrument,
+                        "audioUrl": stem_url,
+                    }
+                )
+
+        elif settings.APP_ENV == settings.APP_ENV_PROD:
+            audio_url = generate_presigned_url(track.audio)
+            img_url = generate_presigned_url(track.img)
+
+            for stem in stems:
+                stem_url = generate_presigned_url(stem.audio)
+                stems_list.append(
+                    {
+                        "uuid": stem.uuid,
+                        "instrument": stem.instrument,
+                        "audioUrl": stem_url,
+                    }
+                )
 
         return self.http_react_response(
             "playback/loadFiles",
             {
                 "track": {
                     "uuid": track_uuid,
-                    'audioUrl': audio_url,
-                    'imageUrl': img_url,
+                    "audioUrl": audio_url,
+                    "imageUrl": img_url,
+                    "stems": stems_list,
                 }
             },
         )

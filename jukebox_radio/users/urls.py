@@ -3,6 +3,7 @@ from django.urls import path
 from jukebox_radio.users.views import (
     UserConnectSpotifyView,
     UserGetSettingsView,
+    UserUpdateSettingsView,
 )
 
 app_name = "users"
@@ -22,4 +23,8 @@ urlpatterns = [
         view=UserGetProfileView.as_view(),
         name="user-get-profile",
     )
+        "user/update-settings/",
+        view=UserUpdateSettingsView.as_view(),
+        name="user-update-settings",
+    ),
 ]

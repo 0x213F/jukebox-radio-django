@@ -6,20 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('comments', '0002_auto_20210206_0631'),
+        ("comments", "0002_auto_20210206_0631"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='textcomment',
-            name='format',
-            field=models.CharField(choices=[('text', 'Text'), ('abc_notation', 'ABC Notation')], default='text', max_length=32),
+            model_name="textcomment",
+            name="format",
+            field=models.CharField(
+                choices=[("text", "Text"), ("abc_notation", "ABC Notation")],
+                default="text",
+                max_length=32,
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='textcommentevent',
-            name='format',
-            field=models.CharField(choices=[('text', 'Text'), ('abc_notation', 'ABC Notation')], default='not-tracked', max_length=32),
+            model_name="textcommentevent",
+            name="format",
+            field=models.CharField(
+                choices=[("text", "Text"), ("abc_notation", "ABC Notation")],
+                default="not-tracked",
+                max_length=32,
+            ),
             preserve_default=False,
         ),
     ]

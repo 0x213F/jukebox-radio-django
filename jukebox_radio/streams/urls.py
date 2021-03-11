@@ -5,16 +5,6 @@ from jukebox_radio.streams.views.marker import (
     MarkerDeleteView,
     MarkerListView,
 )
-from jukebox_radio.streams.views.stream import (
-    StreamGetView,
-    StreamInitializeView,
-    StreamPauseTrackView,
-    StreamPlayTrackView,
-    StreamPrevTrackView,
-    StreamScanBackwardView,
-    StreamScanForwardView,
-    StreamNextTrackView,
-)
 from jukebox_radio.streams.views.queue import (
     QueueCreateView,
     QueueDeleteView,
@@ -24,7 +14,16 @@ from jukebox_radio.streams.views.queue_interval import (
     QueueIntervalCreateView,
     QueueIntervalDeleteView,
 )
-
+from jukebox_radio.streams.views.stream import (
+    StreamGetView,
+    StreamInitializeView,
+    StreamNextTrackView,
+    StreamPauseTrackView,
+    StreamPlayTrackView,
+    StreamPrevTrackView,
+    StreamScanBackwardView,
+    StreamScanForwardView,
+)
 
 app_name = "streams"
 urlpatterns = [

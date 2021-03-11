@@ -19,9 +19,9 @@ class MarkerDeleteView(BaseView, LoginRequiredMixin):
         queue_uuid = request.POST.get("queueUuid")
 
         return self.http_react_response(
-            'marker/delete',
+            "marker/delete",
             {
                 "marker": Marker.objects.serialize(marker),
                 "queueUuid": queue_uuid,
-            }
+            },
         )

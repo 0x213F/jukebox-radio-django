@@ -1,15 +1,7 @@
-import math
-
-import pghistory
-
 from django.apps import apps
 from django.contrib import admin
-from django.contrib.auth import admin as auth_admin
-from django.contrib.auth import get_user_model
 from django.db.models import Exists, OuterRef
 from django.utils.html import mark_safe
-
-User = get_user_model()
 
 
 class CollectionListingAdminInline(admin.TabularInline):

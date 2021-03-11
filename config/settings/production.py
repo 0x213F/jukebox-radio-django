@@ -1,9 +1,10 @@
 import logging
 
 import sentry_sdk
+from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
-from sentry_sdk.integrations.celery import CeleryIntegration
+
 from .base import *  # noqa
 from .base import env
 
@@ -21,6 +22,8 @@ ALLOWED_HOSTS = [
     "prod.jukeboxrad.io",
     "143.110.229.8",
 ]
+
+SITE_URL = "https://jukeboxrad.io/"
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -224,4 +227,4 @@ CORS_ORIGIN_WHITELIST = (
     "https://0x213f.github.io",
 )
 
-APP_ENV = 'prod'
+APP_ENV = "prod"

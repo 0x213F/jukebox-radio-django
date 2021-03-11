@@ -1,8 +1,7 @@
 import uuid
 
-from django.db import models
-
 import pgtrigger
+from django.db import models
 from unique_upload import unique_upload
 
 
@@ -38,6 +37,7 @@ class Stem(models.Model):
     track = models.ForeignKey(
         "music.Track",
         on_delete=models.CASCADE,
+        related_name="stems",
     )
 
     instrument = models.CharField(max_length=32, choices=INSTRUMENT_CHOICES)

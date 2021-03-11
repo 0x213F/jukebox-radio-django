@@ -1,3 +1,4 @@
+from cryptography.fernet import Fernet
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -29,9 +30,7 @@ class User(AbstractUser):
     encrypted_spotify_refresh_token = models.CharField(
         max_length=500, null=True, blank=True
     )
-    spotify_scope = models.CharField(
-        max_length=500, null=True, blank=True
-    )
+    spotify_scope = models.CharField(max_length=500, null=True, blank=True)
     idle_after_now_playing = models.BooleanField(default=False)
     mute_voice_recordings = models.BooleanField(default=True)
     focus_mode = models.BooleanField(default=False)

@@ -1,25 +1,28 @@
-import pgtrigger
 import uuid
-
-from django.apps import apps
-from django.db import models
-from django.db.models import Prefetch
 
 import pghistory
 import pgtrigger
-from unique_upload import unique_upload
+from django.apps import apps
+from django.db import models
+from django.db.models import Prefetch
 
 from jukebox_radio.core import time as time_util
 
 
 class TextCommentManager(models.Manager):
     def serialize(self, text_comment, empty_modifications=False):
+        """
+        JSON serialize a TextComment.
+
+        NOTE: It is assumed that the TextComment has a "ordered_modifications"
+              property, which comes from the QuerySet function
+              "context_filter." The caller can choose to not serialize child
+              modification objects by setting "empty_modifications=True."
+        """
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
 
         text_comment_modifications = []
         if not empty_modifications:
-            # NOTE: "ordered_modifications" is a property defined by
-            #       "prefetch_related" in "notepad_filter"
             for modification in text_comment.ordered_modifications:
                 text_comment_modifications.append(
                     TextCommentModification.objects.serialize(modification)
@@ -38,7 +41,11 @@ class TextCommentManager(models.Manager):
 
 
 class TextCommentQuerySet(models.QuerySet):
-    def notepad_filter(self, track_uuid, user):
+    def context_filter(self, track_uuid, user):
+        """
+        Get all relevant text comments and their related modifications given a
+        track and a user.
+        """
         TextCommentModification = apps.get_model("comments", "TextCommentModification")
         return (
             self.select_related("user", "track")
@@ -61,6 +68,9 @@ class TextCommentQuerySet(models.QuerySet):
 )
 @pghistory.track(pghistory.Snapshot("text_comment.snapshot"))
 class TextComment(models.Model):
+    """
+    Text based comments that are pinned to a specific time on a track.
+    """
 
     FORMAT_TEXT = "text"
     FORMAT_ABC_NOTATION = "abc_notation"
@@ -92,3 +102,13 @@ class TextComment(models.Model):
     def archive(self):
         self.deleted_at = time_util.now()
         self.save()
+
+
+class ABCNotation(TextComment):
+    """
+    NOTE: This proxy model is mainly used to differentiate between
+          "text comment" and "ABC notation" in the admin.
+    """
+
+    class Meta:
+        proxy = True

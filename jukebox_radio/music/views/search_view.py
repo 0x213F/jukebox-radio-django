@@ -1,15 +1,16 @@
-from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
-from jukebox_radio.music.const import GLOBAL_PROVIDER_CHOICES
-from jukebox_radio.music.const import GLOBAL_PROVIDER_SPOTIFY
-from jukebox_radio.music.const import GLOBAL_PROVIDER_YOUTUBE
-from jukebox_radio.music.const import GLOBAL_PROVIDER_JUKEBOX_RADIO
-from jukebox_radio.music.const import GLOBAL_FORMAT_TRACK
-from jukebox_radio.music.const import GLOBAL_FORMAT_ALBUM
-from jukebox_radio.music.const import GLOBAL_FORMAT_PLAYLIST
-from jukebox_radio.music.const import GLOBAL_FORMAT_VIDEO
+from jukebox_radio.music.const import (
+    GLOBAL_FORMAT_ALBUM,
+    GLOBAL_FORMAT_PLAYLIST,
+    GLOBAL_FORMAT_TRACK,
+    GLOBAL_FORMAT_VIDEO,
+    GLOBAL_PROVIDER_CHOICES,
+    GLOBAL_PROVIDER_JUKEBOX_RADIO,
+    GLOBAL_PROVIDER_SPOTIFY,
+    GLOBAL_PROVIDER_YOUTUBE,
+)
 from jukebox_radio.music.search import get_search_results
 
 
@@ -18,9 +19,6 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
         """
         Given a query, get relevant tracks and collections.
         """
-        Track = apps.get_model("music", "Track")
-        Collection = apps.get_model("music", "Collection")
-
         query = request.GET["query"]
 
         providers = []

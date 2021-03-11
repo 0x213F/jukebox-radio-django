@@ -13,11 +13,7 @@ class MarkerListView(BaseView, LoginRequiredMixin):
 
         track_uuid = request.GET.get("trackUuid")
 
-        marker_qs = (
-            Marker
-            .objects
-            .filter_by_track_and_user(track_uuid, request.user)
-        )
+        marker_qs = Marker.objects.filter_by_track_and_user(track_uuid, request.user)
 
         markers = []
         for marker in marker_qs:
@@ -27,9 +23,9 @@ class MarkerListView(BaseView, LoginRequiredMixin):
         queue_uuid = request.GET.get("queueUuid")
 
         return self.http_react_response(
-            'marker/list',
+            "marker/list",
             {
                 "markers": markers,
                 "queueUuid": queue_uuid,
-            }
+            },
         )

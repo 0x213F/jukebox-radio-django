@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.conf import settings
-from jukebox_radio.core import time as time_util
 
+from jukebox_radio.core import time as time_util
 from jukebox_radio.networking.actions import make_request
 
 
@@ -25,7 +25,9 @@ def refresh_collection_external_data(collection, user):
         elif collection.format == Collection.FORMAT_PLAYLIST:
             return _refresh_collection_spotify_playlist_data(collection, user)
     else:
-        raise ValueError(f"Track has bad provider: {track.uuid}, {track.provider}")
+        raise ValueError(
+            f"Collection has bad provider: {collection.uuid}, {collection.provider}"
+        )
 
 
 def _refresh_track_spotify_data(track, user):
@@ -79,7 +81,7 @@ def _refresh_track_youtube_data(track):
             elif char == "M":
                 duration_ms += int(val) * 60 * 1000
             elif char == "S":
-                duration_ms += int(val) * 60 * 1000
+                duration_ms += int(val) * 1000
             else:
                 raise ValueError(f"Unexpected playtime character: {mode}")
 

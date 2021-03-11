@@ -32,9 +32,9 @@ class QueueListView(BaseView, LoginRequiredMixin):
             next_up_queues.append(queue_serialized)
 
         return self.http_react_response(
-            'queue/listSet',
+            "queue/listSet",
             {
                 "lastUpQueues": last_up_queues,
                 "nextUpQueues": next_up_queues,
-            }
+            },
         )

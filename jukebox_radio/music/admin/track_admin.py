@@ -1,14 +1,8 @@
 import math
 
-import pghistory
-
 from django.apps import apps
 from django.contrib import admin
-from django.contrib.auth import admin as auth_admin
-from django.contrib.auth import get_user_model
 from django.utils.html import mark_safe
-
-User = get_user_model()
 
 
 class StemAdminInline(admin.TabularInline):

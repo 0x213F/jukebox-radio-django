@@ -1,15 +1,10 @@
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.decorators.csrf import csrf_exempt
 
 from jukebox_radio.core.base_view import BaseView
 
-User = get_user_model()
-
 
 class VoiceRecordingListView(BaseView, LoginRequiredMixin):
-    @csrf_exempt
     def get(self, request, **kwargs):
         """
         List VoiceRecording objects that the user has created for a given
@@ -30,7 +25,7 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
 
         track_uuid = stream.now_playing.track_id
 
-        voice_recording_qs = VoiceRecording.objects.notepad_filter(
+        voice_recording_qs = VoiceRecording.objects.context_filter(
             track_uuid, request.user
         )
 

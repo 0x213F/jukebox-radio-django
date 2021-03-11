@@ -1,0 +1,39 @@
+version: '3'
+
+volumes:
+  production_traefik: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production_worker/django/Dockerfile
+    image: jukebox_radio_production_django
+    depends_on:
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start
+
+  redis:
+    image: redis:5.0
+
+  celeryworker:
+    <<: *django
+    image: jukebox_radio_production_celeryworker
+    command: /start-celeryworker
+    deploy:
+      resources:
+        reservations:
+          memory: 4G
+
+  celerybeat:
+    <<: *django
+    image: jukebox_radio_production_celerybeat
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: jukebox_radio_production_flower
+    command: /start-flower
