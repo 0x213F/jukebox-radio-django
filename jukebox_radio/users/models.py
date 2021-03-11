@@ -6,11 +6,14 @@ from django.contrib.auth.models import User
 
 from cryptography.fernet import Fernet
 
+def upload_to_profile_imgs(*args, **kwargs):
+    return f"django-storage/users/user-profile/profile-imgs/{unique_upload(*args, **kwargs)}"
+
 class UserProfile(models.Model):
     """
     User Profile
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     profile_image = models.ImageField(
         null=True, blank=True, upload_to=upload_to_profile_imgs
     )
@@ -45,5 +48,3 @@ class User(AbstractUser):
             self.encrypted_spotify_access_token.encode("utf-8")
         ).decode("utf-8")
 
-def upload_to_profile_imgs(*args, **kwargs):
-    return f"django-storage/users/user-profile/profile-imgs/{unique_upload(*args, **kwargs)}"
