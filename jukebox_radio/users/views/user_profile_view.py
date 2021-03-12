@@ -10,9 +10,11 @@ class UserGetProfileView(BaseView, LoginRequiredMixin):
     """
     Get user profile.
     """
+    username = self.param(request, "username")
 
     return self.http_response_200({
       "user": {
+        "can_edit": username == request.user.username,
         "profile_image": request.user.userprofile.profile_image,
         "description": request.user.userprofile.description,
         "website": request.user.userprofile.website
