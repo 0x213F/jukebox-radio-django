@@ -13,6 +13,8 @@ def refresh_track_external_data(track, user):
         return _refresh_track_youtube_data(track)
     elif track.provider == Track.PROVIDER_JUKEBOX_RADIO:
         return {}
+    elif track.provider == Track.PROVIDER_APPLE_MUSIC:
+        return {}
     else:
         raise ValueError(f"Track has bad provider: {track.uuid}, {track.provider}")
 

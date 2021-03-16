@@ -1,6 +1,32 @@
+import jwt
+
+from datetime import timedelta
 from urllib.parse import urlencode
 
 from django.conf import settings
+
+from jukebox_radio.core.time import now
+
+
+def generate_apple_music_token():
+    alg = 'ES256'
+    time_now = now()
+    time_expired = time_now + timedelta(hours=(24 * 7))
+
+    headers = {
+        "alg": alg,
+        "kid": settings.APPLE_MUSIC_KEY_ID,
+    }
+
+    payload = {
+        "iss": settings.APPLE_MUSIC_TEAM_ID,
+        "exp": int(time_expired.strftime("%s")),
+        "iat": int(time_now.strftime("%s")),
+    }
+
+    secret = settings.APPLE_MUSIC_AUTH_KEY_P8
+
+    return jwt.encode(payload, secret, algorithm=alg, headers=headers)
 
 
 def generate_redirect_uri(request):

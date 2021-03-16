@@ -2,7 +2,9 @@ from django.apps import apps
 from django.conf import settings
 from django.db.models import Q
 
+from jukebox_radio.core.utils import generate_apple_music_token
 from jukebox_radio.music.const import (
+    GLOBAL_PROVIDER_APPLE_MUSIC,
     GLOBAL_PROVIDER_JUKEBOX_RADIO,
     GLOBAL_PROVIDER_SPOTIFY,
     GLOBAL_PROVIDER_YOUTUBE,
@@ -20,6 +22,8 @@ def get_search_results(user, provider_slug, query, formats):
         search_results = _get_spotify_search_results(query, formats, user)
     elif provider_slug == GLOBAL_PROVIDER_YOUTUBE:
         search_results = _get_youtube_search_results(query, formats)
+    elif provider_slug == GLOBAL_PROVIDER_APPLE_MUSIC:
+        search_results = _get_apple_music_search_results(query, formats)
     else:
         raise ValueError(f"Unrecognized provider slug: {provider_slug}")
 
@@ -40,29 +44,14 @@ def get_search_results(user, provider_slug, query, formats):
         # TRACK
         if search_result["format"] in ["track", "video"]:
             tracks.append(
-                Track(
-                    format=search_result["format"],
-                    provider=search_result["provider"],
-                    external_id=search_result["external_id"],
-                    name=search_result["name"],
-                    artist_name=search_result["artist_name"],
-                    album_name=search_result["album_name"],
-                    img_url=search_result["img_url"],
-                )
+                Track(**search_result)
             )
             track_eids.append(search_result["external_id"])
 
         # COLLECTION
         else:
             collections.append(
-                Collection(
-                    format=search_result["format"],
-                    provider=search_result["provider"],
-                    external_id=search_result["external_id"],
-                    name=search_result["name"],
-                    artist_name=search_result["artist_name"],
-                    img_url=search_result["img_url"],
-                )
+                Collection(**search_result)
             )
             collection_eids.append(search_result["external_id"])
 
@@ -266,5 +255,90 @@ def _get_youtube_search_results(query, formats):
                 "img_url": youtube_img_lg,
             }
         )
+
+    return cleaned_data
+
+
+# Apple Music
+# ------------------------------------------------------------------------------
+def _get_apple_music_search_results(query, formats):
+    Collection = apps.get_model("music", "Collection")
+    Track = apps.get_model("music", "Track")
+    Request = apps.get_model("networking", "Request")
+
+    formats = set(formats).intersection(
+        set([Track.FORMAT_TRACK, Collection.FORMAT_ALBUM, Collection.FORMAT_PLAYLIST])
+    )
+    if Track.FORMAT_TRACK in formats:
+        formats.remove(Track.FORMAT_TRACK)
+        formats.add("songs")
+    if Collection.FORMAT_ALBUM in formats:
+        formats.remove(Collection.FORMAT_ALBUM)
+        formats.add("albums")
+    if Collection.FORMAT_PLAYLIST in formats:
+        formats.remove(Collection.FORMAT_PLAYLIST)
+        formats.add("playlists")
+
+    data = {
+        "term": query,
+        "types": ",".join(formats),
+    }
+
+    apple_music_token = generate_apple_music_token()
+
+    response = make_request(
+        Request.TYPE_GET,
+        "https://api.music.apple.com/v1/catalog/us/search",
+        data=data,
+        headers={
+            "Authorization": f"Bearer {apple_music_token}",
+        },
+    )
+    response_json = response.json()
+    cleaned_data = []
+
+    if "albums" in response_json["results"].keys():
+        items = response_json["results"]["albums"]["data"]
+        for item in items:
+            cleaned_data.append(
+                {
+                    "format": Collection.FORMAT_ALBUM,
+                    "provider": "apple_music",
+                    "external_id": item["id"],
+                    "name": item["attributes"]["name"],
+                    "artist_name": item["attributes"]["artistName"],
+                    "img_url": item["attributes"]["artwork"]["url"],
+                }
+            )
+
+    if "playlists" in response_json["results"].keys():
+        items = response_json["results"]["playlists"]["data"]
+        for item in items:
+            cleaned_data.append(
+                {
+                    "format": Collection.FORMAT_PLAYLIST,
+                    "provider": "apple_music",
+                    "external_id": item["id"],
+                    "name": item["attributes"]["name"],
+                    "artist_name": item["attributes"]["curatorName"],
+                    "img_url": item["attributes"]["artwork"]["url"],
+                }
+            )
+
+    if 'songs' in response_json["results"].keys():
+        items = response_json["results"]["songs"]["data"]
+        for item in items:
+            cleaned_data.append(
+                {
+                    "format": Track.FORMAT_TRACK,
+                    "provider": "apple_music",
+                    "external_id": item["id"],
+                    "name": item["attributes"]["name"],
+                    "artist_name": item["attributes"]["artistName"],
+                    "album_name": item["attributes"]["albumName"],
+                    "img_url": item["attributes"]["artwork"]["url"],
+                    "duration_ms": item["attributes"]["durationInMillis"],
+                }
+            )
 
     return cleaned_data
