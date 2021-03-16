@@ -6,18 +6,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('music', '0002_auto_20210308_0720'),
+        ("music", "0002_auto_20210308_0720"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='collection',
-            name='provider',
-            field=models.CharField(choices=[('apple_music', 'Apple Music'), ('spotify', 'Spotify'), ('youtube', 'YouTube'), ('jukebox_radio', 'Jukebox Radio')], max_length=32),
+            model_name="collection",
+            name="provider",
+            field=models.CharField(
+                choices=[
+                    ("apple_music", "Apple Music"),
+                    ("spotify", "Spotify"),
+                    ("youtube", "YouTube"),
+                    ("jukebox_radio", "Jukebox Radio"),
+                ],
+                max_length=32,
+            ),
         ),
         migrations.AlterField(
-            model_name='track',
-            name='provider',
-            field=models.CharField(choices=[('apple_music', 'Apple Music'), ('spotify', 'Spotify'), ('youtube', 'YouTube'), ('jukebox_radio', 'Jukebox Radio')], max_length=32),
+            model_name="track",
+            name="provider",
+            field=models.CharField(
+                choices=[
+                    ("apple_music", "Apple Music"),
+                    ("spotify", "Spotify"),
+                    ("youtube", "YouTube"),
+                    ("jukebox_radio", "Jukebox Radio"),
+                ],
+                max_length=32,
+            ),
         ),
     ]

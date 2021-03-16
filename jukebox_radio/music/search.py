@@ -43,16 +43,12 @@ def get_search_results(user, provider_slug, query, formats):
 
         # TRACK
         if search_result["format"] in ["track", "video"]:
-            tracks.append(
-                Track(**search_result)
-            )
+            tracks.append(Track(**search_result))
             track_eids.append(search_result["external_id"])
 
         # COLLECTION
         else:
-            collections.append(
-                Collection(**search_result)
-            )
+            collections.append(Collection(**search_result))
             collection_eids.append(search_result["external_id"])
 
     Track.objects.bulk_create(tracks, ignore_conflicts=True)
@@ -325,7 +321,7 @@ def _get_apple_music_search_results(query, formats):
                 }
             )
 
-    if 'songs' in response_json["results"].keys():
+    if "songs" in response_json["results"].keys():
         items = response_json["results"]["songs"]["data"]
         for item in items:
             cleaned_data.append(

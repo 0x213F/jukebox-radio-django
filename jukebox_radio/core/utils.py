@@ -1,15 +1,14 @@
-import jwt
-
 from datetime import timedelta
 from urllib.parse import urlencode
 
+import jwt
 from django.conf import settings
 
 from jukebox_radio.core.time import now
 
 
 def generate_apple_music_token():
-    alg = 'ES256'
+    alg = "ES256"
     time_now = now()
     time_expired = time_now + timedelta(hours=(24 * 7))
 
