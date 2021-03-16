@@ -6,6 +6,7 @@ from jukebox_radio.music.const import (
     GLOBAL_FORMAT_PLAYLIST,
     GLOBAL_FORMAT_TRACK,
     GLOBAL_FORMAT_VIDEO,
+    GLOBAL_PROVIDER_APPLE_MUSIC,
     GLOBAL_PROVIDER_CHOICES,
     GLOBAL_PROVIDER_JUKEBOX_RADIO,
     GLOBAL_PROVIDER_SPOTIFY,
@@ -22,6 +23,8 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
         query = request.GET["query"]
 
         providers = []
+        if request.GET["providerAppleMusic"] == "true":
+            providers.append(GLOBAL_PROVIDER_APPLE_MUSIC)
         if request.GET["providerSpotify"] == "true":
             providers.append(GLOBAL_PROVIDER_SPOTIFY)
         if request.GET["providerYouTube"] == "true":

@@ -27,6 +27,7 @@ django-cors-headers==3.5.0 # https://github.com/adamchainz/django-cors-headers
 # More...
 # ------------------------------------------------------------------------------
 cryptography==3.2.1
+PyJWT==2.0.1
 
 django-unique-upload==0.2.1
 

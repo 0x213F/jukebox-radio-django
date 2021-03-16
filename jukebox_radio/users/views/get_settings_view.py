@@ -2,7 +2,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from jukebox_radio.core.base_view import BaseView
-from jukebox_radio.core.utils import generate_spotify_authorization_uri
+from jukebox_radio.core.utils import (
+    generate_apple_music_token,
+    generate_spotify_authorization_uri,
+)
 
 User = get_user_model()
 
@@ -17,6 +20,9 @@ class UserGetSettingsView(BaseView, LoginRequiredMixin):
                 "spotify": {
                     "authorizationUrl": generate_spotify_authorization_uri(request),
                     "accessToken": request.user.spotify_access_token,
+                },
+                "appleMusic": {
+                    "token": generate_apple_music_token(),
                 },
                 "idleQueue": request.user.idle_after_now_playing,
                 "speakVoice": request.user.mute_voice_recordings,

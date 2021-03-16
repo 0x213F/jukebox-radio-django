@@ -150,6 +150,13 @@ class CollectionAdmin(admin.ModelAdmin):
 
     inlines = (CollectionListingAdminInline,)
 
+    search_fields = (
+        "uuid",
+        "name",
+        "artist_name",
+        "external_id",
+    )
+
     list_display = (
         "list_uuid",
         "list_name",

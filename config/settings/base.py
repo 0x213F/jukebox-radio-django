@@ -341,6 +341,10 @@ FERNET_KEY = env("FERNET_KEY")
 
 GOOGLE_API_KEY = env("GOOGLE_API_KEY")
 
+APPLE_MUSIC_AUTH_KEY_P8 = env("APPLE_MUSIC_AUTH_KEY_P8").replace("NEWLINE", "\n")
+APPLE_MUSIC_KEY_ID = env("APPLE_MUSIC_KEY_ID")
+APPLE_MUSIC_TEAM_ID = env("APPLE_MUSIC_TEAM_ID")
+
 AUDIO_SEGMENT_PROCESSING_LENGTH = int(env("AUDIO_SEGMENT_PROCESSING_LENGTH"))
 
 # https://django-strict-fields.readthedocs.io/en/latest/#modifying-all-the-problematic-fields
