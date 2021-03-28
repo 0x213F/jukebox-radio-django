@@ -30,6 +30,10 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
         queue_uuid = self.param(request, "queueUuid")
         queue = Queue.objects.get(uuid=queue_uuid, stream=stream, user=request.user)
 
+        head = Queue.objects.get_head(stream)
+        if queue.index <= head.index:
+            raise Exception("Cannot delete a queue that is not up next.")
+
         now = time_util.now()
         with transaction.atomic():
 

@@ -5,6 +5,7 @@ import pghistory
 import pgtrigger
 from django.apps import apps
 from django.db import models
+from django.db.models import Exists, OuterRef, Subquery
 from django.utils import timezone
 
 from jukebox_radio.core import time as time_util
@@ -24,6 +25,56 @@ class StreamManager(models.Manager):
         }
 
 
+class StreamQuerySet(models.QuerySet):
+    def filter_idle(self):
+        """
+        Filters to streams which are idle.
+        """
+        Queue = apps.get_model("streams", "Queue")
+
+        now = time_util.now()
+        three_hours_ago = now - timedelta(hours=3)
+
+        newest_queue_track_id = (
+            Queue.objects.filter(
+                stream_id=OuterRef("uuid"),
+                deleted_at__isnull=True,
+            )
+            .order_by("-index")
+            .values_list("track_id", flat=True)[:1]
+        )
+
+        newest_queue_collection_id = (
+            Queue.objects.filter(
+                stream_id=OuterRef("uuid"),
+                deleted_at__isnull=True,
+            )
+            .order_by("-index")
+            .values_list("collection_id", flat=True)[:1]
+        )
+
+        return (
+            self.annotate(
+                newest_queue_track_id=Subquery(newest_queue_track_id),
+            )
+            .annotate(
+                newest_queue_collection_id=Subquery(newest_queue_collection_id),
+            )
+            .filter(
+                # No recently played queues == streams that are idle.
+                ~Exists(
+                    Queue.objects.filter(stream_id=OuterRef("uuid")).exclude(
+                        played_at__lte=three_hours_ago
+                    )
+                )
+            )
+            .exclude(
+                newest_queue_track_id__isnull=True,
+                newest_queue_collection_id__isnull=True,
+            )
+        )
+
+
 @pgtrigger.register(
     pgtrigger.Protect(name="protect_deletes", operation=pgtrigger.Delete)
 )
@@ -33,7 +84,7 @@ class Stream(models.Model):
     Keeps track of playback. You could also think of this as a radio station.
     """
 
-    objects = StreamManager()
+    objects = StreamManager.from_queryset(StreamQuerySet)()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
