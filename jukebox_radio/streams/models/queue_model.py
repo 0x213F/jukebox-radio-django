@@ -179,10 +179,6 @@ class QueueQuerySet(models.QuerySet):
 
         - The smart way: the queue with the most recent value for "played_at"
         - The convenient way: "stream.now_playing"
-        - The explicit way: query on "is_head"
-
-        This does not seem ideal. Perhaps "is_head" could be deprecated in the
-        future?
         """
         try:
             return Queue.objects.get(
