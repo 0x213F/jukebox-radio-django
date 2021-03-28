@@ -59,17 +59,22 @@ class QueueManager(models.Manager):
         return obj
 
     @pgtrigger.ignore("streams.Queue:protect_inserts")
-    def create_initial_queue(self, stream):
+    def create_blank_queue(self, stream):
         """
         Custom create method
         """
         Queue = apps.get_model("streams", "Queue")
 
+        head = Queue.objects.get_head(stream)
+        if head:
+            index = head.index + 1
+        else:
+            index = Queue.INITIAL_INDEX
+
         return Queue.objects.create(
             stream=stream,
             user=stream.user,
-            index=Queue.INITIAL_INDEX,
-            is_head=True,
+            index=index,
             is_abstract=False,
         )
 
@@ -179,10 +184,14 @@ class QueueQuerySet(models.QuerySet):
         This does not seem ideal. Perhaps "is_head" could be deprecated in the
         future?
         """
-        head = Queue.objects.get(stream=stream, is_head=True, deleted_at__isnull=True)
-        if stream.now_playing_id != head.uuid:
-            raise ValueError("Unexpected head")
-        return head
+        try:
+            return Queue.objects.get(
+                uuid=stream.now_playing_id,
+                stream=stream,
+                deleted_at__isnull=True,
+            )
+        except Queue.DoesNotExist:
+            return None
 
     def get_prev(self, stream):
         """
@@ -347,8 +356,6 @@ class Queue(models.Model):
         on_delete=models.CASCADE,
         null=True,
     )
-
-    is_head = models.BooleanField(default=False)
 
     played_at = models.DateTimeField(null=True, blank=True)
 

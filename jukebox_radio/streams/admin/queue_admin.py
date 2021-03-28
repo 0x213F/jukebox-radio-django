@@ -100,7 +100,6 @@ class QueueAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "is_abstract",
-                    "is_head",
                     "created_at",
                     "updated_at",
                     "deleted_at",

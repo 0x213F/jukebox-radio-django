@@ -38,7 +38,6 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             total_duration = timedelta(milliseconds=int(total_duration_ms))
         is_planned = self.param(request, "isPlanned")
 
-        last_head = Queue.objects.get_head(stream)
         next_head = Queue.objects.get_next(stream)
 
         if not next_head:
@@ -64,10 +63,6 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
             stream.save()
 
             next_head.played_at = playing_at
-            next_head.is_head = True
             next_head.save()
-
-            last_head.is_head = False
-            last_head.save()
 
         return stream
