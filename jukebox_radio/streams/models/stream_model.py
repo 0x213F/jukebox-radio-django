@@ -36,30 +36,25 @@ class StreamQuerySet(models.QuerySet):
         three_hours_ago = now - timedelta(hours=3)
 
         newest_queue_track_id = (
-            Queue
-            .objects
-            .filter(
-                stream_id=OuterRef('uuid'),
+            Queue.objects.filter(
+                stream_id=OuterRef("uuid"),
                 deleted_at__isnull=True,
             )
-            .order_by('-index')
-            .values_list('track_id', flat=True)[:1]
+            .order_by("-index")
+            .values_list("track_id", flat=True)[:1]
         )
 
         newest_queue_collection_id = (
-            Queue
-            .objects
-            .filter(
-                stream_id=OuterRef('uuid'),
+            Queue.objects.filter(
+                stream_id=OuterRef("uuid"),
                 deleted_at__isnull=True,
             )
-            .order_by('-index')
-            .values_list('collection_id', flat=True)[:1]
+            .order_by("-index")
+            .values_list("collection_id", flat=True)[:1]
         )
 
         return (
-            self
-            .annotate(
+            self.annotate(
                 newest_queue_track_id=Subquery(newest_queue_track_id),
             )
             .annotate(
@@ -68,10 +63,9 @@ class StreamQuerySet(models.QuerySet):
             .filter(
                 # No recently played queues == streams that are idle.
                 ~Exists(
-                    Queue
-                    .objects
-                    .filter(stream_id=OuterRef('uuid'))
-                    .exclude(played_at__lte=three_hours_ago)
+                    Queue.objects.filter(stream_id=OuterRef("uuid")).exclude(
+                        played_at__lte=three_hours_ago
+                    )
                 )
             )
             .exclude(

@@ -32,7 +32,7 @@ class QueueDeleteView(BaseView, LoginRequiredMixin):
 
         head = Queue.objects.get_head(stream)
         if queue.index <= head.index:
-            raise Exception('Cannot delete a queue that is not up next.')
+            raise Exception("Cannot delete a queue that is not up next.")
 
         now = time_util.now()
         with transaction.atomic():

@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('streams', '0002_auto_20210308_0721'),
+        ("streams", "0002_auto_20210308_0721"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='queue',
-            name='is_head',
+            model_name="queue",
+            name="is_head",
         ),
     ]
