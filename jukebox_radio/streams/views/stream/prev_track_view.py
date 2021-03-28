@@ -40,7 +40,6 @@ class StreamPrevTrackView(BaseView, LoginRequiredMixin):
             stream.save()
             return stream
 
-        last_head = Queue.objects.get_head(stream)
         next_head = Queue.objects.get_prev(stream)
 
         playing_at = time_util.now() + timedelta(milliseconds=100)
@@ -52,10 +51,6 @@ class StreamPrevTrackView(BaseView, LoginRequiredMixin):
             stream.save()
 
             next_head.played_at = playing_at
-            next_head.is_head = True
             next_head.save()
-
-            last_head.is_head = False
-            last_head.save()
 
         return stream
