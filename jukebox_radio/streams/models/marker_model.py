@@ -15,6 +15,7 @@ class MarkerManager(models.Manager):
             "uuid": marker.uuid,
             "trackUuid": marker.track_id,
             "timestampMilliseconds": marker.timestamp_ms,
+            "name": "Marker Name Here",
         }
 
 
