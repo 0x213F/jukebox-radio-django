@@ -36,6 +36,7 @@ def test_marker_create_view_happy_path(
         "trackUuid": str(track.uuid),
         "timestampMilliseconds": 420,
         "queueUuid": "foobarbaz",  # Yes, this is on purpose!
+        "name": "fooname",
     }
     response = client.post(url, data)
 
@@ -46,13 +47,16 @@ def test_marker_create_view_happy_path(
     payload = response_json["redux"]["payload"]
     marker = Marker.objects.get(uuid=payload["marker"]["uuid"])
     assert payload["marker"]["uuid"] == str(marker.uuid)
-    assert payload["marker"]["trackUuid"] == str(marker.track_id)
-    assert payload["marker"]["timestampMilliseconds"] == str(marker.timestamp_ms)
+    assert payload["marker"]["name"] == data["name"]
+    assert payload["marker"]["trackUuid"] == data["trackUuid"]
+    # cast json response to int to match original payload
+    assert (
+        int(payload["marker"]["timestampMilliseconds"]) == data["timestampMilliseconds"]
+    )
 
     # Assert database entry
-    payload = response_json["redux"]["payload"]
-    marker = Marker.objects.get(uuid=payload["marker"]["uuid"])
     assert marker.user_id == user.id
+    assert marker.name == data["name"]
     assert str(marker.track_id) == data["trackUuid"]
     assert marker.timestamp_ms == data["timestampMilliseconds"]
     assert not marker.deleted_at

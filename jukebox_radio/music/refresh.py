@@ -2,8 +2,8 @@ from django.apps import apps
 from django.conf import settings
 
 from jukebox_radio.core import time as time_util
-from jukebox_radio.networking.actions import make_request
 from jukebox_radio.core.utils import generate_apple_music_token
+from jukebox_radio.networking.actions import make_request
 
 
 def refresh_track_external_data(track, user):
@@ -122,6 +122,9 @@ def _refresh_collection_spotify_album_data(collection, user):
     data = []
     for item in items:
         artist_names = map(lambda o: o["name"], item["artists"])
+        print(item)
+        print(item["duration_ms"])
+        print(int(item["duration_ms"]))
         data.append(
             {
                 # to be saved as Track instances
@@ -131,7 +134,7 @@ def _refresh_collection_spotify_album_data(collection, user):
                 "name": item["name"],
                 "artist_name": ", ".join(artist_names),
                 "album_name": collection.name,
-                "duration_ms": item["duration_ms"],
+                "duration_ms": int(item["duration_ms"]),
                 "img_url": collection.img_url,
                 # not saved in Track table
                 "_disk_number": item["disc_number"],

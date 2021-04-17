@@ -15,7 +15,7 @@ class MarkerManager(models.Manager):
             "uuid": marker.uuid,
             "trackUuid": marker.track_id,
             "timestampMilliseconds": marker.timestamp_ms,
-            "name": "Marker Name Here",
+            "name": marker.name,
         }
 
 
@@ -41,6 +41,8 @@ class Marker(models.Model):
     objects = MarkerManager.from_queryset(MarkerQuerySet)()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    name = models.CharField(max_length=32)
 
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 

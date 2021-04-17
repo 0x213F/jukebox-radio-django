@@ -11,6 +11,7 @@ class MarkerCreateView(BaseView, LoginRequiredMixin):
         """
         Marker = apps.get_model("streams", "Marker")
 
+        name = self.param(request, "name")
         track_uuid = self.param(request, "trackUuid")
         timestamp_ms = self.param(request, "timestampMilliseconds")
 
@@ -18,6 +19,7 @@ class MarkerCreateView(BaseView, LoginRequiredMixin):
             user=request.user,
             track_id=track_uuid,
             timestamp_ms=timestamp_ms,
+            name=name,
         )
 
         # needed for React Redux to update the state on the FE
