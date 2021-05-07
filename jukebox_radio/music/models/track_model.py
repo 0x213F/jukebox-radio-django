@@ -26,8 +26,6 @@ class TrackManager(models.Manager):
         else:
             img_url = track.img_url
 
-        print(track.duration_ms)
-
         return {
             "uuid": track.uuid,
             "format": track.format,

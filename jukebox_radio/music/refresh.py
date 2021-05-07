@@ -122,9 +122,6 @@ def _refresh_collection_spotify_album_data(collection, user):
     data = []
     for item in items:
         artist_names = map(lambda o: o["name"], item["artists"])
-        print(item)
-        print(item["duration_ms"])
-        print(int(item["duration_ms"]))
         data.append(
             {
                 # to be saved as Track instances
