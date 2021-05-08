@@ -5,6 +5,7 @@ from django.db import models
 from unique_upload import unique_upload
 
 from jukebox_radio.core import time as time_util
+from jukebox_radio.core.utils import generate_presigned_url
 
 
 def upload_to_comments_voice_recordings(*args, **kwargs):
@@ -15,7 +16,7 @@ def upload_to_comments_voice_recordings(*args, **kwargs):
 
 
 class VoiceRecordingManager(models.Manager):
-    def serialize(self, voice_recording):
+    def serialize(self, voice_recording, created=False):
         """
         JSON serialize a VoiceRecording.
         """
@@ -28,6 +29,8 @@ class VoiceRecordingManager(models.Manager):
             "durationMilliseconds": voice_recording.duration_ms,
             "trackUuid": voice_recording.track_id,
             "timestampMilliseconds": voice_recording.timestamp_ms,
+            "audioUrl": generate_presigned_url(voice_recording.audio),
+            "created": created,
         }
 
 

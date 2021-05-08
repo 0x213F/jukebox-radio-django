@@ -58,4 +58,6 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
             timestamp_ms=timestamp_ms,
         )
 
-        return self.http_response_200(VoiceRecording.objects.serialize(voice_recording))
+        return self.http_response_200(
+            VoiceRecording.objects.serialize(voice_recording, created=True)
+        )
