@@ -8,6 +8,7 @@ from jukebox_radio.music.const import (
     GLOBAL_PROVIDER_JUKEBOX_RADIO,
     GLOBAL_PROVIDER_SPOTIFY,
     GLOBAL_PROVIDER_YOUTUBE,
+    GLOBAL_PROVIDER_AUDIUS,
 )
 from jukebox_radio.networking.actions import make_request
 
@@ -24,6 +25,8 @@ def get_search_results(user, provider_slug, query, formats):
         search_results = _get_youtube_search_results(query, formats)
     elif provider_slug == GLOBAL_PROVIDER_APPLE_MUSIC:
         search_results = _get_apple_music_search_results(query, formats)
+    elif provider_slug == GLOBAL_PROVIDER_AUDIUS:
+        search_results = _get_audius_search_results(query, formats)
     else:
         raise ValueError(f"Unrecognized provider slug: {provider_slug}")
 
@@ -336,5 +339,42 @@ def _get_apple_music_search_results(query, formats):
                     "duration_ms": item["attributes"]["durationInMillis"],
                 }
             )
+
+    return cleaned_data
+
+
+# Apple Music
+# ------------------------------------------------------------------------------
+def _get_audius_search_results(query, formats):
+    Collection = apps.get_model("music", "Collection")
+    Track = apps.get_model("music", "Track")
+    Request = apps.get_model("networking", "Request")
+
+    data = {
+        "query": query,
+        "app_name": "Jukebox Radio",
+    }
+
+    response = make_request(
+        Request.TYPE_GET,
+        "https://discoveryprovider.audius5.prod-us-west-2.staked.cloud/v1/tracks/search",
+        data=data,
+    )
+    response_json = response.json()
+    cleaned_data = []
+
+    for item in response_json["data"]:
+        cleaned_data.append(
+            {
+                "format": Track.FORMAT_TRACK,
+                "provider": GLOBAL_PROVIDER_AUDIUS,
+                "external_id": item["id"],
+                "name": item["title"],
+                "artist_name": item["user"]["name"],
+                "album_name": "N/A",
+                "img_url": (item["artwork"] and item["artwork"]["1000x1000"]) or "N/A",
+                "duration_ms": item["duration"] * 1000,
+            }
+        )
 
     return cleaned_data

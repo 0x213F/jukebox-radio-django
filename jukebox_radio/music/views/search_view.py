@@ -11,6 +11,7 @@ from jukebox_radio.music.const import (
     GLOBAL_PROVIDER_JUKEBOX_RADIO,
     GLOBAL_PROVIDER_SPOTIFY,
     GLOBAL_PROVIDER_YOUTUBE,
+    GLOBAL_PROVIDER_AUDIUS,
 )
 from jukebox_radio.music.search import get_search_results
 
@@ -29,6 +30,8 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
             providers.append(GLOBAL_PROVIDER_SPOTIFY)
         if request.GET["providerYouTube"] == "true":
             providers.append(GLOBAL_PROVIDER_YOUTUBE)
+        if request.GET["providerAudius"] == "true":
+            providers.append(GLOBAL_PROVIDER_AUDIUS)
         if request.GET["providerJukeboxRadio"] == "true":
             providers.append(GLOBAL_PROVIDER_JUKEBOX_RADIO)
 

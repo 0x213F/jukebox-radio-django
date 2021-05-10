@@ -16,6 +16,8 @@ def refresh_track_external_data(track, user):
         return {}
     elif track.provider == Track.PROVIDER_APPLE_MUSIC:
         return {}
+    elif track.provider == Track.PROVIDER_AUDIUS:
+        return {}
     else:
         raise ValueError(f"Track has bad provider: {track.uuid}, {track.provider}")
 
