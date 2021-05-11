@@ -5,10 +5,10 @@ from django.db.models import Q
 from jukebox_radio.core.utils import generate_apple_music_token
 from jukebox_radio.music.const import (
     GLOBAL_PROVIDER_APPLE_MUSIC,
+    GLOBAL_PROVIDER_AUDIUS,
     GLOBAL_PROVIDER_JUKEBOX_RADIO,
     GLOBAL_PROVIDER_SPOTIFY,
     GLOBAL_PROVIDER_YOUTUBE,
-    GLOBAL_PROVIDER_AUDIUS,
 )
 from jukebox_radio.networking.actions import make_request
 
