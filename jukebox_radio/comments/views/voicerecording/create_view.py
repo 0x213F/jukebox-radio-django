@@ -8,7 +8,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
 from pydub import AudioSegment
 
-from jukebox_radio.core import time as time_util
 from jukebox_radio.core.base_view import BaseView
 
 
@@ -23,6 +22,7 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
         audio_file = request.FILES.get("audioFile")
         transcript_data = json.loads(request.POST["transcriptData"])
         transcript_final = request.POST["transcriptFinal"]
+        voice_recording_timestamp = int(request.POST["voiceRecordingTimestamp"])
 
         # Transform audio into OGG
         f = tempfile.NamedTemporaryFile(delete=False)
@@ -37,8 +37,6 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
         f.close()
         os.remove(filename)
 
-        now = time_util.now()
-
         stream = Stream.objects.select_related("now_playing__track").get(
             user=request.user
         )
@@ -46,7 +44,7 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
         if not stream.is_playing and not stream.is_playing:
             return self.http_response_400("No track is currently playing in the stream")
 
-        timestamp_ms = time_util.ms(now - stream.started_at) - duration_ms
+        timestamp_ms = voice_recording_timestamp - duration_ms
 
         voice_recording = VoiceRecording.objects.create(
             user=request.user,
