@@ -66,6 +66,11 @@ def get_search_results(user, provider_slug, query, formats):
     db_objs = []
     for obj_qs in [track_qs, collection_qs]:
         for obj in obj_qs:
+            img_url = (
+                obj.img_url
+                if obj.provider != GLOBAL_PROVIDER_JUKEBOX_RADIO
+                else generate_presigned_url(obj.img)
+            )
             db_objs.append(
                 {
                     "class": obj.__class__.__name__,
@@ -75,7 +80,7 @@ def get_search_results(user, provider_slug, query, formats):
                     "external_id": getattr(obj, "external_id"),
                     "name": getattr(obj, "name"),
                     "artist_name": getattr(obj, "artist_name"),
-                    "img_url": getattr(obj, "img_url"),
+                    "img_url": img_url,
                 }
             )
 

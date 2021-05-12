@@ -27,4 +27,6 @@ def epoch(dt):
 
 
 def int_to_dt(num):
-    return datetime.datetime.fromtimestamp(num / 1e3).replace(tzinfo=datetime.timezone.utc)
+    return datetime.datetime.fromtimestamp(num / 1e3).replace(
+        tzinfo=datetime.timezone.utc
+    )

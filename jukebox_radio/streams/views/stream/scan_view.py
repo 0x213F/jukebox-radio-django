@@ -43,8 +43,8 @@ class StreamScanView(BaseView, LoginRequiredMixin):
         now = time_util.now()
 
         valid_started_at = (
-            now > started_at and
-            now < started_at + total_duration - timedelta(seconds=5)
+            now > started_at
+            and now < started_at + total_duration - timedelta(seconds=5)
         )
 
         if not valid_started_at:
