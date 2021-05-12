@@ -346,7 +346,6 @@ def _get_apple_music_search_results(query, formats):
 # Apple Music
 # ------------------------------------------------------------------------------
 def _get_audius_search_results(query, formats):
-    Collection = apps.get_model("music", "Collection")
     Track = apps.get_model("music", "Track")
     Request = apps.get_model("networking", "Request")
 
