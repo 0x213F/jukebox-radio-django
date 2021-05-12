@@ -2,7 +2,7 @@ from django.apps import apps
 from django.conf import settings
 from django.db.models import Q
 
-from jukebox_radio.core.utils import generate_apple_music_token
+from jukebox_radio.core.utils import generate_apple_music_token, generate_presigned_url
 from jukebox_radio.music.const import (
     GLOBAL_PROVIDER_APPLE_MUSIC,
     GLOBAL_PROVIDER_AUDIUS,
@@ -103,15 +103,18 @@ def _get_jukebox_radio_search_results(query, user):
 
     tracks = []
     for track in track_qs:
+        # NOTE: This is a "custom serialize method" (purposefully different
+        #       than Track.objects.serialize, although it probably should not
+        #       be.)
         tracks.append(
             {
-                "format": Track.FORMAT_TRACK,
-                "provider": Track.PROVIDER_JUKEBOX_RADIO,
-                "external_id": track.uuid,
+                "format": track.format,
+                "provider": track.provider,
+                "external_id": track.uuid,  # IMPORTANT
                 "name": track.name,
                 "artist_name": track.artist_name,
                 "album_name": track.album_name,
-                "img_url": track.img.url,
+                "img_url": generate_presigned_url(track.img),
             }
         )
 
