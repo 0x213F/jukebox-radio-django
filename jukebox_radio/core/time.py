@@ -1,3 +1,4 @@
+import datetime
 from django.utils import timezone
 
 
@@ -22,3 +23,7 @@ def epoch(dt):
     if not dt:
         return None
     return int(dt.timestamp() * 1000)
+
+
+def int_to_dt(num):
+    return datetime.datetime.fromtimestamp(num / 1e3).replace(tzinfo=datetime.timezone.utc)

@@ -8,9 +8,10 @@ from jukebox_radio.core.base_view import BaseView
 from jukebox_radio.core.database import acquire_playback_control_lock
 
 
-class StreamScanBackwardView(BaseView, LoginRequiredMixin):
+class StreamScanView(BaseView, LoginRequiredMixin):
 
     PARAM_TOTAL_DURATION = "nowPlayingTotalDurationMilliseconds"
+    PARAM_STARTED_AT = "startedAt"
 
     def post(self, request, **kwargs):
         """
@@ -20,14 +21,13 @@ class StreamScanBackwardView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
         with acquire_playback_control_lock(stream):
-            stream = self._scan_backward(request, stream)
+            stream = self._scan(request, stream)
 
         return self.http_response_200({})
 
-    def _scan_backward(self, request, stream):
+    def _scan(self, request, stream):
         """
-        Scan the stream backwards 10 seconds e.g. double tapping left or right
-        in a video streaming app.
+        Scans the stream to a specific part of the currently playing track.
         """
         Stream = apps.get_model("streams", "Stream")
 
@@ -38,16 +38,19 @@ class StreamScanBackwardView(BaseView, LoginRequiredMixin):
 
         total_duration_ms = self.param(request, self.PARAM_TOTAL_DURATION)
         total_duration = timedelta(milliseconds=int(total_duration_ms))
-        end_buffer = timedelta(seconds=5)
-        if not stream.controls_enabled(end_buffer, total_duration):
-            raise Exception("Cannot scan backwards at the very end of the song")
+        started_at_raw = self.param(request, self.PARAM_STARTED_AT)
+        started_at = time_util.int_to_dt(int(started_at_raw))
+        now = time_util.now()
 
-        playing_at = stream.started_at + timedelta(seconds=10)
-        lower_bound = time_util.now() + timedelta(milliseconds=125)
-        if playing_at > lower_bound:
-            playing_at = lower_bound
+        valid_started_at = (
+            now > started_at and
+            now < started_at + total_duration - timedelta(seconds=5)
+        )
 
-        stream.started_at = playing_at
+        if not valid_started_at:
+            raise Exception("Invalid scan")
+
+        stream.started_at = started_at
         stream.save()
 
         return stream

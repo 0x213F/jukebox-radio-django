@@ -21,8 +21,7 @@ from jukebox_radio.streams.views.stream import (
     StreamPauseTrackView,
     StreamPlayTrackView,
     StreamPrevTrackView,
-    StreamScanBackwardView,
-    StreamScanForwardView,
+    StreamScanView,
 )
 
 app_name = "streams"
@@ -71,14 +70,9 @@ urlpatterns = [
         name="stream-prev-track",
     ),
     path(
-        "stream/scan-backward/",
-        view=StreamScanBackwardView.as_view(),
-        name="stream-scan-backward",
-    ),
-    path(
-        "stream/scan-forward/",
-        view=StreamScanForwardView.as_view(),
-        name="stream-scan-forward",
+        "stream/scan/",
+        view=StreamScanView.as_view(),
+        name="stream-scan",
     ),
     # Queue
     # --------------------------------------------------------------------------
