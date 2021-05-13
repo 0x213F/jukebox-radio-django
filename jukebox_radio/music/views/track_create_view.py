@@ -26,7 +26,10 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
         image_file = request.FILES.get("imageFile")
 
         # Morph audio into OGG
-        upload_file_ext = pathlib.Path(audio_file.temporary_file_path()).suffix[1:]
+        try:
+            upload_file_ext = pathlib.Path(audio_file.temporary_file_path()).suffix[1:]
+        except Exception:
+            upload_file_ext = "mp3"
         f = tempfile.NamedTemporaryFile(delete=False)
         f.write(audio_file.read())
 
