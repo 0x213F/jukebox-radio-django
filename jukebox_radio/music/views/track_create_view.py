@@ -29,7 +29,7 @@ class TrackCreateView(BaseView, LoginRequiredMixin):
         try:
             upload_file_ext = pathlib.Path(audio_file.temporary_file_path()).suffix[1:]
         except Exception:
-            upload_file_ext = "mp3"
+            upload_file_ext = "m4a"
         f = tempfile.NamedTemporaryFile(delete=False)
         f.write(audio_file.read())
 
