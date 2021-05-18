@@ -10,12 +10,11 @@ from jukebox_radio.core import time as time_util
 
 class QueueIntervalManager(models.Manager):
     def serialize(self, queue_interval):
-        Marker = apps.get_model("streams", "Marker")
         return {
             "uuid": queue_interval.uuid,
             "queueUuid": queue_interval.queue_id,
-            "lowerBound": Marker.objects.serialize(queue_interval.lower_bound),
-            "upperBound": Marker.objects.serialize(queue_interval.upper_bound),
+            "lowerBoundUuid": queue_interval.lower_bound_id,
+            "upperBoundUuid": queue_interval.upper_bound_id,
             "purpose": queue_interval.purpose,
         }
 

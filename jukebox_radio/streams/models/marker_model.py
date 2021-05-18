@@ -48,7 +48,7 @@ class Marker(models.Model):
 
     track = models.ForeignKey(
         "music.Track",
-        related_name="+",
+        related_name="markers",
         on_delete=models.CASCADE,
         null=True,
     )

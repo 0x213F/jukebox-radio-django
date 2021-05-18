@@ -10,6 +10,7 @@ class QueueManager(models.Manager):
     def serialize(self, queue):
         Collection = apps.get_model("music", "Collection")
         Track = apps.get_model("music", "Track")
+        Marker = apps.get_model("streams", "Marker")
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
         if not queue:
@@ -47,7 +48,7 @@ class QueueManager(models.Manager):
             active_intervals = queue.active_intervals
         except AttributeError:
             active_intervals = (
-                QueueInterval.objects.select_related("lower_bound", "upper_bound")
+                QueueInterval.objects
                 .filter(queue_id=queue.uuid, deleted_at__isnull=True)
                 .order_by("upper_bound__timestamp_ms")
             )
@@ -55,6 +56,19 @@ class QueueManager(models.Manager):
         for interval in active_intervals:
             intervals.append(QueueInterval.objects.serialize(interval))
         obj["intervals"] = intervals
+
+        try:
+            active_markers = queue.active_markers
+        except AttributeError:
+            active_markers = (
+                Marker.objects
+                .filter(track_id=queue.track_id, deleted_at__isnull=True)
+                .order_by("timestamp_ms")
+            )
+        markers = []
+        for marker in active_markers:
+            markers.append(Marker.objects.serialize(marker))
+        obj["markers"] = markers
 
         return obj
 
@@ -164,6 +178,24 @@ class QueueQuerySet(models.QuerySet):
             )
         )
 
+    def prefetch_active_markers(self):
+        """
+        Simple prefetch of queue intervals. This is needed because the deleted
+        (archived) intervals should not be included in the query.
+
+        We also join the bounds using select related since they are needed in
+        context of the queue intervals.
+        """
+        Marker = apps.get_model("streams", "Marker")
+
+        return self.prefetch_related(
+            Prefetch(
+                "track__markers",
+                queryset=Marker.objects.filter(deleted_at__isnull=True).order_by("timestamp_ms"),
+                to_attr="active_markers",
+            )
+        )
+
     def last_queue(self, stream):
         """
         This gets the very last item in a stream's queue.
@@ -249,11 +281,16 @@ class QueueQuerySet(models.QuerySet):
             return Queue.objects.none()
 
         return (
-            self.prefetch_related(
+            self
+            .select_related("track", "collection")
+            .prefetch_related(
                 Prefetch(
                     "children",
                     queryset=(
-                        Queue.objects.prefetch_active_intervals()
+                        Queue.objects
+                        .select_related("track", "collection")
+                        .prefetch_active_intervals()
+                        .prefetch_active_markers()
                         .filter(
                             index__gt=queue_head.index,
                             deleted_at__isnull=True,
@@ -264,6 +301,7 @@ class QueueQuerySet(models.QuerySet):
                 )
             )
             .prefetch_active_intervals()
+            .prefetch_active_markers()
             .filter(
                 index__gt=queue_head.index,
                 stream=stream,

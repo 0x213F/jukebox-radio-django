@@ -11,6 +11,7 @@ from jukebox_radio.core.database import acquire_playback_control_lock
 class StreamPlayTrackView(BaseView, LoginRequiredMixin):
 
     PARAM_TOTAL_DURATION = "nowPlayingTotalDurationMilliseconds"
+    PARAM_STARTED_AT = "startedAt"
 
     def post(self, request, **kwargs):
         """
@@ -46,7 +47,25 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
         playing_at = time_util.now() + timedelta(milliseconds=100)
         paused_duration = playing_at - stream.paused_at
 
-        stream.started_at += paused_duration
+        # NOTE: This is a copy paste of "scan" logic found in "scan_view."
+        total_duration_ms = self.param(request, self.PARAM_TOTAL_DURATION)
+        total_duration = timedelta(milliseconds=int(total_duration_ms))
+        started_at_raw = self.param(request, self.PARAM_STARTED_AT)
+        if started_at_raw:
+            started_at = time_util.int_to_dt(int(started_at_raw))
+
+            # Needs validation when scanning
+            now = time_util.now()
+            valid_started_at = (
+                now > started_at
+                and now < started_at + total_duration - timedelta(seconds=5)
+            )
+            if not valid_started_at:
+                raise Exception("Invalid scan")
+        else:
+            started_at = stream.started_at + paused_duration
+
+        stream.started_at = started_at
         stream.paused_at = None
         stream.save()
 
