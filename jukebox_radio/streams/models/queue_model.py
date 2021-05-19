@@ -356,6 +356,22 @@ class Queue(models.Model):
 
     INITIAL_INDEX = 1
 
+    STATUS_QUEUED_INIT = "queued_init"
+    STATUS_PLAYED = "played"
+    STATUS_PAUSED = "paused"
+    STATUS_ENDED_AUTO = "ended_auto"
+    STATUS_ENDED_SKIPPED = "ended_skip"
+    STATUS_QUEUED_PREVIOUS = "queued_previous"
+
+    STATUS_CHOICES = [
+        (STATUS_QUEUED_INIT, "Queued (init)"),
+        (STATUS_PLAYED, "Played"),
+        (STATUS_PAUSED, "Paused"),
+        (STATUS_ENDED_AUTO, "Ended (auto)"),
+        (STATUS_ENDED_SKIPPED, "Ended (skipped)"),
+        (STATUS_QUEUED_PREVIOUS, "Queued (previous)"),
+    ]
+
     objects = QueueManager.from_queryset(QueueQuerySet)()
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -391,7 +407,10 @@ class Queue(models.Model):
         null=True,
     )
 
-    played_at = models.DateTimeField(null=True, blank=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+
+    status = models.CharField(max_length=32, choices=STATUS_CHOICES)
+    status_at = models.DateTimeField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
