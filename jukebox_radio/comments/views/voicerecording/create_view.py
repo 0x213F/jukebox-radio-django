@@ -41,7 +41,7 @@ class VoiceRecordingCreateView(BaseView, LoginRequiredMixin):
             user=request.user
         )
 
-        if not stream.is_playing and not stream.is_playing:
+        if not stream.now_playing.is_playing and not stream.now_playing.is_playing:
             return self.http_response_400("No track is currently playing in the stream")
 
         timestamp_ms = voice_recording_timestamp - duration_ms

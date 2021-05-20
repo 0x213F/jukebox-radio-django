@@ -10,21 +10,16 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         """
         When a user wants to play the "up next queue item" right now.
         """
-        QueueInterval = apps.get_model("streams", "QueueInterval")
+        Queue = apps.get_model("streams", "Queue")
 
         queue_uuid = self.param(request, "queueUuid")
         with acquire_manage_queue_intervals_lock(queue_uuid):
-            queue_interval = self._create_queue_interval(request)
-
-        # needed for React Redux to update the state on the FE
-        parent_queue_uuid = self.param(request, "parentQueueUuid")
+            queue = self._create_queue_interval(request)
 
         return self.http_react_response(
-            "queueInterval/create",
+            "queue/update",
             {
-                "queueInterval": QueueInterval.objects.serialize(queue_interval),
-                "queueUuid": queue_uuid,
-                "parentQueueUuid": parent_queue_uuid,
+                "queues": [Queue.objects.serialize(queue)],
             },
         )
 
@@ -32,13 +27,18 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         """
         Create a QueueInterval.
         """
+        Marker = apps.get_model("streams", "Marker")
         QueueInterval = apps.get_model("streams", "QueueInterval")
+        Queue = apps.get_model("streams", "Queue")
 
+        # Query parameters
         queue_uuid = self.param(request, "queueUuid")
         lower_bound_marker_uuid = self.param(request, "lowerBoundMarkerUuid")
         upper_bound_marker_uuid = self.param(request, "upperBoundMarkerUuid")
         purpose = self.param(request, "purpose")
-        queue_interval = QueueInterval.objects.create_queue_interval(
+
+        # Create the interval
+        QueueInterval.objects.create_queue_interval(
             user=request.user,
             queue_id=queue_uuid,
             lower_bound_id=lower_bound_marker_uuid,
@@ -46,4 +46,35 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
             purpose=purpose,
         )
 
-        return queue_interval
+        # Update the queue duration
+        if purpose == QueueInterval.PURPOSE_MUTED:
+            queue = (
+                Queue
+                .objects
+                .select_related('parent')
+                .select_related('track')
+                .get(uuid=queue_uuid)
+            )
+
+            lower_timestamp_ms = (
+                Marker.objects.get(uuid=lower_bound_marker_uuid).timestamp_ms
+                if lower_bound_marker_uuid else 0
+            )
+            upper_timestamp_ms = (
+                Marker.objects.get(uuid=upper_bound_marker_uuid).timestamp_ms
+                if upper_bound_marker_uuid else queue.track.duration_ms
+            )
+            interval_duration_ms = upper_timestamp_ms - lower_timestamp_ms
+
+            queue.duration_ms -= interval_duration_ms
+            queue.save()
+            if queue.parent:
+                # NOTE: This returns the parent queue to the application, which
+                #       is expected!
+                queue = queue.parent
+                queue.duration_ms += interval_duration_ms
+                queue.save()
+
+        # Queue object (along with related intervals) will be sent back to the
+        # application.
+        return queue

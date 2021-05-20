@@ -10,22 +10,21 @@ from jukebox_radio.core.database import acquire_playback_control_lock
 
 class StreamPauseTrackView(BaseView, LoginRequiredMixin):
 
-    PARAM_TOTAL_DURATION = "nowPlayingTotalDurationMilliseconds"
-
     def post(self, request, **kwargs):
         """
         When a user wants to play the "up next queue item" right now.
         """
         Stream = apps.get_model("streams", "Stream")
 
-        stream = Stream.objects.get(user=request.user)
+        stream = Stream.objects.select_related('now_playing').get(user=request.user)
         with acquire_playback_control_lock(stream):
             stream = self._pause_track(request, stream)
 
         return self.http_react_response(
             "stream/pause",
             {
-                "pausedAt": time_util.epoch(stream.paused_at),
+                "statusAt": time_util.epoch(stream.now_playing.status_at),
+                "status": stream.now_playing.status,
             },
         )
 
@@ -33,18 +32,20 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
         """
         When a user pauses a playing stream.
         """
-        if not stream.is_playing:
+        Queue = apps.get_model("streams", "Queue")
+        if not stream.now_playing.is_playing:
             raise ValueError("Cannot pause a stream that is not already playing")
-        if stream.is_paused:
+        if stream.now_playing.is_paused:
             raise ValueError("Cannot pause a stream which is already paused")
 
         pausing_at = time_util.now() + timedelta(milliseconds=100)
-        if (stream.started_at - pausing_at) > stream.now_playing_duration:
+        if not stream.now_playing.controls_enabled:
             raise ValueError(
                 "Cannot pause since the track will be over by the time we try to pause"
             )
 
-        stream.paused_at = pausing_at
-        stream.save()
+        stream.now_playing.status = Queue.STATUS_PAUSED
+        stream.now_playing.status_at = pausing_at
+        stream.now_playing.save()
 
         return stream
