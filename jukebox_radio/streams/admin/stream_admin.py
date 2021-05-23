@@ -10,8 +10,6 @@ class StreamAdmin(admin.ModelAdmin):
     list_display = (
         "list_uuid",
         "now_playing",
-        "list_is_playing",
-        "list_is_paused",
         "user",
     )
 
@@ -41,18 +39,6 @@ class StreamAdmin(admin.ModelAdmin):
         return mark_safe(f"<tt>{obj.uuid}</tt>")
 
     list_uuid.short_description = "UUID"
-
-    def list_is_playing(self, obj):
-        return obj.is_playing
-
-    list_is_playing.short_description = "IS PLAYING"
-    list_is_playing.boolean = True
-
-    def list_is_paused(self, obj):
-        return obj.is_paused
-
-    list_is_paused.short_description = "IS PAUSED"
-    list_is_paused.boolean = True
 
     # NOTE: https://github.com/jyveapp/django-pghistory
     object_history_template = "admin/pghistory_template.html"

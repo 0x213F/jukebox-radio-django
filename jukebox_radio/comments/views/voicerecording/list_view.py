@@ -15,7 +15,7 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        if not stream.is_playing and not stream.is_paused:
+        if not stream.now_playing.is_playing and not stream.now_playing.is_paused:
             return self.http_react_response(
                 "voiceRecording/listSet",
                 {

@@ -10,21 +10,16 @@ class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
         """
         When a user wants to play the "up next queue item" right now.
         """
-        QueueInterval = apps.get_model("streams", "QueueInterval")
+        Queue = apps.get_model("streams", "Queue")
 
         queue_uuid = self.param(request, "queueUuid")
         with acquire_manage_queue_intervals_lock(queue_uuid):
-            queue_interval = self._delete_queue_interval(request)
-
-        # needed for React Redux to update the state on the FE
-        parent_queue_uuid = self.param(request, "parentQueueUuid")
+            queue = self._delete_queue_interval(request)
 
         return self.http_react_response(
-            "queueInterval/delete",
+            "queue/update",
             {
-                "queueInterval": QueueInterval.objects.serialize(queue_interval),
-                "queueUuid": queue_uuid,
-                "parentQueueUuid": parent_queue_uuid,
+                "queues": [Queue.objects.serialize(queue)],
             },
         )
 
@@ -34,8 +29,37 @@ class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
         """
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
+        # Query parameters
         queue_interval_uuid = self.param(request, "queueIntervalUuid")
-        queue_interval = QueueInterval.objects.get(uuid=queue_interval_uuid)
+
+        # Delete the interval
+        queue_interval = (
+            QueueInterval
+            .objects
+            .select_related('queue')
+            .select_related('queue__track')
+            .select_related('queue__parent')
+            .select_related('lower_bound')
+            .select_related('upper_bound')
+            .get(uuid=queue_interval_uuid)
+        )
         queue_interval.archive()
 
-        return queue_interval
+        queue = queue_interval.queue
+
+        # Update the queue duration
+        if queue_interval.purpose == QueueInterval.PURPOSE_MUTED:
+            lower_timestamp_ms = getattr(queue_interval.lower_bound, "timestamp_ms", 0)
+            upper_timestamp_ms = getattr(queue_interval.upper_bound, "timestamp_ms", queue.track.duration_ms)
+            interval_duration_ms = upper_timestamp_ms - lower_timestamp_ms
+
+            queue.duration_ms += interval_duration_ms
+            queue.save()
+            if queue.parent:
+                # NOTE: This returns the parent queue to the application, which
+                #       is expected!
+                queue = queue.parent
+                queue.duration_ms += interval_duration_ms
+                queue.save()
+
+        return queue

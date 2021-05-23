@@ -59,6 +59,7 @@ class QueueAdmin(admin.ModelAdmin):
     list_display = (
         "list_uuid",
         "index",
+        "status",
         "list_parent",
         "list_stream",
         "user",
@@ -85,7 +86,9 @@ class QueueAdmin(admin.ModelAdmin):
                 "fields": (
                     "track",
                     "collection",
-                    "played_at",
+                    "started_at",
+                    "status",
+                    "status_at",
                 ),
             },
         ),

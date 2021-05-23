@@ -10,7 +10,6 @@ from jukebox_radio.core.database import acquire_playback_control_lock
 
 class StreamScanView(BaseView, LoginRequiredMixin):
 
-    PARAM_TOTAL_DURATION = "nowPlayingTotalDurationMilliseconds"
     PARAM_STARTED_AT = "startedAt"
 
     def post(self, request, **kwargs):
@@ -19,11 +18,18 @@ class StreamScanView(BaseView, LoginRequiredMixin):
         """
         Stream = apps.get_model("streams", "Stream")
 
-        stream = Stream.objects.get(user=request.user)
+        stream = Stream.objects.select_related('now_playing').get(user=request.user)
         with acquire_playback_control_lock(stream):
             stream = self._scan(request, stream)
 
-        return self.http_response_200({})
+        return self.http_react_response(
+            "stream/scan",
+            {
+                "startedAt": time_util.epoch(stream.now_playing.started_at),
+                "statusAt": time_util.epoch(stream.now_playing.status_at),
+                "status": stream.now_playing.status,
+            },
+        )
 
     def _scan(self, request, stream):
         """
@@ -33,10 +39,10 @@ class StreamScanView(BaseView, LoginRequiredMixin):
 
         stream = Stream.objects.get(user=request.user)
 
-        if not stream.is_playing:
+        if not stream.now_playing.is_playing:
             raise Exception("Stream has to be playing")
 
-        total_duration_ms = self.param(request, self.PARAM_TOTAL_DURATION)
+        total_duration_ms = stream.now_playing.duration_ms
         total_duration = timedelta(milliseconds=int(total_duration_ms))
         started_at_raw = self.param(request, self.PARAM_STARTED_AT)
         started_at = time_util.int_to_dt(int(started_at_raw))
@@ -50,7 +56,8 @@ class StreamScanView(BaseView, LoginRequiredMixin):
         if not valid_started_at:
             raise Exception("Invalid scan")
 
-        stream.started_at = started_at
-        stream.save()
+        stream.now_playing.started_at = started_at
+        stream.now_playing.status_at = time_util.now()
+        stream.now_playing.save()
 
         return stream

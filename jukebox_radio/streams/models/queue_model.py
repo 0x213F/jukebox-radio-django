@@ -1,9 +1,12 @@
 import uuid
+from datetime import timedelta
 
 import pgtrigger
 from django.apps import apps
 from django.db import models, transaction
 from django.db.models import F, Prefetch
+
+from jukebox_radio.core import time as time_util
 
 
 class QueueManager(models.Manager):
@@ -31,12 +34,16 @@ class QueueManager(models.Manager):
             "parentUuid": queue.parent_id,
             "isAbstract": queue.is_abstract,
             "isArchived": bool(queue.deleted_at),
+            "durationMilliseconds": queue.duration_ms,
+            "startedAt": time_util.epoch(queue.started_at),
+            "status": queue.status,
+            "statusAt": time_util.epoch(queue.status_at),
         }
 
         try:
             queue_children = queue.ordered_children
         except AttributeError:
-            # TODO: we should fetch children here, but as of now, no case
+            # NOTE: We should fetch children here, but as of now, no case
             #       justifies writing this code.
             queue_children = []
         children = []
@@ -75,7 +82,9 @@ class QueueManager(models.Manager):
     @pgtrigger.ignore("streams.Queue:protect_inserts")
     def create_blank_queue(self, stream):
         """
-        Custom create method
+        Custom create method.
+        TODO: this should probably only be done when the blank queue is the
+        new head. the code should enforce that.
         """
         Queue = apps.get_model("streams", "Queue")
 
@@ -90,6 +99,9 @@ class QueueManager(models.Manager):
             user=stream.user,
             index=index,
             is_abstract=False,
+            duration_ms=0,
+            status=Queue.STATUS_PLAYED,
+            status_at=time_util.now(),
         )
 
     @pgtrigger.ignore("streams.Queue:protect_inserts")
@@ -132,6 +144,8 @@ class QueueManager(models.Manager):
                     user=user,
                     collection=collection,
                     is_abstract=True,
+                    status=Queue.STATUS_QUEUED_INIT,
+                    status_at=time_util.now(),
                 )
                 if collection
                 else None
@@ -139,7 +153,9 @@ class QueueManager(models.Manager):
             if parent_queue:
                 queues.append(parent_queue)
 
+            total_duration_ms = 0
             for _track in _tracks:
+                t = _track or track
                 queue = Queue(
                     stream=stream,
                     index=index,
@@ -148,9 +164,15 @@ class QueueManager(models.Manager):
                     collection=collection,
                     is_abstract=False,
                     parent=parent_queue,
+                    duration_ms=t.duration_ms,
+                    status=Queue.STATUS_QUEUED_INIT,
+                    status_at=time_util.now(),
                 )
                 queues.append(queue)
                 index += 1
+                total_duration_ms += t.duration_ms
+            if parent_queue:
+                parent_queue.duration_ms = total_duration_ms
 
             Queue.objects.bulk_create(queues)
 
@@ -354,7 +376,25 @@ class Queue(models.Model):
     recursive tree structure with unlimited depth is possible.
     """
 
+    CONTROL_BUFFER_MS = 6000
+
     INITIAL_INDEX = 1
+
+    STATUS_QUEUED_INIT = "queued_init"
+    STATUS_PLAYED = "played"
+    STATUS_PAUSED = "paused"
+    STATUS_ENDED_AUTO = "ended_auto"
+    STATUS_ENDED_SKIPPED = "ended_skip"
+    STATUS_QUEUED_PREVIOUS = "queued_previous"
+
+    STATUS_CHOICES = [
+        (STATUS_QUEUED_INIT, "Queued (init)"),
+        (STATUS_PLAYED, "Played"),
+        (STATUS_PAUSED, "Paused"),
+        (STATUS_ENDED_AUTO, "Ended (auto)"),
+        (STATUS_ENDED_SKIPPED, "Ended (skipped)"),
+        (STATUS_QUEUED_PREVIOUS, "Queued (previous)"),
+    ]
 
     objects = QueueManager.from_queryset(QueueQuerySet)()
 
@@ -391,8 +431,41 @@ class Queue(models.Model):
         null=True,
     )
 
-    played_at = models.DateTimeField(null=True, blank=True)
+    duration_ms = models.PositiveIntegerField()
+
+    started_at = models.DateTimeField(null=True, blank=True)
+
+    status = models.CharField(max_length=32, choices=STATUS_CHOICES)
+    status_at = models.DateTimeField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def is_playing(self):
+        return self.status == self.STATUS_PLAYED
+
+    @property
+    def is_paused(self):
+        return self.status == self.STATUS_PAUSED
+
+    def controls_enabled(self, end_buffer, total_duration):
+        """
+        A stream's playback controls are disabled towards the end of the now
+        playing track. This determines if the stream is able to have the
+        controls enabled or not.
+        """
+        if not self.track_id:
+            raise Exception("Can only control a queue if it has a track.")
+
+        if self.status == self.STATUS_PAUSED:
+            return True
+
+        if self.status != self.STATUS_PLAYED:
+            return False
+
+        expected_end_at = self.started_at + timedelta(milliseconds=self.track.duration_ms)
+        controls_disabled_at = time_util.now() + timedelta(milliseconds=self.CONTROL_BUFFER_MS)
+
+        return controls_disabled_at > expected_end_at
