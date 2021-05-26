@@ -7,6 +7,7 @@ from django.db import models, transaction
 from django.db.models import F, Prefetch
 
 from jukebox_radio.core import time as time_util
+from jukebox_radio.music.refresh import refresh_track_external_data
 
 
 class QueueManager(models.Manager):
@@ -156,6 +157,9 @@ class QueueManager(models.Manager):
             total_duration_ms = 0
             for _track in _tracks:
                 t = _track or track
+                if not t.duration_ms:
+                    refresh_track_external_data(t, user)
+                    t.refresh_from_db()
                 queue = Queue(
                     stream=stream,
                     index=index,

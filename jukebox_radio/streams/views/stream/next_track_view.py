@@ -16,17 +16,16 @@ class StreamNextTrackView(BaseView, LoginRequiredMixin):
         When a user wants to play the "up next queue item" right now.
         """
         Stream = apps.get_model("streams", "Stream")
+        Queue = apps.get_model("streams", "Queue")
 
         stream = Stream.objects.select_related('now_playing').get(user=request.user)
         with acquire_playback_control_lock(stream):
             stream = self._next_track(request, stream)
 
         return self.http_react_response(
-            "stream/nextTrack",
+            "queue/update",
             {
-                "startedAt": time_util.epoch(stream.now_playing.started_at),
-                "statusAt": time_util.epoch(stream.now_playing.status_at),
-                "status": stream.now_playing.status,
+                "queues": [Queue.objects.serialize(stream.now_playing)],
             },
         )
 
