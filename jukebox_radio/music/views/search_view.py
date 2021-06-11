@@ -24,15 +24,15 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
         query = request.GET["query"]
 
         providers = []
-        if request.GET["providerAppleMusic"] == "true":
+        if request.GET["service"] == GLOBAL_PROVIDER_APPLE_MUSIC:
             providers.append(GLOBAL_PROVIDER_APPLE_MUSIC)
-        if request.GET["providerSpotify"] == "true":
+        if request.GET["service"] == GLOBAL_PROVIDER_SPOTIFY:
             providers.append(GLOBAL_PROVIDER_SPOTIFY)
-        if request.GET["providerYouTube"] == "true":
+        if request.GET["service"] == GLOBAL_PROVIDER_YOUTUBE:
             providers.append(GLOBAL_PROVIDER_YOUTUBE)
-        if request.GET["providerAudius"] == "true":
+        if request.GET["service"] == GLOBAL_PROVIDER_AUDIUS:
             providers.append(GLOBAL_PROVIDER_AUDIUS)
-        if request.GET["providerJukeboxRadio"] == "true":
+        if request.GET["service"] == GLOBAL_PROVIDER_JUKEBOX_RADIO:
             providers.append(GLOBAL_PROVIDER_JUKEBOX_RADIO)
 
         formats = []
