@@ -23,7 +23,7 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
                 },
             )
 
-        track_uuid = stream.now_playing.track_id
+        track_uuid = self.param(request, 'trackUuid')
 
         voice_recording_qs = VoiceRecording.objects.context_filter(
             track_uuid, request.user
@@ -36,6 +36,6 @@ class VoiceRecordingListView(BaseView, LoginRequiredMixin):
         return self.http_react_response(
             "voiceRecording/listSet",
             {
-                "voiceRecordings": voice_recordings,
+                "voiceRecordings": voice_recordings,  "trackUuid": track_uuid
             },
         )

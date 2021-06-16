@@ -21,5 +21,5 @@ class TextCommentListView(BaseView, LoginRequiredMixin):
 
         return self.http_react_response(
             "textComment/listSet",
-            {"textComments": text_comments},
+            {"textComments": text_comments, "trackUuid": track_uuid},
         )
