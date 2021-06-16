@@ -17,7 +17,7 @@ class StreamPrevTrackView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model("streams", "Stream")
         Queue = apps.get_model("streams", "Queue")
 
-        stream = Stream.objects.select_related('now_playing').get(user=request.user)
+        stream = Stream.objects.select_related("now_playing").get(user=request.user)
         with acquire_playback_control_lock(stream):
             stream = self._prev_track(request, stream)
 
@@ -36,7 +36,11 @@ class StreamPrevTrackView(BaseView, LoginRequiredMixin):
         if not stream.now_playing.track_id:
             raise ValueError("Nothing to play next!")
 
-        if stream.now_playing and not stream.now_playing.is_playing and not stream.now_playing.is_paused:
+        if (
+            stream.now_playing
+            and not stream.now_playing.is_playing
+            and not stream.now_playing.is_paused
+        ):
             playing_at = time_util.now()
             stream.now_playing.started_at = playing_at
             stream.now_playing.status = Queue.STATUS_PLAYED

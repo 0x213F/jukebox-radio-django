@@ -19,7 +19,7 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model("streams", "Stream")
         Queue = apps.get_model("streams", "Queue")
 
-        stream = Stream.objects.select_related('now_playing').get(user=request.user)
+        stream = Stream.objects.select_related("now_playing").get(user=request.user)
         with acquire_playback_control_lock(stream):
             stream = self._play_track(request, stream)
 

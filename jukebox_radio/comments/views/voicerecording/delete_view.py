@@ -19,5 +19,8 @@ class VoiceRecordingDeleteView(BaseView, LoginRequiredMixin):
 
         return self.http_react_response(
             "voiceRecording/delete",
-            {"voiceRecordingUuid": voice_recording_uuid, "trackUuid": voice_recording.track_id },
+            {
+                "voiceRecordingUuid": voice_recording_uuid,
+                "trackUuid": voice_recording.track_id,
+            },
         )

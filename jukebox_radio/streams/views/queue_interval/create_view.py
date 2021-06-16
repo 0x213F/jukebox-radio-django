@@ -49,20 +49,20 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         # Update the queue duration
         if purpose == QueueInterval.PURPOSE_MUTED:
             queue = (
-                Queue
-                .objects
-                .select_related('parent')
-                .select_related('track')
+                Queue.objects.select_related("parent")
+                .select_related("track")
                 .get(uuid=queue_uuid)
             )
 
             lower_timestamp_ms = (
                 Marker.objects.get(uuid=lower_bound_marker_uuid).timestamp_ms
-                if lower_bound_marker_uuid else 0
+                if lower_bound_marker_uuid
+                else 0
             )
             upper_timestamp_ms = (
                 Marker.objects.get(uuid=upper_bound_marker_uuid).timestamp_ms
-                if upper_bound_marker_uuid else queue.track.duration_ms
+                if upper_bound_marker_uuid
+                else queue.track.duration_ms
             )
             interval_duration_ms = upper_timestamp_ms - lower_timestamp_ms
 

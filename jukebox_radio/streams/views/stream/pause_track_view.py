@@ -9,7 +9,6 @@ from jukebox_radio.core.database import acquire_playback_control_lock
 
 
 class StreamPauseTrackView(BaseView, LoginRequiredMixin):
-
     def post(self, request, **kwargs):
         """
         When a user wants to play the "up next queue item" right now.
@@ -17,7 +16,7 @@ class StreamPauseTrackView(BaseView, LoginRequiredMixin):
         Stream = apps.get_model("streams", "Stream")
         Queue = apps.get_model("streams", "Queue")
 
-        stream = Stream.objects.select_related('now_playing').get(user=request.user)
+        stream = Stream.objects.select_related("now_playing").get(user=request.user)
         with acquire_playback_control_lock(stream):
             stream = self._pause_track(request, stream)
 

@@ -19,5 +19,5 @@ class TextCommentDeleteView(BaseView, LoginRequiredMixin):
 
         return self.http_react_response(
             "textComment/delete",
-            {"textCommentUuid": text_comment_uuid, "trackUuid": text_comment.track_id },
+            {"textCommentUuid": text_comment_uuid, "trackUuid": text_comment.track_id},
         )

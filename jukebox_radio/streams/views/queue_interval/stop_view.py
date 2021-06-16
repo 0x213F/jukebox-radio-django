@@ -28,11 +28,14 @@ class QueueIntervalStopView(BaseView, LoginRequiredMixin):
                         "queueInterval": q,
                         "queueUuid": q["queueUuid"],
                         "parentQueueUuid": parent_queue_uuid,
-                    } for q in deleted_queue_intervals
+                    }
+                    for q in deleted_queue_intervals
                 ],
                 "queueInterval/create": [
                     {
-                        "queueInterval": QueueInterval.objects.serialize(queue_interval),
+                        "queueInterval": QueueInterval.objects.serialize(
+                            queue_interval
+                        ),
                         "queueUuid": str(queue_interval.queue_id),
                         "parentQueueUuid": parent_queue_uuid,
                     }
@@ -55,14 +58,10 @@ class QueueIntervalStopView(BaseView, LoginRequiredMixin):
             marker = Marker.objects.get(uuid=marker_uuid)
 
             deleted_queue_intervals = []
-            queue_interval_qs = (
-                QueueInterval
-                .objects
-                .filter(
-                    queue_id=queue_uuid,
-                    lower_bound__timestamp_ms__gte=marker.timestamp_ms,
-                    deleted_at__isnull=True,
-                )
+            queue_interval_qs = QueueInterval.objects.filter(
+                queue_id=queue_uuid,
+                lower_bound__timestamp_ms__gte=marker.timestamp_ms,
+                deleted_at__isnull=True,
             )
 
             for queue_interval in queue_interval_qs:

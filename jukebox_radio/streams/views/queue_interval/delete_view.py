@@ -34,13 +34,11 @@ class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
 
         # Delete the interval
         queue_interval = (
-            QueueInterval
-            .objects
-            .select_related('queue')
-            .select_related('queue__track')
-            .select_related('queue__parent')
-            .select_related('lower_bound')
-            .select_related('upper_bound')
+            QueueInterval.objects.select_related("queue")
+            .select_related("queue__track")
+            .select_related("queue__parent")
+            .select_related("lower_bound")
+            .select_related("upper_bound")
             .get(uuid=queue_interval_uuid)
         )
         queue_interval.archive()
@@ -50,7 +48,9 @@ class QueueIntervalDeleteView(BaseView, LoginRequiredMixin):
         # Update the queue duration
         if queue_interval.purpose == QueueInterval.PURPOSE_MUTED:
             lower_timestamp_ms = getattr(queue_interval.lower_bound, "timestamp_ms", 0)
-            upper_timestamp_ms = getattr(queue_interval.upper_bound, "timestamp_ms", queue.track.duration_ms)
+            upper_timestamp_ms = getattr(
+                queue_interval.upper_bound, "timestamp_ms", queue.track.duration_ms
+            )
             interval_duration_ms = upper_timestamp_ms - lower_timestamp_ms
 
             queue.duration_ms += interval_duration_ms

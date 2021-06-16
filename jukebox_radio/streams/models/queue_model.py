@@ -55,11 +55,9 @@ class QueueManager(models.Manager):
         try:
             active_intervals = queue.active_intervals
         except AttributeError:
-            active_intervals = (
-                QueueInterval.objects
-                .filter(queue_id=queue.uuid, deleted_at__isnull=True)
-                .order_by("upper_bound__timestamp_ms")
-            )
+            active_intervals = QueueInterval.objects.filter(
+                queue_id=queue.uuid, deleted_at__isnull=True
+            ).order_by("upper_bound__timestamp_ms")
         intervals = []
         for interval in active_intervals:
             intervals.append(QueueInterval.objects.serialize(interval))
@@ -68,11 +66,9 @@ class QueueManager(models.Manager):
         try:
             active_markers = queue.active_markers
         except AttributeError:
-            active_markers = (
-                Marker.objects
-                .filter(track_id=queue.track_id, deleted_at__isnull=True)
-                .order_by("timestamp_ms")
-            )
+            active_markers = Marker.objects.filter(
+                track_id=queue.track_id, deleted_at__isnull=True
+            ).order_by("timestamp_ms")
         markers = []
         for marker in active_markers:
             markers.append(Marker.objects.serialize(marker))
@@ -217,7 +213,9 @@ class QueueQuerySet(models.QuerySet):
         return self.prefetch_related(
             Prefetch(
                 "track__markers",
-                queryset=Marker.objects.filter(deleted_at__isnull=True).order_by("timestamp_ms"),
+                queryset=Marker.objects.filter(deleted_at__isnull=True).order_by(
+                    "timestamp_ms"
+                ),
                 to_attr="active_markers",
             )
         )
@@ -307,14 +305,12 @@ class QueueQuerySet(models.QuerySet):
             return Queue.objects.none()
 
         return (
-            self
-            .select_related("track", "collection")
+            self.select_related("track", "collection")
             .prefetch_related(
                 Prefetch(
                     "children",
                     queryset=(
-                        Queue.objects
-                        .select_related("track", "collection")
+                        Queue.objects.select_related("track", "collection")
                         .prefetch_active_intervals()
                         .prefetch_active_markers()
                         .filter(
@@ -469,7 +465,11 @@ class Queue(models.Model):
         if self.status != self.STATUS_PLAYED:
             return False
 
-        expected_end_at = self.started_at + timedelta(milliseconds=self.track.duration_ms)
-        controls_disabled_at = time_util.now() + timedelta(milliseconds=self.CONTROL_BUFFER_MS)
+        expected_end_at = self.started_at + timedelta(
+            milliseconds=self.track.duration_ms
+        )
+        controls_disabled_at = time_util.now() + timedelta(
+            milliseconds=self.CONTROL_BUFFER_MS
+        )
 
         return controls_disabled_at > expected_end_at
