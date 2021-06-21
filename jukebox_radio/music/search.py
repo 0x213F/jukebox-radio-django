@@ -285,6 +285,7 @@ def _get_apple_music_search_results(query, formats):
     if Collection.FORMAT_PLAYLIST in formats:
         formats.remove(Collection.FORMAT_PLAYLIST)
         formats.add("playlists")
+    formats.add("music-videos")
 
     data = {
         "term": query,
@@ -343,6 +344,22 @@ def _get_apple_music_search_results(query, formats):
                     "name": item["attributes"]["name"],
                     "artist_name": item["attributes"]["artistName"],
                     "album_name": item["attributes"]["albumName"],
+                    "img_url": item["attributes"]["artwork"]["url"],
+                    "duration_ms": item["attributes"]["durationInMillis"],
+                }
+            )
+
+    if "music-videos" in response_json["results"].keys():
+        items = response_json["results"]["music-videos"]["data"]
+        for item in items:
+            print(item)
+            cleaned_data.append(
+                {
+                    "format": Track.FORMAT_VIDEO,
+                    "provider": "apple_music",
+                    "external_id": item["id"],
+                    "name": item["attributes"]["name"],
+                    "artist_name": item["attributes"]["artistName"],
                     "img_url": item["attributes"]["artwork"]["url"],
                     "duration_ms": item["attributes"]["durationInMillis"],
                 }
