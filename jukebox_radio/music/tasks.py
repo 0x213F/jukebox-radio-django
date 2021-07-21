@@ -46,7 +46,7 @@ def generate_stems_for_track(track_uuid):
     #       If your system is silently crashing, it is likely running out of
     #       RAM. Combat the issue by adjusting the enviorment variable value
     #       for AUDIO_SEGMENT_PROCESSING_LENGTH to a smaller value.
-    separator = Separator("spleeter:4stems")
+    separator = Separator("spleeter:5stems")
     chunks = make_chunks(audio_segment, settings.AUDIO_SEGMENT_PROCESSING_LENGTH)
     wav_codec = "wav"
     export_codec = "ogg"
@@ -70,6 +70,7 @@ def generate_stems_for_track(track_uuid):
         f"drums.{export_codec}": AudioSegment.empty(),
         f"other.{export_codec}": AudioSegment.empty(),
         f"vocals.{export_codec}": AudioSegment.empty(),
+        f"piano.{export_codec}": AudioSegment.empty(),
     }
     for idx in range(len(chunks)):
         chunk_filename = get_chunk_temporary_filename(track_uuid, idx)
@@ -91,6 +92,8 @@ def generate_stems_for_track(track_uuid):
             instrument = Stem.INSTRUMENT_DRUMS
         elif Stem.INSTRUMENT_VOCALS in stem_audio_key:
             instrument = Stem.INSTRUMENT_VOCALS
+        elif Stem.INSTRUMENT_PIANO in stem_audio_key:
+            instrument = Stem.INSTRUMENT_PIANO
         else:  # Stem.INSTRUMENT_OTHER in stem_audio_key:
             instrument = Stem.INSTRUMENT_OTHER
 

@@ -55,7 +55,7 @@ class StreamPlayTrackView(BaseView, LoginRequiredMixin):
 
         # Needs validation when scanning
         valid_started_at = (
-            now > started_at
+            now >= started_at
             and now < started_at + total_duration - timedelta(seconds=5)
         )
         if not valid_started_at:

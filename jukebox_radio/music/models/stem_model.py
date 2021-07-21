@@ -24,11 +24,13 @@ class Stem(models.Model):
     INSTRUMENT_BASS = "bass"
     INSTRUMENT_DRUMS = "drums"
     INSTRUMENT_VOCALS = "vocals"
+    INSTRUMENT_PIANO = "piano"
     INSTRUMENT_OTHER = "other"
     INSTRUMENT_CHOICES = (
         (INSTRUMENT_BASS, "Bass"),
         (INSTRUMENT_DRUMS, "Drums"),
         (INSTRUMENT_VOCALS, "Vocals"),
+        (INSTRUMENT_PIANO, "Piano"),
         (INSTRUMENT_OTHER, "Other"),
     )
 

@@ -36,6 +36,11 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
         lower_bound_marker_uuid = self.param(request, "lowerBoundMarkerUuid")
         upper_bound_marker_uuid = self.param(request, "upperBoundMarkerUuid")
         purpose = self.param(request, "purpose")
+        stem_vocals = self.param(request, "stemVocals")
+        stem_drums = self.param(request, "stemDrums")
+        stem_bass = self.param(request, "stemBass")
+        stem_piano = self.param(request, "stemPiano")
+        stem_other = self.param(request, "stemOther")
 
         # Create the interval
         QueueInterval.objects.create_queue_interval(
@@ -44,6 +49,11 @@ class QueueIntervalCreateView(BaseView, LoginRequiredMixin):
             lower_bound_id=lower_bound_marker_uuid,
             upper_bound_id=upper_bound_marker_uuid,
             purpose=purpose,
+            stem_vocals=stem_vocals,
+            stem_drums=stem_drums,
+            stem_bass=stem_bass,
+            stem_piano=stem_piano,
+            stem_other=stem_other,
         )
 
         # Update the queue duration

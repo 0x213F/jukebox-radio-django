@@ -16,6 +16,11 @@ class QueueIntervalManager(models.Manager):
             "lowerBoundUuid": queue_interval.lower_bound_id,
             "upperBoundUuid": queue_interval.upper_bound_id,
             "purpose": queue_interval.purpose,
+            "vocals": queue_interval.stem_vocals,
+            "drums": queue_interval.stem_drums,
+            "bass": queue_interval.stem_bass,
+            "piano": queue_interval.stem_piano,
+            "other": queue_interval.stem_other,
         }
 
     def create_queue_interval(
@@ -26,6 +31,11 @@ class QueueIntervalManager(models.Manager):
         lower_bound_id,
         upper_bound_id,
         purpose,
+        stem_vocals,
+        stem_drums,
+        stem_bass,
+        stem_piano,
+        stem_other,
     ):
         QueueInterval = apps.get_model("streams", "QueueInterval")
 
@@ -61,6 +71,11 @@ class QueueIntervalManager(models.Manager):
             lower_bound_id=lower_bound_id,
             upper_bound_id=upper_bound_id,
             purpose=purpose,
+            stem_vocals=stem_vocals,
+            stem_drums=stem_drums,
+            stem_bass=stem_bass,
+            stem_piano=stem_piano,
+            stem_other=stem_other,
         )
 
 
@@ -202,17 +217,11 @@ class QueueInterval(models.Model):
     """
 
     PURPOSE_MUTED = "muted"
-    PURPOSE_SOLO_DRUMS = "solo_drums"
-    PURPOSE_SOLO_VOCALS = "solo_vocals"
-    PURPOSE_SOLO_BASS = "solo_bass"
-    PURPOSE_SOLO_OTHER = "solo_other"
+    PURPOSE_STEM_ISOLATION = "stem_isolation"
 
     PURPOSE_CHOICES = [
         (PURPOSE_MUTED, "Muted"),
-        (PURPOSE_SOLO_DRUMS, "Solo drums"),
-        (PURPOSE_SOLO_VOCALS, "Solo vocals"),
-        (PURPOSE_SOLO_BASS, "Solo bass"),
-        (PURPOSE_SOLO_OTHER, "Solo other"),
+        (PURPOSE_STEM_ISOLATION, "Stem Isolation"),
     ]
 
     objects = QueueIntervalManager.from_queryset(QueueIntervalQuerySet)()
@@ -242,6 +251,12 @@ class QueueInterval(models.Model):
     )
 
     purpose = models.CharField(max_length=32, choices=PURPOSE_CHOICES)
+
+    stem_vocals = models.BooleanField()
+    stem_drums = models.BooleanField()
+    stem_bass = models.BooleanField()
+    stem_piano = models.BooleanField()
+    stem_other = models.BooleanField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)

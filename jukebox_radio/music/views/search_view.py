@@ -36,14 +36,10 @@ class MusicSearchView(BaseView, LoginRequiredMixin):
             providers.append(GLOBAL_PROVIDER_JUKEBOX_RADIO)
 
         formats = []
-        if request.GET["formatTrack"] == "true":
-            formats.append(GLOBAL_FORMAT_TRACK)
-        if request.GET["formatAlbum"] == "true":
-            formats.append(GLOBAL_FORMAT_ALBUM)
-        if request.GET["formatPlaylist"] == "true":
-            formats.append(GLOBAL_FORMAT_PLAYLIST)
-        if request.GET["formatVideo"] == "true":
-            formats.append(GLOBAL_FORMAT_VIDEO)
+        formats.append(GLOBAL_FORMAT_TRACK)
+        formats.append(GLOBAL_FORMAT_ALBUM)
+        formats.append(GLOBAL_FORMAT_PLAYLIST)
+        formats.append(GLOBAL_FORMAT_VIDEO)
 
         search_results = []
         for (provider_slug, _) in GLOBAL_PROVIDER_CHOICES:
