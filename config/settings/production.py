@@ -223,10 +223,9 @@ sentry_sdk.init(
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-CORS_ORIGIN_WHITELIST = (
-    "https://jukeboxrad.io",
-    "https://0x213f.github.io",
-    "76.14.37.181",
-)
+# CORS_ORIGIN_WHITELIST = (
+#     "https://jukeboxrad.io",
+#     "https://0x213f.github.io",
+# )
 
 APP_ENV = "prod"
