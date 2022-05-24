@@ -3,6 +3,6 @@
 ffmpeg-python==0.2.0
 pydub==0.24.1
 
-tensorflow-cpu==2.3.1
+tensorflow-cpu==2.6.4
 spleeter==2.0.2
 spleeter-gpu==2.0.2
