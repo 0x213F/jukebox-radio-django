@@ -47,7 +47,7 @@ jobs:
     needs: test
     steps:
       - name: SSH Remote Commands
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v0.1.7
         with:
           script_stop: true
           host: ${{ secrets.PROD_SERVER_IP }}
